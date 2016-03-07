@@ -6,3 +6,6 @@
 	* Added a 'make rpm' rule.
 2016-03-07 Fred Gleason <fredg@paravelsystems.com>
 	* Added 'vpick.service.in'.
+2016-03-07 Fred Gleason <fredg@paravelsystems.com>
+	* Updated 'INSTALL'.
+	* Incremented the package version to 0.6.0.
