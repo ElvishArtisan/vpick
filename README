@@ -1,0 +1,9 @@
+This is the README file for the vpick package.
+
+This software comes with ABSOLUTELY NO WARRANTY.  See the file 'COPYING' for
+details.
+
+See the file 'INSTALL' for instructions on building GlassCoder from source.
+
+Vpick is a small 'chooser' applet, designed to run at boot time on a thin
+client to allow the user to choose from a list of hosts to connect to.
