@@ -83,6 +83,7 @@ else
 fi 
 
 AC_CONFIG_FILES([ \
+    conf/Makefile \
     src/Makefile \
     vpick.spec \
     Makefile ])

@@ -21,11 +21,16 @@
 #ifndef VPICK_H
 #define VPICK_H
 
+#include <vector>
+
 #include <QLabel>
 #include <QMainWindow>
 #include <QProcess>
 #include <QPushButton>
+#include <QSignalMapper>
+#include <QTimer>
 
+#define VPICK_CONF_FILE "/etc/vpick.conf"
 #define VPICK_USAGE "[options]\n"
 
 class MainWidget : public QMainWindow
@@ -35,9 +40,24 @@ class MainWidget : public QMainWindow
   MainWidget(QWidget *parent=0);
   QSize sizeHint() const;
 
+ private slots:
+  void buttonClickedData(int id);
+  void processErrorData(QProcess::ProcessError err);
+  void processFinishedData(int exit_code,QProcess::ExitStatus status);
+  void processKillData();
+
  protected:
   void closeEvent(QCloseEvent *e);
   void resizeEvent(QResizeEvent *e);
+
+ private:
+  void LoadHosts();
+  std::vector<QPushButton *> vpick_buttons;
+  std::vector<QString> vpick_commands;
+  QSignalMapper *vpick_button_mapper;
+  int vpick_height;
+  QProcess *vpick_process;
+  QTimer *vpick_process_timer;
 };
 
 

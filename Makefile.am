@@ -25,7 +25,8 @@
 #endif
 
 #SUBDIRS = $(DOCBOOK_AM_OPT) src
-SUBDIRS = src
+SUBDIRS = conf\
+          src
 
 rpm:	dist
 	cp vpick-$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES/

@@ -1,8 +1,8 @@
 ## automake.am
 ##
-## Makefile for the vpick(1) host chooser
+## conf/Automake.am for vpick
 ##
-## (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+##   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -18,33 +18,13 @@
 ##   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 ##
 ##
+## by Fred Gleason <fredg@paravelsystems.com>
+##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing @QT4_CFLAGS@
-MOC = @QT4_MOC@
+EXTRA_DIST = vpick-sample.conf
 
-# The dependency for qt's Meta Object Compiler (moc)
-moc_%.cpp:	%.h
-	@MOC@ $< -o $@
-
-
-bin_PROGRAMS = vpick
-
-dist_vpick_SOURCES = cmdswitch.cpp cmdswitch.h\
-                     profile.cpp profile.h\
-                     vpick.cpp vpick.h
-
-nodist_vpick_SOURCES = moc_vpick.cpp
-
-vpick_LDADD = @GUILIBS@
-vpick_LDFLAGS = @GUIFLAGS@
-
-CLEANFILES = *~\
-             moc_*\
-             *.obj\
-             *.idb\
-             *.pdb\
-             *ilk
-
+CLEANFILES = *~
+DISTCLEANFILES = moc_*
 MAINTAINERCLEANFILES = *~\
                        Makefile.in
