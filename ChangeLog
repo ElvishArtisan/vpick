@@ -4,3 +4,5 @@
 	* Completed basic functionality.
 2016-03-07 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'make rpm' rule.
+2016-03-07 Fred Gleason <fredg@paravelsystems.com>
+	* Added 'vpick.service.in'.

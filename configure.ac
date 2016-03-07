@@ -85,6 +85,7 @@ fi
 AC_CONFIG_FILES([ \
     conf/Makefile \
     src/Makefile \
+    vpick.service\
     vpick.spec \
     Makefile ])
 AC_OUTPUT()

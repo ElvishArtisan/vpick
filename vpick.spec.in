@@ -53,6 +53,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 if test ! -f /etc/vpick.conf ; then
     cp %{_datadir}/doc/vpick-@VERSION@/vpick-sample.conf /etc/vpick.conf
 fi
+/usr/bin/systemctl daemon-reload
 
 
 %clean
@@ -62,6 +63,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 %{_bindir}/vpick
+/usr/lib/systemd/system/vpick.service
 %doc AUTHORS
 %doc ChangeLog
 %doc COPYING 
