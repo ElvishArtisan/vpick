@@ -20,3 +20,5 @@
 	* Added an IP address display.
 2016-03-08 Fred Gleason <fredg@paravelsystems.com>
 	* Tweaked the color of the IP addres display.
+2016-03-08 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.6.1.
