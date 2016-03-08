@@ -104,6 +104,7 @@ MainWidget::MainWidget(QWidget *parent)
 	  this,SLOT(removeToggledData(bool)));
 
   vpick_address_label=new QLabel(this);
+  vpick_address_label->setStyleSheet("color: #888888;");
   vpick_address_label->
     setText(InterfaceIPv4Address(VPICK_NETWORK_INTERFACE).toString());
 
