@@ -13,3 +13,6 @@
 	* Added a 'Config' class in 'src/config.cpp' and 'src/config.h'.
 2016-03-08 Fred Gleason <fredg@paravelsystems.com>
 	* Added 'Add', 'Delete' and 'Configure' buttons.
+2016-03-08 Fred Gleason <fredg@paravelsystems.com>
+	* Changed the 'PrivateTemp' parameter in 'vpick.system.in' to
+	'false'.
