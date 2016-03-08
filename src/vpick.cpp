@@ -29,6 +29,7 @@
 #include <QStringList>
 
 #include "cmdswitch.h"
+#include "network.h"
 #include "profile.h"
 #include "vpick.h"
 
@@ -101,6 +102,10 @@ MainWidget::MainWidget(QWidget *parent)
   vpick_remove_button->setCheckable(true);
   connect(vpick_remove_button,SIGNAL(toggled(bool)),
 	  this,SLOT(removeToggledData(bool)));
+
+  vpick_address_label=new QLabel(this);
+  vpick_address_label->
+    setText(InterfaceIPv4Address(VPICK_NETWORK_INTERFACE).toString());
 
   //
   // Process Timer
@@ -213,11 +218,14 @@ void MainWidget::resizeEvent(QResizeEvent *e)
     vpick_buttons[i]->show();
     vpick_buttons[i]->setGeometry(10,10+50*i,200,40);
   }
+
   vpick_add_button->setGeometry(10,10+50*vpick_buttons.size(),40,40);
   vpick_config_button->
     setGeometry(e->size().width()/2-20,10+50*vpick_buttons.size(),40,40);
   vpick_remove_button->
     setGeometry(e->size().width()-50,10+50*vpick_buttons.size(),40,40);
+
+  vpick_address_label->setGeometry(10,size().height()-20,size().width()-20,20);
 }
 
 
@@ -272,7 +280,7 @@ void MainWidget::LoadHosts()
   for(unsigned i=0;i<vpick_config->hostQuantity();i++) {
     AddHost(i);
   }
-  vpick_height=10+50*(vpick_buttons.size()+1);
+  vpick_height=30+50*(vpick_buttons.size()+1);
 }
 
 

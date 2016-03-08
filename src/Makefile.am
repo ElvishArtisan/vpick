@@ -33,6 +33,7 @@ bin_PROGRAMS = vpick
 dist_vpick_SOURCES = cmdswitch.cpp cmdswitch.h\
                      config.cpp config.h\
                      hostdialog.cpp hostdialog.h\
+                     network.cpp network.h\
                      profile.cpp profile.h\
                      vpick.cpp vpick.h
 

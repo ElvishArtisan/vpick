@@ -16,3 +16,5 @@
 2016-03-08 Fred Gleason <fredg@paravelsystems.com>
 	* Changed the 'PrivateTemp' parameter in 'vpick.system.in' to
 	'false'.
+2016-03-08 Fred Gleason <fredg@paravelsystems.com>
+	* Added an IP address display.
