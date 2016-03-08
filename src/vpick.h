@@ -25,12 +25,14 @@
 
 #include <QLabel>
 #include <QMainWindow>
+#include <QPixmap>
 #include <QProcess>
 #include <QPushButton>
 #include <QSignalMapper>
 #include <QTimer>
 
 #include "config.h"
+#include "hostdialog.h"
 
 #define VPICK_CONF_FILE "/etc/vpick.conf"
 #define VPICK_USAGE "[options]\n"
@@ -44,6 +46,9 @@ class MainWidget : public QMainWindow
 
  private slots:
   void buttonClickedData(int id);
+  void addClickedData();
+  void setupToggledData(bool state);
+  void removeToggledData(bool state);
   void processErrorData(QProcess::ProcessError err);
   void processFinishedData(int exit_code,QProcess::ExitStatus status);
   void processKillData();
@@ -53,16 +58,30 @@ class MainWidget : public QMainWindow
   void resizeEvent(QResizeEvent *e);
 
  private:
+  void EditViewer(int id);
+  void StartViewer(int id);
+  void SetButtonIcons(const QPixmap &pix);
   void LoadHosts();
+  void AddHost(int id);
+  void RemoveHost(int id);
   void SaveHosts();
+  void Resize();
   std::vector<QPushButton *> vpick_buttons;
   std::vector<QString> vpick_commands;
   QSignalMapper *vpick_button_mapper;
+  QPushButton *vpick_add_button;
+  QPushButton *vpick_config_button;
+  QPushButton *vpick_remove_button;
   int vpick_height;
   QProcess *vpick_process;
   QTimer *vpick_process_timer;
   QString vpick_password_file;
+  HostDialog *vpick_host_dialog;
   Config *vpick_config;
+  QPixmap *vpick_lightbulb_map;
+  QPixmap *vpick_noexit_map;
+  QPixmap *vpick_plussign_map;
+  QPixmap *vpick_minussign_map;
 };
 
 

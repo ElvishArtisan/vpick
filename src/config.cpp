@@ -138,6 +138,7 @@ bool Config::save()
   }
   for(unsigned i=0;i<conf_types.size();i++) {
     fprintf(f,"[Host%u]\n",i+1);
+    fprintf(f,"Type=%u\n",conf_types[i]);
     fprintf(f,"Title=%s\n",(const char *)conf_titles[i].toUtf8());
     fprintf(f,"Hostname=%s\n",(const char *)conf_hostnames[i].toUtf8());
     fprintf(f,"Password=%s\n",(const char *)conf_passwords[i].toUtf8());

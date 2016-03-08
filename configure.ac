@@ -84,7 +84,9 @@ fi
 
 AC_CONFIG_FILES([ \
     conf/Makefile \
+    icons/Makefile \
     src/Makefile \
+    xdg/Makefile \
     vpick.service\
     vpick.spec \
     Makefile ])

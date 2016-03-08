@@ -1,8 +1,8 @@
 ## automake.am
 ##
-## Makefile for the vpick(1) host chooser
+## xdg/automake.am
 ##
-## (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+##   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -17,37 +17,18 @@
 ##   License along with this program; if not, write to the Free Software
 ##   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 ##
-##
 ## Use automake to process this into a Makefile.in
 
-AM_CPPFLAGS = -Wall -DPREFIX=\"$(prefix)\" -Wno-strict-aliasing @QT4_CFLAGS@
-MOC = @QT4_MOC@
+install-exec-am:	
+	mkdir -p $(DESTDIR)@prefix@/share/applications
+	cp vpick.desktop $(DESTDIR)@prefix@/share/applications/
 
-# The dependency for qt's Meta Object Compiler (moc)
-moc_%.cpp:	%.h
-	@MOC@ $< -o $@
+uninstall-local:	
+	rm -f $(DESTDIR)@prefix@/share/applications/vpick.desktop
 
+EXTRA_DIST = vpick.desktop
 
-bin_PROGRAMS = vpick
-
-dist_vpick_SOURCES = cmdswitch.cpp cmdswitch.h\
-                     config.cpp config.h\
-                     hostdialog.cpp hostdialog.h\
-                     profile.cpp profile.h\
-                     vpick.cpp vpick.h
-
-nodist_vpick_SOURCES = moc_hostdialog.cpp\
-                       moc_vpick.cpp
-
-vpick_LDADD = @GUILIBS@
-vpick_LDFLAGS = @GUIFLAGS@
-
-CLEANFILES = *~\
-             moc_*\
-             *.obj\
-             *.idb\
-             *.pdb\
-             *ilk
+CLEANFILES = *~
 
 MAINTAINERCLEANFILES = *~\
                        Makefile.in

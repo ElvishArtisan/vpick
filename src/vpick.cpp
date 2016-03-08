@@ -25,11 +25,18 @@
 
 #include <QApplication>
 #include <QMessageBox>
+#include <QResizeEvent>
 #include <QStringList>
 
 #include "cmdswitch.h"
 #include "profile.h"
 #include "vpick.h"
+
+#include "../icons/lightbulb.xpm"
+#include "../icons/minussign.xpm"
+#include "../icons/noexit.xpm"
+#include "../icons/plussign.xpm"
+#include "../icons/vpick-16x16.xpm"
 
 MainWidget::MainWidget(QWidget *parent)
   : QMainWindow(parent)
@@ -43,6 +50,7 @@ MainWidget::MainWidget(QWidget *parent)
   }
   vpick_process=NULL;
   setWindowTitle(tr("VNC Picker"));
+  setWindowIcon(QPixmap(vpick_16x16_xpm));
 
   //
   // Button Mapper
@@ -54,6 +62,45 @@ MainWidget::MainWidget(QWidget *parent)
   vpick_config=new Config();
   vpick_config->load();
   LoadHosts();
+
+  //
+  // Dialogs
+  //
+  vpick_minussign_map=new QPixmap(minussign_xpm);
+
+  //
+  // Icons
+  //
+  vpick_noexit_map=new QPixmap(noexit_xpm);
+  vpick_plussign_map=new QPixmap(plussign_xpm);
+  vpick_lightbulb_map=new QPixmap(lightbulb_xpm);
+  vpick_host_dialog=new HostDialog(vpick_config,this);
+
+  //
+  // Add Button
+  //
+  vpick_add_button=new QPushButton(this);
+  vpick_add_button->setIcon(*vpick_plussign_map);
+  connect(vpick_add_button,SIGNAL(clicked()),
+	  this,SLOT(addClickedData()));
+
+  //
+  // Config Button
+  //
+  vpick_config_button=new QPushButton(this);
+  vpick_config_button->setIcon(*vpick_lightbulb_map);
+  vpick_config_button->setCheckable(true);
+  connect(vpick_config_button,SIGNAL(toggled(bool)),
+	  this,SLOT(setupToggledData(bool)));
+
+  //
+  // Remove Button
+  //
+  vpick_remove_button=new QPushButton(this);
+  vpick_remove_button->setIcon(*vpick_minussign_map);
+  vpick_remove_button->setCheckable(true);
+  connect(vpick_remove_button,SIGNAL(toggled(bool)),
+	  this,SLOT(removeToggledData(bool)));
 
   //
   // Process Timer
@@ -74,6 +121,115 @@ QSize MainWidget::sizeHint() const
 
 
 void MainWidget::buttonClickedData(int id)
+{
+  if(vpick_config_button->isChecked()) {
+    EditViewer(id);
+  }
+  else {
+    if(vpick_remove_button->isChecked()) {
+      RemoveHost(id);
+    }
+    else {
+      StartViewer(id);
+    }
+  }
+}
+
+
+void MainWidget::addClickedData()
+{
+  vpick_config_button->setChecked(false);
+  vpick_remove_button->setChecked(false);
+
+  vpick_config->addHost(Config::VncPlain,"[new host]","","");
+  if(vpick_host_dialog->exec(vpick_config->hostQuantity()-1)==0) {
+    AddHost(vpick_config->hostQuantity()-1);
+    vpick_height+=50;
+    Resize();
+  }
+  else {
+    vpick_config->removeHost(vpick_config->hostQuantity()-1);
+  }
+}
+
+
+void MainWidget::setupToggledData(bool state)
+{
+  if(state) {
+    vpick_add_button->setChecked(false);
+    vpick_remove_button->setChecked(false);
+    SetButtonIcons(*vpick_lightbulb_map);
+  }
+  else {
+    SetButtonIcons(QPixmap());
+  }
+}
+
+
+void MainWidget::removeToggledData(bool state)
+{
+  if(state) {
+    vpick_add_button->setChecked(false);
+    vpick_config_button->setChecked(false);
+    SetButtonIcons(*vpick_noexit_map);
+  }
+  else {
+    SetButtonIcons(QPixmap());
+  }
+}
+
+
+void MainWidget::processErrorData(QProcess::ProcessError err)
+{
+  QMessageBox::critical(this,"VPick",tr("Process returned error")+
+			QString().sprintf("%d!",err));
+  vpick_process_timer->start(0);
+}
+
+
+void MainWidget::processFinishedData(int exit_code,QProcess::ExitStatus status)
+{
+  vpick_process_timer->start(0);
+}
+
+
+void MainWidget::processKillData()
+{
+  unlink(vpick_password_file.toUtf8());
+  delete vpick_process;
+  vpick_process=NULL;
+}
+
+
+void MainWidget::closeEvent(QCloseEvent *e)
+{
+  qApp->quit();
+}
+
+
+void MainWidget::resizeEvent(QResizeEvent *e)
+{
+  for(unsigned i=0;i<vpick_buttons.size();i++) {
+    vpick_buttons[i]->show();
+    vpick_buttons[i]->setGeometry(10,10+50*i,200,40);
+  }
+  vpick_add_button->setGeometry(10,10+50*vpick_buttons.size(),40,40);
+  vpick_config_button->
+    setGeometry(e->size().width()/2-20,10+50*vpick_buttons.size(),40,40);
+  vpick_remove_button->
+    setGeometry(e->size().width()-50,10+50*vpick_buttons.size(),40,40);
+}
+
+
+void MainWidget::EditViewer(int id)
+{
+  if(vpick_host_dialog->exec(id)==0) {
+    vpick_buttons[id]->setText(vpick_config->title(id));
+  }
+}
+
+
+void MainWidget::StartViewer(int id)
 {
   char tempname[PATH_MAX];
   QStringList args;
@@ -111,60 +267,60 @@ void MainWidget::buttonClickedData(int id)
 }
 
 
-void MainWidget::processErrorData(QProcess::ProcessError err)
-{
-  QMessageBox::critical(this,"VPick",tr("Process returned error")+
-			QString().sprintf("%d!",err));
-  vpick_process_timer->start(0);
-}
-
-
-void MainWidget::processFinishedData(int exit_code,QProcess::ExitStatus status)
-{
-  vpick_process_timer->start(0);
-}
-
-
-void MainWidget::processKillData()
-{
-  unlink(vpick_password_file.toUtf8());
-  delete vpick_process;
-  vpick_process=NULL;
-}
-
-
-void MainWidget::closeEvent(QCloseEvent *e)
-{
-  qApp->quit();
-}
-
-
-void MainWidget::resizeEvent(QResizeEvent *e)
-{
-  for(unsigned i=0;i<vpick_buttons.size();i++) {
-    vpick_buttons[i]->setGeometry(10,10+50*i,200,40);
-  }
-}
-
-
 void MainWidget::LoadHosts()
 {
-  QFont font("helvetica",16,QFont::Bold);
-
   for(unsigned i=0;i<vpick_config->hostQuantity();i++) {
-    vpick_buttons.push_back(new QPushButton(vpick_config->title(i),this));
-    vpick_buttons.back()->setFont(font);
-    vpick_button_mapper->
-      setMapping(vpick_buttons.back(),vpick_buttons.size()-1);
-    connect(vpick_buttons.back(),SIGNAL(clicked()),
-	    vpick_button_mapper,SLOT(map()));
+    AddHost(i);
   }
-  vpick_height=10+50*vpick_buttons.size();
+  vpick_height=10+50*(vpick_buttons.size()+1);
+}
+
+
+void MainWidget::AddHost(int id)
+{
+  QFont font("helvetica",16,QFont::Bold);
+  font.setPixelSize(16);
+
+  vpick_buttons.push_back(new QPushButton(vpick_config->title(id),this));
+  vpick_buttons.back()->setFont(font);
+  vpick_button_mapper->setMapping(vpick_buttons.back(),vpick_buttons.size()-1);
+  connect(vpick_buttons.back(),SIGNAL(clicked()),
+	  vpick_button_mapper,SLOT(map()));
+}
+
+
+void MainWidget::RemoveHost(int id)
+{
+  for(unsigned i=id+1;i<vpick_buttons.size();i++) {
+    vpick_button_mapper->removeMappings(vpick_buttons[i]);
+    vpick_button_mapper->setMapping(vpick_buttons[i],i-1);
+  }
+  vpick_config->removeHost(id);
+  vpick_config->save();
+  delete vpick_buttons[id];
+  vpick_buttons.erase(vpick_buttons.begin()+id);
+  vpick_height-=50;
+  Resize();
+}
+
+
+void MainWidget::SetButtonIcons(const QPixmap &pix)
+{
+  for(unsigned i=0;i<vpick_buttons.size();i++) {
+    vpick_buttons[i]->setIcon(pix);
+  }
 }
 
 
 void MainWidget::SaveHosts()
 {
+}
+
+
+void MainWidget::Resize()
+{
+  setMaximumHeight(vpick_height);
+  setMinimumHeight(vpick_height);
 }
 
 

@@ -26,7 +26,9 @@
 
 #SUBDIRS = $(DOCBOOK_AM_OPT) src
 SUBDIRS = conf\
-          src
+          icons\
+          src\
+          xdg
 
 install-exec-local:	
 	mkdir -p $(DESTDIR)/usr/lib/systemd/system
