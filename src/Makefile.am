@@ -31,6 +31,7 @@ moc_%.cpp:	%.h
 bin_PROGRAMS = vpick
 
 dist_vpick_SOURCES = cmdswitch.cpp cmdswitch.h\
+                     config.cpp config.h\
                      profile.cpp profile.h\
                      vpick.cpp vpick.h
 

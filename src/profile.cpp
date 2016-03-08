@@ -212,6 +212,7 @@ int Profile::intValue(const QString &section,const QString &tag,
 		       int default_value,bool *ok) const
 {
   bool valid;
+  QString str;
 
   int result=stringValue(section,tag).toInt(&valid,10);
   if(!valid) {

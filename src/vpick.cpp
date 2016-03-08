@@ -20,6 +20,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #include <QApplication>
 #include <QMessageBox>
@@ -40,6 +42,7 @@ MainWidget::MainWidget(QWidget *parent)
     }
   }
   vpick_process=NULL;
+  setWindowTitle(tr("VNC Picker"));
 
   //
   // Button Mapper
@@ -48,6 +51,8 @@ MainWidget::MainWidget(QWidget *parent)
   connect(vpick_button_mapper,SIGNAL(mapped(int)),
 	  this,SLOT(buttonClickedData(int)));
 
+  vpick_config=new Config();
+  vpick_config->load();
   LoadHosts();
 
   //
@@ -70,16 +75,38 @@ QSize MainWidget::sizeHint() const
 
 void MainWidget::buttonClickedData(int id)
 {
+  char tempname[PATH_MAX];
+  QStringList args;
+
   if(vpick_process==NULL) {
+    //
+    // Generate Password File
+    //
+    strncpy(tempname,"/tmp/vpickXXXXXX",PATH_MAX);
+    vpick_password_file=mktemp(tempname);
+    args.push_back("-f");
+    vpick_process=new QProcess(this);
+    vpick_process->setStandardOutputFile(vpick_password_file);
+    vpick_process->start("/usr/bin/vncpasswd",args);
+    vpick_process->write(vpick_config->password(id).toUtf8());
+    vpick_process->write("\n");
+    vpick_process->waitForFinished();
+    delete vpick_process;
+
+    //
+    // Start Viewer
+    //
     vpick_process=new QProcess(this);
     connect(vpick_process,SIGNAL(error(QProcess::ProcessError)),
 	    this,SLOT(processErrorData(QProcess::ProcessError)));
     connect(vpick_process,SIGNAL(finished(int,QProcess::ExitStatus)),
 	    this,SLOT(processFinishedData(int,QProcess::ExitStatus)));
-    QStringList f0=vpick_commands[id].split(" ");
-    QString cmd=f0[0];
-    f0.erase(f0.begin());
-    vpick_process->start(cmd,f0);
+    args.clear();
+    args.push_back("-passwd");
+    args.push_back(vpick_password_file);
+    args.push_back("-FullScreen");
+    args.push_back(vpick_config->hostname(id));
+    vpick_process->start("/usr/bin/vncviewer",args);
   }
 }
 
@@ -100,6 +127,7 @@ void MainWidget::processFinishedData(int exit_code,QProcess::ExitStatus status)
 
 void MainWidget::processKillData()
 {
+  unlink(vpick_password_file.toUtf8());
   delete vpick_process;
   vpick_process=NULL;
 }
@@ -121,29 +149,22 @@ void MainWidget::resizeEvent(QResizeEvent *e)
 
 void MainWidget::LoadHosts()
 {
-  QString cmd;
-  bool ok=false;
-  int count=0;
-  QString section=QString().sprintf("Host%d",count+1);
   QFont font("helvetica",16,QFont::Bold);
-  Profile *p=new Profile();
-  p->setSource(VPICK_CONF_FILE);
-  
-  cmd=p->stringValue(section,"Command","",&ok);
-  while(ok) {
-    vpick_commands.push_back(cmd);
-    vpick_buttons.push_back(new QPushButton(p->stringValue(section,"Title",QString().sprintf("Host %d",count+1)),this));
+
+  for(unsigned i=0;i<vpick_config->hostQuantity();i++) {
+    vpick_buttons.push_back(new QPushButton(vpick_config->title(i),this));
     vpick_buttons.back()->setFont(font);
     vpick_button_mapper->
       setMapping(vpick_buttons.back(),vpick_buttons.size()-1);
     connect(vpick_buttons.back(),SIGNAL(clicked()),
 	    vpick_button_mapper,SLOT(map()));
-    count++;
-    section=QString().sprintf("Host%d",count+1);
-    cmd=p->stringValue(section,"Command","",&ok);
   }
-  delete p;
   vpick_height=10+50*vpick_buttons.size();
+}
+
+
+void MainWidget::SaveHosts()
+{
 }
 
 

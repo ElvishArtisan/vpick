@@ -30,6 +30,8 @@
 #include <QSignalMapper>
 #include <QTimer>
 
+#include "config.h"
+
 #define VPICK_CONF_FILE "/etc/vpick.conf"
 #define VPICK_USAGE "[options]\n"
 
@@ -52,12 +54,15 @@ class MainWidget : public QMainWindow
 
  private:
   void LoadHosts();
+  void SaveHosts();
   std::vector<QPushButton *> vpick_buttons;
   std::vector<QString> vpick_commands;
   QSignalMapper *vpick_button_mapper;
   int vpick_height;
   QProcess *vpick_process;
   QTimer *vpick_process_timer;
+  QString vpick_password_file;
+  Config *vpick_config;
 };
 
 
