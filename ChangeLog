@@ -27,3 +27,6 @@
 2016-03-09 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/settingsdialog.cpp' that caused saving the
 	settings to fail in DHCP mode if the IP fields were empty.
+2016-03-09 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/settingsdialog.cpp' that caused the DNS Server
+	fields to fail to be disabled when configured to use DHCP.

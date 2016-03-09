@@ -120,6 +120,9 @@ void SettingsDialog::dhcpChangedData(int n)
   set_ipnetmask_edit->setEnabled(n);
   set_ipgateway_label->setEnabled(n);
   set_ipgateway_edit->setEnabled(n);
+  set_dns_label->setEnabled(n);
+  set_dns1_edit->setEnabled(n);
+  set_dns2_edit->setEnabled(n);
 }
 
 
