@@ -25,7 +25,7 @@
 
 #include <QString>
 
-#define VPICK_NETWORK_INTERFACE QString("enp5s0")
+#define VPICK_NETWORK_INTERFACE QString("eth0")
 #define VPICK_CONF_FILE QString("/etc/vpick.conf")
 
 class Config

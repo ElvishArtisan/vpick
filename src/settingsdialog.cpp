@@ -23,7 +23,6 @@
 #include <vector>
 
 #include <QMessageBox>
-#include <QProcess>
 #include <QStringList>
 
 #include "config.h"
@@ -127,14 +126,6 @@ void SettingsDialog::dhcpChangedData(int n)
 void SettingsDialog::okData()
 {
   if(Save()) {
-    QStringList args;
-    args.push_back("restart");
-    args.push_back("network");
-    QProcess *proc=new QProcess();
-    proc->start("systemctl",args);
-    proc->waitForFinished();
-    delete proc;
-
     done(0);
   }
 }
@@ -205,46 +196,46 @@ bool SettingsDialog::Save()
   FILE *f=NULL;
   std::vector<QString> dns_servers;
 
-  if(!ValidIp(set_ipaddress_edit->text())) {
-    QMessageBox::information(this,tr("VPick - Error"),
-			     tr("Invalid IP Address value!"));
-    return false;
-  }
-  if(!ValidIp(set_ipnetmask_edit->text())) {
-    QMessageBox::information(this,tr("VPick - Error"),
-			     tr("Invalid IP Netmask value!"));
-    return false;
-  }
-  if(!ValidIp(set_ipgateway_edit->text())) {
-    QMessageBox::information(this,tr("VPick - Error"),
-			     tr("Invalid IP Gateway value!"));
-    return false;
-  }
-  if(!set_dns1_edit->text().isEmpty()) {
-    if(!ValidIp(set_dns1_edit->text())) {
+  if(set_dhcp_box->currentIndex()!=0) {  // Manual Setup
+    if(!ValidIp(set_ipaddress_edit->text())) {
       QMessageBox::information(this,tr("VPick - Error"),
-			       tr("Invalid DNS Server value!"));
+			       tr("Invalid IP Address value!"));
       return false;
     }
-    dns_servers.push_back(set_dns1_edit->text());
-  }
-  if(!set_dns2_edit->text().isEmpty()) {
-    if(!ValidIp(set_dns2_edit->text())) {
+    if(!ValidIp(set_ipnetmask_edit->text())) {
       QMessageBox::information(this,tr("VPick - Error"),
-			       tr("Invalid DNS Server value!"));
+			       tr("Invalid IP Netmask value!"));
       return false;
     }
-    dns_servers.push_back(set_dns2_edit->text());
+    if(!ValidIp(set_ipgateway_edit->text())) {
+      QMessageBox::information(this,tr("VPick - Error"),
+			       tr("Invalid IP Gateway value!"));
+      return false;
+    }
+    if(!set_dns1_edit->text().isEmpty()) {
+      if(!ValidIp(set_dns1_edit->text())) {
+	QMessageBox::information(this,tr("VPick - Error"),
+				 tr("Invalid DNS Server value!"));
+	return false;
+      }
+      dns_servers.push_back(set_dns1_edit->text());
+    }
+    if(!set_dns2_edit->text().isEmpty()) {
+      if(!ValidIp(set_dns2_edit->text())) {
+	QMessageBox::information(this,tr("VPick - Error"),
+				 tr("Invalid DNS Server value!"));
+	return false;
+      }
+      dns_servers.push_back(set_dns2_edit->text());
+    }
+    set_values["BOOTPROTO"]="none";
+    set_values["IPADDR"]=set_ipaddress_edit->text();
+    set_values["NETMASK"]=set_ipnetmask_edit->text();
+    set_values["GATEWAY"]=set_ipgateway_edit->text();
   }
-  if(set_dhcp_box->currentIndex()==0) {
+  else {   // DHCP Setup
     set_values["BOOTPROTO"]="dhcp";
   }
-  else {
-    set_values["BOOTPROTO"]="none";
-  }
-  set_values["IPADDR"]=set_ipaddress_edit->text();
-  set_values["NETMASK"]=set_ipnetmask_edit->text();
-  set_values["GATEWAY"]=set_ipgateway_edit->text();
   if((f=fopen(("/etc/sysconfig/network-scripts/ifcfg-"+
 	       VPICK_NETWORK_INTERFACE+"-back").toUtf8(),"w"))!=NULL) {
     for(std::map<QString,QString>::const_iterator it=set_values.begin();

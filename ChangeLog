@@ -24,3 +24,6 @@
 	* Incremented the package version to 0.6.1.
 2016-03-09 Fred Gleason <fredg@paravelsystems.com>
 	* Added an IP Settings dialog.
+2016-03-09 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/settingsdialog.cpp' that caused saving the
+	settings to fail in DHCP mode if the IP fields were empty.

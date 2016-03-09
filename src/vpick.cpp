@@ -25,6 +25,7 @@
 
 #include <QApplication>
 #include <QMessageBox>
+#include <QProcess>
 #include <QResizeEvent>
 #include <QStringList>
 
@@ -205,7 +206,15 @@ void MainWidget::removeToggledData(bool state)
 
 void MainWidget::settingsClickedData()
 {
-  vpick_settings_dialog->exec();
+  if(vpick_settings_dialog->exec()==0) {
+    QStringList args;
+    args.push_back("restart");
+    args.push_back("network");
+    QProcess *proc=new QProcess();
+    proc->start("systemctl",args);
+    proc->waitForFinished();
+    delete proc;
+  }
 }
 
 
