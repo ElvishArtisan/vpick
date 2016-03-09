@@ -30,3 +30,5 @@
 2016-03-09 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/settingsdialog.cpp' that caused the DNS Server
 	fields to fail to be disabled when configured to use DHCP.
+2016-03-09 Fred Gleason <fredg@paravelsystems.com>
+	* Removed the IP Address display from the main window.

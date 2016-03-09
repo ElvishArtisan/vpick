@@ -115,14 +115,6 @@ MainWidget::MainWidget(QWidget *parent)
 	  this,SLOT(settingsClickedData()));
 
   //
-  // Address Display
-  //
-  vpick_address_label=new QLabel(this);
-  vpick_address_label->setStyleSheet("color: #888888;");
-  vpick_address_label->
-    setText(InterfaceIPv4Address(VPICK_NETWORK_INTERFACE).toString());
-
-  //
   // Process Timer
   //
   vpick_process_timer=new QTimer(this);
@@ -258,8 +250,6 @@ void MainWidget::resizeEvent(QResizeEvent *e)
   vpick_remove_button->setGeometry(100,10+50*vpick_buttons.size(),40,40);
   vpick_settings_button->
     setGeometry(size().width()-50,10+50*vpick_buttons.size(),40,40);
-
-  vpick_address_label->setGeometry(10,size().height()-20,size().width()-20,20);
 }
 
 
@@ -314,7 +304,7 @@ void MainWidget::LoadHosts()
   for(unsigned i=0;i<vpick_config->hostQuantity();i++) {
     AddHost(i);
   }
-  vpick_height=30+50*(vpick_buttons.size()+1);
+  vpick_height=50*(vpick_buttons.size()+1);
 }
 
 

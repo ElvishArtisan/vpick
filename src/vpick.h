@@ -74,7 +74,6 @@ class MainWidget : public QMainWindow
   QPushButton *vpick_config_button;
   QPushButton *vpick_remove_button;
   QPushButton *vpick_settings_button;
-  QLabel *vpick_address_label;
   int vpick_height;
   QProcess *vpick_process;
   QTimer *vpick_process_timer;
