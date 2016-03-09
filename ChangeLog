@@ -34,3 +34,5 @@
 	* Removed the IP Address display from the main window.
 2016-03-09 Fred Gleason <fredg@paravelsystems.com>
 	* Added additional margin at the bottom of the main window.
+2016-03-09 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.6.2.
