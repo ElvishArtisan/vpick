@@ -33,9 +33,8 @@
 
 #include "config.h"
 #include "hostdialog.h"
+#include "settingsdialog.h"
 
-#define VPICK_NETWORK_INTERFACE "eth0"
-#define VPICK_CONF_FILE "/etc/vpick.conf"
 #define VPICK_USAGE "[options]\n"
 
 class MainWidget : public QMainWindow
@@ -50,6 +49,7 @@ class MainWidget : public QMainWindow
   void addClickedData();
   void setupToggledData(bool state);
   void removeToggledData(bool state);
+  void settingsClickedData();
   void processErrorData(QProcess::ProcessError err);
   void processFinishedData(int exit_code,QProcess::ExitStatus status);
   void processKillData();
@@ -73,12 +73,14 @@ class MainWidget : public QMainWindow
   QPushButton *vpick_add_button;
   QPushButton *vpick_config_button;
   QPushButton *vpick_remove_button;
+  QPushButton *vpick_settings_button;
   QLabel *vpick_address_label;
   int vpick_height;
   QProcess *vpick_process;
   QTimer *vpick_process_timer;
   QString vpick_password_file;
   HostDialog *vpick_host_dialog;
+  SettingsDialog *vpick_settings_dialog;
   Config *vpick_config;
   QPixmap *vpick_lightbulb_map;
   QPixmap *vpick_noexit_map;

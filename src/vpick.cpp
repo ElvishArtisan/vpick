@@ -37,6 +37,7 @@
 #include "../icons/minussign.xpm"
 #include "../icons/noexit.xpm"
 #include "../icons/plussign.xpm"
+#include "../icons/settings.xpm"
 #include "../icons/vpick-16x16.xpm"
 
 MainWidget::MainWidget(QWidget *parent)
@@ -67,15 +68,16 @@ MainWidget::MainWidget(QWidget *parent)
   //
   // Dialogs
   //
-  vpick_minussign_map=new QPixmap(minussign_xpm);
+  vpick_host_dialog=new HostDialog(vpick_config,this);
+  vpick_settings_dialog=new SettingsDialog(this);
 
   //
   // Icons
   //
+  vpick_minussign_map=new QPixmap(minussign_xpm);
   vpick_noexit_map=new QPixmap(noexit_xpm);
   vpick_plussign_map=new QPixmap(plussign_xpm);
   vpick_lightbulb_map=new QPixmap(lightbulb_xpm);
-  vpick_host_dialog=new HostDialog(vpick_config,this);
 
   //
   // Add Button
@@ -103,6 +105,17 @@ MainWidget::MainWidget(QWidget *parent)
   connect(vpick_remove_button,SIGNAL(toggled(bool)),
 	  this,SLOT(removeToggledData(bool)));
 
+  //
+  // Settings Button
+  //
+  vpick_settings_button=new QPushButton(this);
+  vpick_settings_button->setIcon(QPixmap(settings_xpm));
+  connect(vpick_settings_button,SIGNAL(clicked()),
+	  this,SLOT(settingsClickedData()));
+
+  //
+  // Address Display
+  //
   vpick_address_label=new QLabel(this);
   vpick_address_label->setStyleSheet("color: #888888;");
   vpick_address_label->
@@ -162,13 +175,15 @@ void MainWidget::addClickedData()
 void MainWidget::setupToggledData(bool state)
 {
   if(state) {
-    vpick_add_button->setChecked(false);
     vpick_remove_button->setChecked(false);
     SetButtonIcons(*vpick_lightbulb_map);
   }
   else {
     SetButtonIcons(QPixmap());
   }
+  vpick_add_button->setDisabled(state);
+  vpick_remove_button->setDisabled(state);
+  vpick_settings_button->setDisabled(state);
 }
 
 
@@ -182,6 +197,15 @@ void MainWidget::removeToggledData(bool state)
   else {
     SetButtonIcons(QPixmap());
   }
+  vpick_add_button->setDisabled(state);
+  vpick_config_button->setDisabled(state);
+  vpick_settings_button->setDisabled(state);
+}
+
+
+void MainWidget::settingsClickedData()
+{
+  vpick_settings_dialog->exec();
 }
 
 
@@ -221,10 +245,10 @@ void MainWidget::resizeEvent(QResizeEvent *e)
   }
 
   vpick_add_button->setGeometry(10,10+50*vpick_buttons.size(),40,40);
-  vpick_config_button->
-    setGeometry(e->size().width()/2-20,10+50*vpick_buttons.size(),40,40);
-  vpick_remove_button->
-    setGeometry(e->size().width()-50,10+50*vpick_buttons.size(),40,40);
+  vpick_config_button->setGeometry(55,10+50*vpick_buttons.size(),40,40);
+  vpick_remove_button->setGeometry(100,10+50*vpick_buttons.size(),40,40);
+  vpick_settings_button->
+    setGeometry(size().width()-50,10+50*vpick_buttons.size(),40,40);
 
   vpick_address_label->setGeometry(10,size().height()-20,size().width()-20,20);
 }

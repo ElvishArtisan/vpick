@@ -35,9 +35,11 @@ dist_vpick_SOURCES = cmdswitch.cpp cmdswitch.h\
                      hostdialog.cpp hostdialog.h\
                      network.cpp network.h\
                      profile.cpp profile.h\
+                     settingsdialog.cpp settingsdialog.h\
                      vpick.cpp vpick.h
 
 nodist_vpick_SOURCES = moc_hostdialog.cpp\
+                       moc_settingsdialog.cpp\
                        moc_vpick.cpp
 
 vpick_LDADD = @GUILIBS@

@@ -41,6 +41,7 @@ EXTRA_DIST = lightbulb.xpm\
              minussign.xpm\
              noexit.xpm\
              plussign.xpm\
+             settings.xpm\
              vpick-16x16.png\
              vpick-16x16.xpm\
              vpick-22x22.png\

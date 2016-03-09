@@ -145,7 +145,7 @@ bool Config::save()
     fprintf(f,"\n");
   }
   fclose(f);
-  rename((QString(VPICK_CONF_FILE)+"-back").toUtf8(),VPICK_CONF_FILE);
+  rename((VPICK_CONF_FILE+"-back").toUtf8(),VPICK_CONF_FILE.toUtf8());
 
   return true;
 }
