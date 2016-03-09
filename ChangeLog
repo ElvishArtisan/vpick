@@ -32,3 +32,5 @@
 	fields to fail to be disabled when configured to use DHCP.
 2016-03-09 Fred Gleason <fredg@paravelsystems.com>
 	* Removed the IP Address display from the main window.
+2016-03-09 Fred Gleason <fredg@paravelsystems.com>
+	* Added additional margin at the bottom of the main window.

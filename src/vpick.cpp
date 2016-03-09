@@ -304,7 +304,7 @@ void MainWidget::LoadHosts()
   for(unsigned i=0;i<vpick_config->hostQuantity();i++) {
     AddHost(i);
   }
-  vpick_height=50*(vpick_buttons.size()+1);
+  vpick_height=10+50*(vpick_buttons.size()+1);
 }
 
 
