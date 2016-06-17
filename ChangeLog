@@ -38,3 +38,5 @@
 	* Incremented the package version to 0.6.2.
 2016-06-17 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'Resolution' control to the 'Settings' dialog.
+2016-06-17 Fred Gleason <fredg@paravelsystems.com>
+	* Added 1280x768 resolution menu item in 'src/settingsdialog.cpp'.

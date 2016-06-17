@@ -104,6 +104,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   set_resolution_box->insertItem(1,tr("1440x900"),QSize(1440,900));
   set_resolution_box->insertItem(1,tr("1280x1024"),QSize(1280,1024));
   set_resolution_box->insertItem(1,tr("1280x960"),QSize(1280,960));
+  set_resolution_box->insertItem(1,tr("1280x768"),QSize(1280,768));
   set_resolution_box->insertItem(1,tr("1280x720"),QSize(1280,720));
   set_resolution_box->insertItem(1,tr("1680x1050"),QSize(1680,1050));
   set_resolution_box->insertItem(1,tr("1920x1080"),QSize(1920,1080));
