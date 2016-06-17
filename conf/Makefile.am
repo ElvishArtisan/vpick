@@ -22,7 +22,8 @@
 ##
 ## Use automake to process this into a Makefile.in
 
-EXTRA_DIST = vpick-sample.conf
+EXTRA_DIST = config-sample.txt\
+             vpick-sample.conf
 
 CLEANFILES = *~
 DISTCLEANFILES = moc_*

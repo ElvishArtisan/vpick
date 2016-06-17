@@ -29,7 +29,9 @@
 #include <QLineEdit>
 #include <QPushButton>
 
+#include "combobox.h"
 #include "config.h"
+#include "rpiconfig.h"
 
 class SettingsDialog : public QDialog
 {
@@ -65,9 +67,12 @@ class SettingsDialog : public QDialog
   QLabel *set_dns_label;
   QLineEdit *set_dns1_edit;
   QLineEdit *set_dns2_edit;
+  QLabel *set_resolution_label;
+  ComboBox *set_resolution_box;
   QPushButton *set_ok_button;
   QPushButton *set_cancel_button;
   std::map<QString,QString> set_values;
+  RpiConfig *set_rpiconfig;
 };
 
 

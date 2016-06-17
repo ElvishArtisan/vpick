@@ -19,6 +19,7 @@
 //
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <vector>
 
@@ -31,13 +32,18 @@
 SettingsDialog::SettingsDialog(QWidget *parent)
   : QDialog(parent)
 {
-  setWindowTitle(tr("VPick - IP Settings"));
+  setWindowTitle(tr("VPick - Settings"));
 
   QFont label_font("helvetica",14,QFont::Bold);
   label_font.setPixelSize(14);
 
   QFont button_font("helvetica",16,QFont::Bold);
   button_font.setPixelSize(16);
+
+  //
+  // Config File
+  //
+  set_rpiconfig=new RpiConfig();
 
   //
   // Configuration Type
@@ -84,6 +90,25 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   set_dns2_edit=new QLineEdit(this);
 
   //
+  // Resolution
+  //
+  set_resolution_label=new QLabel(tr("Resolution")+":",this);
+  set_resolution_label->setFont(label_font);
+  set_resolution_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  set_resolution_box=new ComboBox(this);
+  set_resolution_box->insertItem(0,tr("Automatic (recommended)"),QSize());
+  set_resolution_box->insertItem(1,tr("640x480"),QSize(640,480));
+  set_resolution_box->insertItem(1,tr("720x400"),QSize(720,400));
+  set_resolution_box->insertItem(1,tr("800x600"),QSize(800,600));
+  set_resolution_box->insertItem(1,tr("1024x786"),QSize(1024,786));
+  set_resolution_box->insertItem(1,tr("1440x900"),QSize(1440,900));
+  set_resolution_box->insertItem(1,tr("1280x1024"),QSize(1280,1024));
+  set_resolution_box->insertItem(1,tr("1280x960"),QSize(1280,960));
+  set_resolution_box->insertItem(1,tr("1280x720"),QSize(1280,720));
+  set_resolution_box->insertItem(1,tr("1680x1050"),QSize(1680,1050));
+  set_resolution_box->insertItem(1,tr("1920x1080"),QSize(1920,1080));
+
+  //
   // OK Button
   //
   set_ok_button=new QPushButton(tr("OK"),this);
@@ -101,7 +126,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 QSize SettingsDialog::sizeHint() const
 {
-  return QSize(300,226);
+  return QSize(350,265);
 }
 
 
@@ -164,6 +189,9 @@ void SettingsDialog::resizeEvent(QResizeEvent *e)
   set_dns1_edit->setGeometry(125,110,size().width()-135,20);
   set_dns2_edit->setGeometry(125,132,size().width()-135,20);
 
+  set_resolution_label->setGeometry(10,166,110,20);
+  set_resolution_box->setGeometry(125,166,size().width()-135,20);
+
   set_ok_button->setGeometry(size().width()-180,size().height()-60,80,50);
   set_cancel_button->setGeometry(size().width()-90,size().height()-60,80,50);
 }
@@ -190,6 +218,9 @@ void SettingsDialog::Load()
   set_ipgateway_edit->setText(set_values["GATEWAY"]);
   set_dns1_edit->setText(set_values["DNS1"]);
   set_dns2_edit->setText(set_values["DNS2"]);
+
+  set_rpiconfig->load();
+  set_resolution_box->setCurrentItemData(set_rpiconfig->framebufferSize());
   dhcpChangedData(set_dhcp_box->currentIndex());
 }
 
@@ -256,6 +287,13 @@ bool SettingsDialog::Save()
 	    "-back").toUtf8(),
 	   ("/etc/sysconfig/network-scripts/ifcfg-"+VPICK_NETWORK_INTERFACE).
 	   toUtf8());
+  }
+
+  set_rpiconfig->
+    setFramebufferSize(set_resolution_box->currentItemData().toSize());
+  if(set_rpiconfig->wasChanged()) {
+    set_rpiconfig->save();
+    system("/sbin/reboot");
   }
 
   return true;
