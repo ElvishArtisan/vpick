@@ -48,3 +48,5 @@
 2016-08-21 Fred Gleason <fredg@paravelsystems.com>
 	* Removed the duplicate password entry field from 'src/hostdialog.cpp'
 	and 'src/hostdialog.h'.
+2016-08-21 Fred Gleason <fredg@paravelsystems.com>
+	* Added an 'Autoconnect' option to Host configurations.

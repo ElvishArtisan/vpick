@@ -42,8 +42,10 @@ class Config
   void setHostname(unsigned n,const QString &str);
   QString password(unsigned n) const;
   void setPassword(unsigned n,const QString &);
+  bool autoconnect(unsigned n) const;
+  void setAutoconnect(unsigned n,bool state);
   unsigned addHost(Type type,const QString &title,const QString &hostname,
-		   const QString &passwd);
+		   const QString &passwd,bool autoconnect);
   void removeHost(unsigned n);
   bool load();
   bool save();
@@ -53,6 +55,7 @@ class Config
   std::vector<QString> conf_titles;
   std::vector<QString> conf_hostnames;
   std::vector<QString> conf_passwords;
+  std::vector<unsigned> conf_autoconnects;
 };
 
 

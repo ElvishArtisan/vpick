@@ -82,13 +82,26 @@ void Config::setPassword(unsigned n,const QString &str)
 }
 
 
+bool Config::autoconnect(unsigned n) const
+{
+  return conf_autoconnects[n];
+}
+
+
+void Config::setAutoconnect(unsigned n,bool state)
+{
+  conf_autoconnects[n]=state;
+}
+
+
 unsigned Config::addHost(Type type,const QString &title,const QString &hostname,
-			 const QString &passwd)
+			 const QString &passwd, bool autoconnect)
 {
   conf_types.push_back(type);
   conf_titles.push_back(title);
   conf_hostnames.push_back(hostname);
   conf_passwords.push_back(passwd);
+  conf_autoconnects.push_back(autoconnect);
 
   return conf_types.size()-1;
 }
@@ -100,6 +113,7 @@ void Config::removeHost(unsigned n)
   conf_titles.erase(conf_titles.begin()+n);
   conf_hostnames.erase(conf_hostnames.begin()+n);
   conf_passwords.erase(conf_passwords.begin()+n);
+  conf_autoconnects.erase(conf_autoconnects.begin()+n);
 }
 
 
@@ -117,6 +131,7 @@ bool Config::load()
     conf_types.push_back(type);
     conf_hostnames.push_back(p->stringValue(section,"Hostname"));
     conf_passwords.push_back(p->stringValue(section,"Password"));
+    conf_autoconnects.push_back(p->boolValue(section,"Autoconnect"));
     conf_titles.push_back(p->stringValue(section,"Title",QString().
 					 sprintf("Host %d",count+1)));
     count++;
@@ -142,6 +157,7 @@ bool Config::save()
     fprintf(f,"Title=%s\n",(const char *)conf_titles[i].toUtf8());
     fprintf(f,"Hostname=%s\n",(const char *)conf_hostnames[i].toUtf8());
     fprintf(f,"Password=%s\n",(const char *)conf_passwords[i].toUtf8());
+    fprintf(f,"Autoconnect=%u\n",conf_autoconnects[i]);
     fprintf(f,"\n");
   }
   fclose(f);

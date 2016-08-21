@@ -21,6 +21,7 @@
 #ifndef HOSTDIALOG_H
 #define HOSTDIALOG_H
 
+#include <QCheckBox>
 #include <QDialog>
 #include <QLabel>
 #include <QLineEdit>
@@ -53,6 +54,8 @@ class HostDialog : public QDialog
   QLineEdit *host_hostname_edit;
   QLabel *host_password_label;
   QLineEdit *host_password_edit;
+  QCheckBox *host_autoconnect_check;
+  QLabel *host_autoconnect_label;
   QPushButton *host_ok_button;
   QPushButton *host_cancel_button;
   Config *host_config;

@@ -44,6 +44,8 @@
 MainWidget::MainWidget(QWidget *parent)
   : QMainWindow(parent)
 {
+  vpick_autoconnect_id=-1;
+
   CmdSwitch *cmd=new CmdSwitch(qApp->argc(),qApp->argv(),"vpick",VERSION);
   for(unsigned i=0;i<cmd->keys();i++) {
     if(!cmd->processed(i)) {
@@ -123,6 +125,21 @@ MainWidget::MainWidget(QWidget *parent)
 
   setMaximumSize(sizeHint());
   setMinimumSize(sizeHint());
+
+  //
+  // Autoconnect
+  //
+  for(unsigned i=0;i<vpick_config->hostQuantity();i++) {
+    if(vpick_config->autoconnect(i)) {
+      vpick_autoconnect_id=i;
+      vpick_autoconnect_timer=new QTimer(this);
+      connect(vpick_autoconnect_timer,SIGNAL(timeout()),
+	      this,SLOT(autoconnectData()));
+      vpick_autoconnect_timer->setSingleShot(true);
+      vpick_autoconnect_timer->start(1);
+      continue;
+    }
+  }
 }
 
 
@@ -153,7 +170,7 @@ void MainWidget::addClickedData()
   vpick_config_button->setChecked(false);
   vpick_remove_button->setChecked(false);
 
-  vpick_config->addHost(Config::VncPlain,"[new host]","","");
+  vpick_config->addHost(Config::VncPlain,"[new host]","","",false);
   if(vpick_host_dialog->exec(vpick_config->hostQuantity()-1)==0) {
     AddHost(vpick_config->hostQuantity()-1);
     vpick_height+=50;
@@ -215,6 +232,12 @@ void MainWidget::processErrorData(QProcess::ProcessError err)
   QMessageBox::critical(this,"VPick",tr("Process returned error")+
 			QString().sprintf("%d!",err));
   vpick_process_timer->start(0);
+}
+
+
+void MainWidget::autoconnectData()
+{
+  buttonClickedData(vpick_autoconnect_id);
 }
 
 

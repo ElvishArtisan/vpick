@@ -53,6 +53,7 @@ class MainWidget : public QMainWindow
   void processErrorData(QProcess::ProcessError err);
   void processFinishedData(int exit_code,QProcess::ExitStatus status);
   void processKillData();
+  void autoconnectData();
 
  protected:
   void closeEvent(QCloseEvent *e);
@@ -85,6 +86,8 @@ class MainWidget : public QMainWindow
   QPixmap *vpick_noexit_map;
   QPixmap *vpick_plussign_map;
   QPixmap *vpick_minussign_map;
+  QTimer *vpick_autoconnect_timer;
+  int vpick_autoconnect_id;
 };
 
 
