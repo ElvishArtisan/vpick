@@ -45,6 +45,7 @@ class SettingsDialog : public QDialog
 
  private slots:
   void dhcpChangedData(int n);
+  void calibrateData();
   void okData();
   void cancelData();
 
@@ -69,6 +70,7 @@ class SettingsDialog : public QDialog
   QLineEdit *set_dns2_edit;
   QLabel *set_resolution_label;
   ComboBox *set_resolution_box;
+  QPushButton *set_calibrate_button;
   QPushButton *set_ok_button;
   QPushButton *set_cancel_button;
   std::map<QString,QString> set_values;

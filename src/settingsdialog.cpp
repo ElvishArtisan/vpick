@@ -34,6 +34,9 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 {
   setWindowTitle(tr("VPick - Settings"));
 
+  QFont small_button_font("helvetica",10,QFont::Bold);
+  small_button_font.setPixelSize(10);
+
   QFont label_font("helvetica",14,QFont::Bold);
   label_font.setPixelSize(14);
 
@@ -111,6 +114,14 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   set_resolution_box->insertItem(1,tr("1920x1080"),QSize(1920,1080));
 
   //
+  // Calibrate Button
+  //
+  set_calibrate_button=
+    new QPushButton(tr("Calibrate")+"\n"+tr("Touchscreen"),this);
+  set_calibrate_button->setFont(small_button_font);
+  connect(set_calibrate_button,SIGNAL(clicked()),this,SLOT(calibrateData()));
+
+  //
   // OK Button
   //
   set_ok_button=new QPushButton(tr("OK"),this);
@@ -150,6 +161,12 @@ void SettingsDialog::dhcpChangedData(int n)
   set_dns_label->setEnabled(n);
   set_dns1_edit->setEnabled(n);
   set_dns2_edit->setEnabled(n);
+}
+
+
+void SettingsDialog::calibrateData()
+{
+  system("/usr/bin/xinput_calibrator --misclick 0");
 }
 
 
@@ -194,6 +211,7 @@ void SettingsDialog::resizeEvent(QResizeEvent *e)
   set_resolution_label->setGeometry(10,166,110,20);
   set_resolution_box->setGeometry(125,166,size().width()-135,20);
 
+  set_calibrate_button->setGeometry(10,size().height()-60,80,50);
   set_ok_button->setGeometry(size().width()-180,size().height()-60,80,50);
   set_cancel_button->setGeometry(size().width()-90,size().height()-60,80,50);
 }
