@@ -52,8 +52,7 @@ class HostDialog : public QDialog
   QLabel *host_hostname_label;
   QLineEdit *host_hostname_edit;
   QLabel *host_password_label;
-  QLineEdit *host_password1_edit;
-  QLineEdit *host_password2_edit;
+  QLineEdit *host_password_edit;
   QPushButton *host_ok_button;
   QPushButton *host_cancel_button;
   Config *host_config;

@@ -45,3 +45,6 @@
 2016-08-21 Fred Gleason <fredg@paravelsystems.com>
 	* Added '1600x1200' to the set of supported resolutions in
 	'src/settingsdialog.cpp'.
+2016-08-21 Fred Gleason <fredg@paravelsystems.com>
+	* Removed the duplicate password entry field from 'src/hostdialog.cpp'
+	and 'src/hostdialog.h'.

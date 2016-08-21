@@ -46,10 +46,8 @@ HostDialog::HostDialog(Config *config,QWidget *parent)
   host_password_label=new QLabel(tr("Password")+":",this);
   host_password_label->setFont(label_font);
   host_password_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  host_password1_edit=new QLineEdit(this);
-  host_password1_edit->setEchoMode(QLineEdit::Password);
-  host_password2_edit=new QLineEdit(this);
-  host_password2_edit->setEchoMode(QLineEdit::Password);
+  host_password_edit=new QLineEdit(this);
+  host_password_edit->setEchoMode(QLineEdit::Password);
 
   host_ok_button=new QPushButton(tr("OK"),this);
   host_ok_button->setFont(button_font);
@@ -63,7 +61,7 @@ HostDialog::HostDialog(Config *config,QWidget *parent)
 
 QSize HostDialog::sizeHint() const
 {
-  return QSize(300,170);
+  return QSize(300,148);
 }
 
 
@@ -73,8 +71,7 @@ int HostDialog::exec(int id)
 
   host_label_edit->setText(host_config->title(id));
   host_hostname_edit->setText(host_config->hostname(id));
-  host_password1_edit->setText(host_config->password(id));
-  host_password2_edit->setText(host_config->password(id));
+  host_password_edit->setText(host_config->password(id));
 
   return QDialog::exec();
 }
@@ -82,14 +79,9 @@ int HostDialog::exec(int id)
 
 void HostDialog::okData()
 {
-  if(host_password1_edit->text()!=host_password2_edit->text()) {
-    QMessageBox::information(this,tr("VNC Picker - Error"),
-			     tr("The passwords don't match!"));
-    return;
-  }
   host_config->setTitle(host_id,host_label_edit->text());
   host_config->setHostname(host_id,host_hostname_edit->text());
-  host_config->setPassword(host_id,host_password1_edit->text());
+  host_config->setPassword(host_id,host_password_edit->text());
   host_config->save();
 
   done(0);
@@ -117,8 +109,7 @@ void HostDialog::resizeEvent(QResizeEvent *e)
   host_hostname_edit->setGeometry(125,32,size().width()-140,20);
 
   host_password_label->setGeometry(10,54,110,20);
-  host_password1_edit->setGeometry(125,54,size().width()-140,20);
-  host_password2_edit->setGeometry(125,76,size().width()-140,20);
+  host_password_edit->setGeometry(125,54,size().width()-140,20);
 
   host_ok_button->setGeometry(size().width()-180,size().height()-60,80,50);
   host_cancel_button->setGeometry(size().width()-90,size().height()-60,80,50);
