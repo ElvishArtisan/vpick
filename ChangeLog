@@ -50,3 +50,5 @@
 	and 'src/hostdialog.h'.
 2016-08-21 Fred Gleason <fredg@paravelsystems.com>
 	* Added an 'Autoconnect' option to Host configurations.
+2016-08-21 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.7.1.
