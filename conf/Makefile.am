@@ -22,7 +22,15 @@
 ##
 ## Use automake to process this into a Makefile.in
 
+install-exec-am:	
+	mkdir -p $(DESTDIR)/etc
+	cp system.fvwm2rc $(DESTDIR)/etc/
+
+uninstall-local:	
+	rm -f $DESTDIR)/etc/system.fvwm2rc
+
 EXTRA_DIST = config-sample.txt\
+             system.fvwm2rc\
              vpick-sample.conf
 
 CLEANFILES = *~

@@ -316,6 +316,7 @@ void MainWidget::StartViewer(int id)
     args.push_back("-passwd");
     args.push_back(vpick_password_file);
     args.push_back("-FullScreen");
+    args.push_back("-Shared");
     args.push_back(vpick_config->hostname(id));
     vpick_process->start("/usr/bin/vncviewer",args);
   }
