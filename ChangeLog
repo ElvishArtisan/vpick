@@ -57,3 +57,5 @@
 	in 'src/settingsdialog.cpp' and 'src/settingsdialog.h'.
 2016-08-21 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.7.2.
+2017-05-05 Fred Gleason <fredg@paravelsystems.com>
+	* Replaced Tiger VNC with SSVNC.
