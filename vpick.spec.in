@@ -28,7 +28,8 @@ Packager: Fred Gleason <fredg@paravelsystems.com>
 Group: Productivity/Multimedia/Other
 Source: %{name}-@VERSION@.tar.gz
 BuildRoot: /var/tmp/%{name}-@VERSION@
-Requires: tigervnc-server-minimal ssvnc xinput_calibrator
+Requires: tigervnc-server-minimal ssvnc xinput_calibrator fvwm
+
 
 %description
 VPick is a small "chooser" application for thin host clients.
@@ -70,6 +71,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/icons/hicolor/32x32/apps/vpick.png
 %{_datadir}/icons/hicolor/48x48/apps/vpick.png
 %{_datadir}/applications/vpick.desktop
+/etc/system.fvwm2rc
 %doc AUTHORS
 %doc ChangeLog
 %doc COPYING 
@@ -79,5 +81,7 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri May  5 2017 Fred Gleason <fredg@paravelsystems.com>
+-- Added fvwm dependency.
 * Mon Mar  7 2016 Fred Gleason <fredg@paravelsystems.com>
 -- Initial RPM creation.
