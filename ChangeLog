@@ -71,3 +71,5 @@
 2017-05-08 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/synergydialog.cpp' that failed to
 	set the screen name when starting the Synergy client.
+2017-05-08 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.7.5.
