@@ -38,11 +38,13 @@ dist_vpick_SOURCES = cmdswitch.cpp cmdswitch.h\
                      profile.cpp profile.h\
                      rpiconfig.cpp rpiconfig.h\
                      settingsdialog.cpp settingsdialog.h\
+                     synergydialog.cpp synergydialog.h\
                      vpick.cpp vpick.h
 
 nodist_vpick_SOURCES = moc_combobox.cpp\
                        moc_hostdialog.cpp\
                        moc_settingsdialog.cpp\
+                       moc_synergydialog.cpp\
                        moc_vpick.cpp
 
 vpick_LDADD = @GUILIBS@

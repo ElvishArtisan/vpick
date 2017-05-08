@@ -32,13 +32,15 @@
 #include "combobox.h"
 #include "config.h"
 #include "rpiconfig.h"
+#include "synergydialog.h"
 
 class SettingsDialog : public QDialog
 {
  Q_OBJECT;
  public:
-  SettingsDialog(QWidget *parent=0);
+  SettingsDialog(Config *c,QWidget *parent=0);
   QSize sizeHint() const;
+  void stopSynergy();
 
  public slots:
   int exec();
@@ -70,11 +72,14 @@ class SettingsDialog : public QDialog
   QLineEdit *set_dns2_edit;
   QLabel *set_resolution_label;
   ComboBox *set_resolution_box;
+  QPushButton *set_synergy_button;
   QPushButton *set_calibrate_button;
   QPushButton *set_ok_button;
   QPushButton *set_cancel_button;
   std::map<QString,QString> set_values;
   RpiConfig *set_rpiconfig;
+  Config *set_config;
+  SynergyDialog *set_synergy_dialog;
 };
 
 

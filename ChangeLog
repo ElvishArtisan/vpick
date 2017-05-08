@@ -64,3 +64,5 @@
 	* Added the '-Shared' switch when starting vncviewer(1).
 2017-05-05 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.7.3.
+2017-05-05 Fred Gleason <fredg@paravelsystems.com>
+	* Added Synergy client support.

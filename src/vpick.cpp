@@ -72,7 +72,7 @@ MainWidget::MainWidget(QWidget *parent)
   // Dialogs
   //
   vpick_host_dialog=new HostDialog(vpick_config,this);
-  vpick_settings_dialog=new SettingsDialog(this);
+  vpick_settings_dialog=new SettingsDialog(vpick_config,this);
 
   //
   // Icons
@@ -257,6 +257,7 @@ void MainWidget::processKillData()
 
 void MainWidget::closeEvent(QCloseEvent *e)
 {
+  vpick_settings_dialog->stopSynergy();
   qApp->quit();
 }
 

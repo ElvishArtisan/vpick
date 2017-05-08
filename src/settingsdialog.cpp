@@ -29,7 +29,7 @@
 #include "config.h"
 #include "settingsdialog.h"
 
-SettingsDialog::SettingsDialog(QWidget *parent)
+SettingsDialog::SettingsDialog(Config *c,QWidget *parent)
   : QDialog(parent)
 {
   setWindowTitle(tr("VPick - Settings"));
@@ -44,9 +44,15 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   button_font.setPixelSize(16);
 
   //
-  // Config File
+  // Config Files
   //
+  set_config=c;
   set_rpiconfig=new RpiConfig();
+
+  //
+  // Dialogs
+  //
+  set_synergy_dialog=new SynergyDialog(set_config,this);
 
   //
   // Configuration Type
@@ -114,6 +120,14 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   set_resolution_box->insertItem(1,tr("1920x1080"),QSize(1920,1080));
 
   //
+  // Synergy Button
+  //
+  set_synergy_button=
+    new QPushButton(tr("Configure")+"\n"+tr("Synergy"),this);
+  set_synergy_button->setFont(small_button_font);
+  connect(set_synergy_button,SIGNAL(clicked()),set_synergy_dialog,SLOT(exec()));
+
+  //
   // Calibrate Button
   //
   set_calibrate_button=
@@ -139,7 +153,13 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 QSize SettingsDialog::sizeHint() const
 {
-  return QSize(350,265);
+  return QSize(400,265);
+}
+
+
+void SettingsDialog::stopSynergy()
+{
+  set_synergy_dialog->stopSynergy();
 }
 
 
@@ -211,7 +231,8 @@ void SettingsDialog::resizeEvent(QResizeEvent *e)
   set_resolution_label->setGeometry(10,166,110,20);
   set_resolution_box->setGeometry(125,166,size().width()-135,20);
 
-  set_calibrate_button->setGeometry(10,size().height()-60,80,50);
+  set_synergy_button->setGeometry(10,size().height()-60,80,50);
+  set_calibrate_button->setGeometry(100,size().height()-60,80,50);
   set_ok_button->setGeometry(size().width()-180,size().height()-60,80,50);
   set_cancel_button->setGeometry(size().width()-90,size().height()-60,80,50);
 }

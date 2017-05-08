@@ -28,6 +28,42 @@ Config::Config()
 }
 
 
+Config::SynergyMode Config::synergyMode() const
+{
+  return conf_synergy_mode;
+}
+
+
+void Config::setSynergyMode(Config::SynergyMode mode)
+{
+  conf_synergy_mode=mode;
+}
+
+
+QString Config::synergyScreenname() const
+{
+  return conf_synergy_screenname;
+}
+
+
+void Config::setSynergyScreenname(const QString &str)
+{
+  conf_synergy_screenname=str;
+}
+
+
+QHostAddress Config::synergyServerAddress() const
+{
+  return conf_synergy_server_address;
+}
+
+
+void Config::setSynergyServerAddress(const QHostAddress &addr)
+{
+  conf_synergy_server_address=addr;
+}
+
+
 unsigned Config::hostQuantity() const
 {
   return conf_types.size();
@@ -125,6 +161,10 @@ bool Config::load()
   QString section=QString().sprintf("Host%d",count+1);
   Profile *p=new Profile();
   p->setSource(VPICK_CONF_FILE);
+
+  conf_synergy_mode=(Config::SynergyMode)p->intValue("Synergy","Mode");
+  conf_synergy_screenname=p->stringValue("Synergy","Screenname");
+  conf_synergy_server_address=p->addressValue("Synergy","ServerAddress","");
   
   type=(Config::Type)p->intValue(section,"Type",(int)Config::VncPlain,&ok);
   while(ok) {
@@ -151,6 +191,12 @@ bool Config::save()
   if((f=fopen((QString(VPICK_CONF_FILE)+"-back").toUtf8(),"w"))==NULL) {
     return false;
   }
+  fprintf(f,"[Synergy]\n");
+  fprintf(f,"Mode=%d\n",conf_synergy_mode);
+  fprintf(f,"Screenname=%s\n",(const char *)conf_synergy_screenname.toUtf8());
+  fprintf(f,"ServerAddress=%s\n",
+	  (const char *)conf_synergy_server_address.toString().toUtf8());
+  fprintf(f,"\n");
   for(unsigned i=0;i<conf_types.size();i++) {
     fprintf(f,"[Host%u]\n",i+1);
     fprintf(f,"Type=%u\n",conf_types[i]);

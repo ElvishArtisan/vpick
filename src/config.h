@@ -23,6 +23,7 @@
 
 #include <vector>
 
+#include <QHostAddress>
 #include <QString>
 
 #define VPICK_NETWORK_INTERFACE QString("eth0")
@@ -32,7 +33,14 @@ class Config
 {
  public:
   enum Type {VncPlain=0};
+  enum SynergyMode {NoSynergy=0,ClientSynergy=1,ServerSynergy=2};
   Config();
+  SynergyMode synergyMode() const;
+  void setSynergyMode(SynergyMode mode);
+  QString synergyScreenname() const;
+  void setSynergyScreenname(const QString &str);
+  QHostAddress synergyServerAddress() const;
+  void setSynergyServerAddress(const QHostAddress &addr);
   unsigned hostQuantity() const;
   Type type(unsigned n);
   void setType(unsigned n,Type type);
@@ -51,6 +59,9 @@ class Config
   bool save();
 
  private:
+  SynergyMode conf_synergy_mode;
+  QString conf_synergy_screenname;
+  QHostAddress conf_synergy_server_address;
   std::vector<Type> conf_types;
   std::vector<QString> conf_titles;
   std::vector<QString> conf_hostnames;
