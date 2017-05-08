@@ -80,6 +80,8 @@ void SynergyDialog::startSynergy()
     args.push_back("--no-daemon");
     args.push_back("--restart");
     args.push_back(synergy_config->synergyServerAddress().toString());
+    args.push_back("--name");
+    args.push_back(synergy_config->synergyScreenname());
     synergy_process=new QProcess(this);
     synergy_process->start("/usr/bin/synergyc",args);
 
