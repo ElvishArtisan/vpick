@@ -76,3 +76,5 @@
 2017-05-11 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/synergydialog.cpp' that failed to
 	start the Synergy client.
+2017-05-11 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.7.6.
