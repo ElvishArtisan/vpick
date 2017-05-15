@@ -176,54 +176,50 @@ void SynergyGrid::load()
       }
     }
     fclose(f);
+  }
+  //
+  // Place the root element
+  //
+  if(screens.size()==0) {
+    screens.push_back(new SynergyScreen(Config::hostName()));
+  }
+  grid_nodes[2][1]->setScreenName(screens.at(0)->screenName());
+  grid_nodes[2][1]->setActive(true);
 
-    //
-    // Place the root element
-    //
-    if(screens.size()>0) {
-      grid_nodes[2][1]->setScreenName(screens.at(0)->screenName());
-      grid_nodes[2][1]->setActive(true);
-    }
-    else {
-      grid_nodes[2][1]->setScreenName(Config::hostName());
-      grid_nodes[2][1]->setActive(true);
-    }
-
-    //
-    // Build node array
-    //
-    bool placed=true;
-    while(placed) {
-      placed=false;
-      for(int i=0;i<SYNERGYGRID_Y_QUAN;i++) {
-	for(int j=0;j<SYNERGYGRID_X_QUAN;j++) {
-	  SynergyNode *node=grid_nodes[j][i];
-	  if((!node->screenName().isEmpty())&&(!node->placed())) {
-	    if((scrn=GetScreen(&screens,node->screenName()))==NULL) {
-	      fprintf(stderr,"unknown screen \"%s\"\n",
-		      (const char *)node->screenName().toUtf8());
-	    }
-	    else {
-	      if((!scrn->left().isEmpty())&&(j>0)) {
-		grid_nodes[j-1][i]->setScreenName(scrn->left());
-		grid_nodes[j-1][i]->setActive(true);
-	      }
-	      if((!scrn->right().isEmpty())&&(j<(SYNERGYGRID_X_QUAN-1))) {
-		grid_nodes[j+1][i]->setScreenName(scrn->right());
-		grid_nodes[j+1][i]->setActive(true);
-	      }
-	      if((!scrn->up().isEmpty())&&(i>0)) {
-		grid_nodes[j][i-1]->setScreenName(scrn->up());
-		grid_nodes[j][i-1]->setActive(true);
-	      }
-	      if((!scrn->down().isEmpty())&&(i<(SYNERGYGRID_Y_QUAN-1))) {
-		grid_nodes[j][i+1]->setScreenName(scrn->down());
-		grid_nodes[j][i+1]->setActive(true);
-	      }
-	    }
-	    node->setPlaced(true);
-	    placed=true;
+  //
+  // Build node array
+  //
+  bool placed=true;
+  while(placed) {
+    placed=false;
+    for(int i=0;i<SYNERGYGRID_Y_QUAN;i++) {
+      for(int j=0;j<SYNERGYGRID_X_QUAN;j++) {
+	SynergyNode *node=grid_nodes[j][i];
+	if((!node->screenName().isEmpty())&&(!node->placed())) {
+	  if((scrn=GetScreen(&screens,node->screenName()))==NULL) {
+	    fprintf(stderr,"unknown screen \"%s\"\n",
+		    (const char *)node->screenName().toUtf8());
 	  }
+	  else {
+	    if((!scrn->left().isEmpty())&&(j>0)) {
+	      grid_nodes[j-1][i]->setScreenName(scrn->left());
+	      grid_nodes[j-1][i]->setActive(true);
+	    }
+	    if((!scrn->right().isEmpty())&&(j<(SYNERGYGRID_X_QUAN-1))) {
+	      grid_nodes[j+1][i]->setScreenName(scrn->right());
+	      grid_nodes[j+1][i]->setActive(true);
+	    }
+	    if((!scrn->up().isEmpty())&&(i>0)) {
+	      grid_nodes[j][i-1]->setScreenName(scrn->up());
+	      grid_nodes[j][i-1]->setActive(true);
+	    }
+	    if((!scrn->down().isEmpty())&&(i<(SYNERGYGRID_Y_QUAN-1))) {
+	      grid_nodes[j][i+1]->setScreenName(scrn->down());
+	      grid_nodes[j][i+1]->setActive(true);
+	    }
+	  }
+	  node->setPlaced(true);
+	  placed=true;
 	}
       }
     }
