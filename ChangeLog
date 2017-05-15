@@ -101,3 +101,5 @@
 2017-05-15 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/synergygrid.cpp' that failed to create a default
 	server node when initializing a new configuration.
+2017-05-15 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.7.9.
