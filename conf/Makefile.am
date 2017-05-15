@@ -27,7 +27,7 @@ install-exec-am:
 	cp system.fvwm2rc $(DESTDIR)/etc/
 
 uninstall-local:	
-	rm -f $DESTDIR)/etc/system.fvwm2rc
+	rm -f $(DESTDIR)/etc/system.fvwm2rc
 
 EXTRA_DIST = config-sample.txt\
              system.fvwm2rc\
