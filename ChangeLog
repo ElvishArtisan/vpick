@@ -82,3 +82,5 @@
 	* Implemented synergy server.
 2017-05-15 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a typo in 'conf/Makefile.am'.
+2017-05-15 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.7.7.
