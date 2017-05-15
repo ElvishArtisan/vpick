@@ -78,3 +78,5 @@
 	start the Synergy client.
 2017-05-11 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.7.6.
+2017-05-15 Fred Gleason <fredg@paravelsystems.com>
+	* Implemented synergy server.

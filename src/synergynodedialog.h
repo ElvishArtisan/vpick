@@ -1,6 +1,6 @@
-// synergydialog.h
+// synergynodedialog.h
 //
-// Configure Synergy
+// Configure a Synergy node.
 //
 //   (C) Copyright 2017 Fred Gleason <fredg@paravelsystems.com>
 //
@@ -18,35 +18,25 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef SYNERGYDIALOG_H
-#define SYNERGYDIALOG_H
+#ifndef SYNERGYNODEDIALOG_H
+#define SYNERGYNODEDIALOG_H
 
 #include <QDialog>
 #include <QLabel>
 #include <QLineEdit>
-#include <QProcess>
 #include <QPushButton>
 
-#include "combobox.h"
-#include "config.h"
-#include "screensource.h"
-#include "synergygrid.h"
-#include "trashcan.h"
-
-class SynergyDialog : public QDialog
+class SynergyNodeDialog : public QDialog
 {
  Q_OBJECT;
  public:
-  SynergyDialog(Config *c,QWidget *parent=0);
+  SynergyNodeDialog(QWidget *parent=0);
   QSize sizeHint() const;
-  void startSynergy();
-  void stopSynergy();
 
  public slots:
-  int exec();
+  int exec(QString *screenname);
 
  private slots:
-  void modeActivatedData(int index);
   void okData();
   void cancelData();
 
@@ -55,19 +45,12 @@ class SynergyDialog : public QDialog
   void resizeEvent(QResizeEvent *e);
 
  private:
-  ComboBox *synergy_mode_box;
   QLabel *synergy_screenname_label;
   QLineEdit *synergy_screenname_edit;
-  QLabel *synergy_server_label;
-  QLineEdit *synergy_server_edit;
-  SynergyGrid *synergy_grid;
-  ScreenSource *synergy_screen_source;
-  Trashcan *synergy_trashcan;
   QPushButton *synergy_ok_button;
   QPushButton *synergy_cancel_button;
-  Config *synergy_config;
-  QProcess *synergy_process;
+  QString *synergy_screenname;
 };
 
 
-#endif  // SYNERGYDIALOG_H
+#endif  // SYNERGYNODEDIALOG_H

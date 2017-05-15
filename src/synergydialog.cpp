@@ -49,6 +49,15 @@ SynergyDialog::SynergyDialog(Config *c,QWidget *parent)
   synergy_server_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
   synergy_server_edit=new QLineEdit(this);
 
+  synergy_grid=new SynergyGrid(this);
+  connect(synergy_screenname_edit,SIGNAL(textChanged(const QString &)),
+	  synergy_grid,SLOT(setServerScreenName(const QString &)));
+  synergy_grid->load();
+
+  synergy_screen_source=new ScreenSource(this);
+
+  synergy_trashcan=new Trashcan(this);
+
   synergy_ok_button=new QPushButton(tr("OK"),this);
   synergy_ok_button->setFont(bold_font);
   connect(synergy_ok_button,SIGNAL(clicked()),this,SLOT(okData()));
@@ -63,7 +72,7 @@ SynergyDialog::SynergyDialog(Config *c,QWidget *parent)
 
 QSize SynergyDialog::sizeHint() const
 {
-  return QSize(400,160);
+  return QSize(800,450);
 }
 
 
@@ -92,6 +101,17 @@ void SynergyDialog::startSynergy()
     break;
 
   case Config::ServerSynergy:
+    args.push_back("--no-daemon");
+    args.push_back("--restart");
+    args.push_back("--name");
+    args.push_back(synergy_config->synergyScreenname());
+    synergy_process=new QProcess(this);
+    synergy_process->start("/usr/bin/synergys",args);
+
+    if(!synergy_process->waitForStarted()) {
+      QMessageBox::critical(this,tr("VPick - Process Error"),
+			    tr("Unable to start synergy server!"));
+    }
     break;
   }  
 }
@@ -130,22 +150,31 @@ void SynergyDialog::modeActivatedData(int index)
   case Config::NoSynergy:
     synergy_screenname_label->setDisabled(true);
     synergy_screenname_edit->setDisabled(true);
-    synergy_server_label->hide();
-    synergy_server_edit->hide();
+    synergy_server_label->setDisabled(true);
+    synergy_server_edit->setDisabled(true);
+    synergy_grid->setDisabled(true);
+    synergy_screen_source->setDisabled(true);
+    synergy_trashcan->setDisabled(true);
     break;
 
   case Config::ClientSynergy:
     synergy_screenname_label->setEnabled(true);
     synergy_screenname_edit->setEnabled(true);
-    synergy_server_label->show();
-    synergy_server_edit->show();
+    synergy_server_label->setEnabled(true);
+    synergy_server_edit->setEnabled(true);
+    synergy_grid->setDisabled(true);
+    synergy_screen_source->setDisabled(true);
+    synergy_trashcan->setDisabled(true);
     break;
 
   case Config::ServerSynergy:
     synergy_screenname_label->setEnabled(true);
     synergy_screenname_edit->setEnabled(true);
-    synergy_server_label->hide();
-    synergy_server_edit->hide();
+    synergy_server_label->setDisabled(true);
+    synergy_server_edit->setDisabled(true);
+    synergy_grid->setEnabled(true);
+    synergy_screen_source->setEnabled(true);
+    synergy_trashcan->setEnabled(true);
     break;
   }
 }
@@ -164,6 +193,7 @@ void SynergyDialog::okData()
   synergy_config->setSynergyServerAddress(addr);
   synergy_config->setSynergyScreenname(synergy_screenname_edit->text());
   synergy_config->save();
+  synergy_grid->save();
 
   stopSynergy();
   startSynergy();
@@ -191,8 +221,13 @@ void SynergyDialog::resizeEvent(QResizeEvent *e)
   synergy_screenname_label->setGeometry(10,40,125,20);
   synergy_screenname_edit->setGeometry(140,40,size().width()-150,20);
 
-  synergy_server_label->setGeometry(10,70,125,20);
-  synergy_server_edit->setGeometry(140,70,150,20);
+  synergy_server_label->setGeometry(10,62,125,20);
+  synergy_server_edit->setGeometry(140,62,150,20);
+
+  synergy_grid->setGeometry(10,84,size().width()-20,size().height()-150);
+
+  synergy_screen_source->setGeometry(20,size().height()-55,44,42);
+  synergy_trashcan->setGeometry(90,size().height()-50,32,32);
 
   synergy_ok_button->setGeometry(size().width()-180,size().height()-60,80,50);
 

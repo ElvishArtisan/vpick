@@ -42,11 +42,13 @@ EXTRA_DIST = lightbulb.xpm\
              noexit.xpm\
              plussign.xpm\
              settings.xpm\
+             trashcan-32x32.xpm\
              vpick-16x16.png\
              vpick-16x16.xpm\
              vpick-22x22.png\
              vpick-32x32.png\
-             vpick-48x48.png
+             vpick-48x48.png\
+             vpick-48x48.xpm
 
 CLEANFILES = *~
 

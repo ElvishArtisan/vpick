@@ -37,14 +37,25 @@ dist_vpick_SOURCES = cmdswitch.cpp cmdswitch.h\
                      network.cpp network.h\
                      profile.cpp profile.h\
                      rpiconfig.cpp rpiconfig.h\
+                     screendata.cpp screendata.h\
+                     screensource.cpp screensource.h\
                      settingsdialog.cpp settingsdialog.h\
                      synergydialog.cpp synergydialog.h\
+                     synergygrid.cpp synergygrid.h\
+                     synergynode.cpp synergynode.h\
+                     synergynodedialog.cpp synergynodedialog.h\
+                     trashcan.cpp trashcan.h\
                      vpick.cpp vpick.h
 
 nodist_vpick_SOURCES = moc_combobox.cpp\
                        moc_hostdialog.cpp\
+                       moc_screensource.cpp\
                        moc_settingsdialog.cpp\
                        moc_synergydialog.cpp\
+                       moc_synergygrid.cpp\
+                       moc_synergynode.cpp\
+                       moc_synergynodedialog.cpp\
+                       moc_trashcan.cpp\
                        moc_vpick.cpp
 
 vpick_LDADD = @GUILIBS@
