@@ -19,6 +19,7 @@
 //
 
 #include <stdio.h>
+#include <unistd.h>
 
 #include "config.h"
 #include "profile.h"
@@ -163,7 +164,8 @@ bool Config::load()
   p->setSource(VPICK_CONF_FILE);
 
   conf_synergy_mode=(Config::SynergyMode)p->intValue("Synergy","Mode");
-  conf_synergy_screenname=p->stringValue("Synergy","Screenname");
+  conf_synergy_screenname=
+    p->stringValue("Synergy","Screenname",Config::hostName());
   conf_synergy_server_address=p->addressValue("Synergy","ServerAddress","");
   
   type=(Config::Type)p->intValue(section,"Type",(int)Config::VncPlain,&ok);
@@ -210,4 +212,17 @@ bool Config::save()
   rename((VPICK_CONF_FILE+"-back").toUtf8(),VPICK_CONF_FILE.toUtf8());
 
   return true;
+}
+
+
+QString Config::hostName()
+{
+  char hostname[256];
+  QString ret="hostname";
+
+  memset(hostname,0,256);
+  if(gethostname(hostname,255)==0) {
+    ret=hostname;
+  }
+  return ret;
 }

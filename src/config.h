@@ -58,6 +58,7 @@ class Config
   void removeHost(unsigned n);
   bool load();
   bool save();
+  static QString hostName();
 
  private:
   SynergyMode conf_synergy_mode;

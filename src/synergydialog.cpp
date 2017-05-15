@@ -186,6 +186,12 @@ void SynergyDialog::okData()
     currentItemData().toInt();
   QHostAddress addr(synergy_server_edit->text());
 
+  if(synergy_screenname_edit->text().isEmpty()) {
+    QMessageBox::warning(this,tr("VPick - Error"),
+			 tr("You must provide a screen name."));
+    return;
+  }
+
   switch(mode) {
   case Config::NoSynergy:
     break;

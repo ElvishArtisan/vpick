@@ -88,3 +88,8 @@
 	* Fixed a bug in 'src/synergydialog.cpp' that caused an 'Invalid server
 	IP address' error to be generated when Synergy was disabled or in
 	Server mode.
+2017-05-15 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Config::hostName()' method in 'src/config.cpp' and
+	'src/config.h'.
+	* Added a sanity check for an empty screen name in
+	'src/synergydialog.cpp'.
