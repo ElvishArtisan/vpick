@@ -184,6 +184,10 @@ void SynergyGrid::load()
       grid_nodes[2][1]->setScreenName(screens.at(0)->screenName());
       grid_nodes[2][1]->setActive(true);
     }
+    else {
+      grid_nodes[2][1]->setScreenName(Config::hostName());
+      grid_nodes[2][1]->setActive(true);
+    }
 
     //
     // Build node array
