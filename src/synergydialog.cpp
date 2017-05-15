@@ -182,11 +182,24 @@ void SynergyDialog::modeActivatedData(int index)
 
 void SynergyDialog::okData()
 {
+  Config::SynergyMode mode=(Config::SynergyMode)synergy_mode_box->
+    currentItemData().toInt();
   QHostAddress addr(synergy_server_edit->text());
-  if(addr.isNull()) {
-    QMessageBox::warning(this,tr("VPick - Error"),
-			 tr("Invalid IP address!"));
-    return;
+
+  switch(mode) {
+  case Config::NoSynergy:
+    break;
+
+  case Config::ClientSynergy:
+    if(addr.isNull()) {
+      QMessageBox::warning(this,tr("VPick - Error"),
+			   tr("Invalid server IP address!"));
+      return;
+    }
+    break;
+
+  case Config::ServerSynergy:
+    break;
   }
   synergy_config->
     setSynergyMode((Config::SynergyMode)synergy_mode_box->currentItemData().toInt());

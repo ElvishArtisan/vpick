@@ -84,3 +84,7 @@
 	* Fixed a typo in 'conf/Makefile.am'.
 2017-05-15 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.7.7.
+2017-05-15 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/synergydialog.cpp' that caused an 'Invalid server
+	IP address' error to be generated when Synergy was disabled or in
+	Server mode.
