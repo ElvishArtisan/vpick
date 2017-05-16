@@ -310,6 +310,9 @@ bool SettingsDialog::Save()
   }
   else {   // DHCP Setup
     set_values["BOOTPROTO"]="dhcp";
+    set_values["IPADDR"]="";
+    set_values["NETMASK"]="";
+    set_values["GATEWAY"]="";
   }
   if((f=fopen(("/etc/sysconfig/network-scripts/ifcfg-"+
 	       VPICK_NETWORK_INTERFACE+"-back").toUtf8(),"w"))!=NULL) {

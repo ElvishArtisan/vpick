@@ -114,3 +114,6 @@
 	value in the titlebar after restarting the network.
 2017-05-16 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.7.11.
+2017-05-16 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in 'src/settingsdialog.cpp' that failed to disable
+	the previous static address when enabling DHCP.
