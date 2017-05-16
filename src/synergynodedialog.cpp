@@ -52,6 +52,7 @@ int SynergyNodeDialog::exec(QString *screenname)
 {
   synergy_screenname=screenname;
   synergy_screenname_edit->setText(*screenname);
+  synergy_screenname_edit->selectAll();
   return QDialog::exec();
 }
 

@@ -54,7 +54,8 @@ MainWidget::MainWidget(QWidget *parent)
     }
   }
   vpick_process=NULL;
-  setWindowTitle(tr("VNC Picker"));
+  setWindowTitle(tr("VNC Picker")+" ["+
+  		 InterfaceIPv4Address(VPICK_NETWORK_INTERFACE).toString()+"]");
   setWindowIcon(QPixmap(vpick_16x16_xpm));
 
   //

@@ -103,3 +103,7 @@
 	server node when initializing a new configuration.
 2017-05-15 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.7.9.
+2017-05-16 Fred Gleason <fredg@paravelsystems.com>
+	* Added code to highlight the 'Screen Name' entry in the Settings
+	dialog when oping the dialog.
+	* Added the current IP address to the main window titlebar.
