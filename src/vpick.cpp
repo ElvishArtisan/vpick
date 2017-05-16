@@ -224,6 +224,8 @@ void MainWidget::settingsClickedData()
     proc->start("systemctl",args);
     proc->waitForFinished();
     delete proc;
+    setWindowTitle(tr("VNC Picker")+" ["+
+		  InterfaceIPv4Address(VPICK_NETWORK_INTERFACE).toString()+"]");
   }
 }
 
