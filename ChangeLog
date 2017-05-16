@@ -112,3 +112,5 @@
 2017-05-16 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in 'src/vpick.cpp' that failed to update the IP address
 	value in the titlebar after restarting the network.
+2017-05-16 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.7.11.
