@@ -121,3 +121,5 @@
 	* Incremented the package version to 0.7.12.
 2017-07-11 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'Color' attribute to host configurations.
+2017-07-11 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.9.0.
