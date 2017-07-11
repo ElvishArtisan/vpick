@@ -131,14 +131,28 @@ void Config::setAutoconnect(unsigned n,bool state)
 }
 
 
+Qt::GlobalColor Config::color(unsigned n) const
+{
+  return conf_colors[n];
+}
+
+
+void Config::setColor(unsigned n,Qt::GlobalColor color)
+{
+  conf_colors[n]=color;
+}
+
+
 unsigned Config::addHost(Type type,const QString &title,const QString &hostname,
-			 const QString &passwd, bool autoconnect)
+			 const QString &passwd, bool autoconnect,
+			 Qt::GlobalColor color)
 {
   conf_types.push_back(type);
   conf_titles.push_back(title);
   conf_hostnames.push_back(hostname);
   conf_passwords.push_back(passwd);
   conf_autoconnects.push_back(autoconnect);
+  conf_colors.push_back(color);
 
   return conf_types.size()-1;
 }
@@ -151,6 +165,7 @@ void Config::removeHost(unsigned n)
   conf_hostnames.erase(conf_hostnames.begin()+n);
   conf_passwords.erase(conf_passwords.begin()+n);
   conf_autoconnects.erase(conf_autoconnects.begin()+n);
+  conf_colors.erase(conf_colors.begin()+n);
 }
 
 
@@ -174,6 +189,8 @@ bool Config::load()
     conf_hostnames.push_back(p->stringValue(section,"Hostname"));
     conf_passwords.push_back(p->stringValue(section,"Password"));
     conf_autoconnects.push_back(p->boolValue(section,"Autoconnect"));
+    conf_colors.push_back((Qt::GlobalColor)p->
+			  intValue(section,"Color",(int)Qt::transparent));
     conf_titles.push_back(p->stringValue(section,"Title",QString().
 					 sprintf("Host %d",count+1)));
     count++;
@@ -206,6 +223,7 @@ bool Config::save()
     fprintf(f,"Hostname=%s\n",(const char *)conf_hostnames[i].toUtf8());
     fprintf(f,"Password=%s\n",(const char *)conf_passwords[i].toUtf8());
     fprintf(f,"Autoconnect=%u\n",conf_autoconnects[i]);
+    fprintf(f,"Color=%d\n",conf_colors[i]);
     fprintf(f,"\n");
   }
   fclose(f);

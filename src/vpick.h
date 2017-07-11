@@ -32,6 +32,7 @@
 #include <QTimer>
 
 #include "config.h"
+#include "hostbutton.h"
 #include "hostdialog.h"
 #include "settingsdialog.h"
 
@@ -68,7 +69,7 @@ class MainWidget : public QMainWindow
   void RemoveHost(int id);
   void SaveHosts();
   void Resize();
-  std::vector<QPushButton *> vpick_buttons;
+  std::vector<HostButton *> vpick_buttons;
   std::vector<QString> vpick_commands;
   QSignalMapper *vpick_button_mapper;
   QPushButton *vpick_add_button;

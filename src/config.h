@@ -23,6 +23,7 @@
 
 #include <vector>
 
+#include <QColor>
 #include <QHostAddress>
 #include <QString>
 
@@ -53,8 +54,11 @@ class Config
   void setPassword(unsigned n,const QString &);
   bool autoconnect(unsigned n) const;
   void setAutoconnect(unsigned n,bool state);
+  Qt::GlobalColor color(unsigned n) const;
+  void setColor(unsigned n,Qt::GlobalColor color);
   unsigned addHost(Type type,const QString &title,const QString &hostname,
-		   const QString &passwd,bool autoconnect);
+		   const QString &passwd,bool autoconnect,
+		   Qt::GlobalColor color);
   void removeHost(unsigned n);
   bool load();
   bool save();
@@ -69,6 +73,7 @@ class Config
   std::vector<QString> conf_hostnames;
   std::vector<QString> conf_passwords;
   std::vector<unsigned> conf_autoconnects;
+  std::vector<Qt::GlobalColor> conf_colors;
 };
 
 

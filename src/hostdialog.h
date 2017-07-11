@@ -27,6 +27,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 
+#include "colorbox.h"
 #include "config.h"
 
 class HostDialog : public QDialog
@@ -54,6 +55,8 @@ class HostDialog : public QDialog
   QLineEdit *host_hostname_edit;
   QLabel *host_password_label;
   QLineEdit *host_password_edit;
+  QLabel *host_color_label;
+  ColorBox *host_color_box;
   QCheckBox *host_autoconnect_check;
   QLabel *host_autoconnect_label;
   QPushButton *host_ok_button;

@@ -171,7 +171,8 @@ void MainWidget::addClickedData()
   vpick_config_button->setChecked(false);
   vpick_remove_button->setChecked(false);
 
-  vpick_config->addHost(Config::VncPlain,"[new host]","","",false);
+  vpick_config->
+    addHost(Config::VncPlain,"[new host]","","",false,Qt::transparent);
   if(vpick_host_dialog->exec(vpick_config->hostQuantity()-1)==0) {
     AddHost(vpick_config->hostQuantity()-1);
     vpick_height+=50;
@@ -283,7 +284,7 @@ void MainWidget::resizeEvent(QResizeEvent *e)
 void MainWidget::EditViewer(int id)
 {
   if(vpick_host_dialog->exec(id)==0) {
-    vpick_buttons[id]->setText(vpick_config->title(id));
+    vpick_buttons[id]->setText(vpick_config->title(id),vpick_config->color(id));
   }
 }
 
@@ -341,7 +342,8 @@ void MainWidget::AddHost(int id)
   QFont font("helvetica",16,QFont::Bold);
   font.setPixelSize(16);
 
-  vpick_buttons.push_back(new QPushButton(vpick_config->title(id),this));
+  vpick_buttons.
+    push_back(new HostButton(vpick_config->title(id),vpick_config->color(id),this));
   vpick_buttons.back()->setFont(font);
   vpick_button_mapper->setMapping(vpick_buttons.back(),vpick_buttons.size()-1);
   connect(vpick_buttons.back(),SIGNAL(clicked()),
