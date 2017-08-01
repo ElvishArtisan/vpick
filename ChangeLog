@@ -126,3 +126,5 @@
 2017-08-01 Fred Gleason <fredg@paravelsystems.com>
 	* Added 1600x900 resolution to the set of available monitor
 	resolutions.
+2017-08-01 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.9.1.
