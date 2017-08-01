@@ -1,8 +1,8 @@
 // settingsdialog.cpp
 //
-// Configure a Host
+// Configure system settings
 //
-//   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2017 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -111,6 +111,7 @@ SettingsDialog::SettingsDialog(Config *c,QWidget *parent)
   set_resolution_box->insertItem(1,tr("800x600"),QSize(800,600));
   set_resolution_box->insertItem(1,tr("1024x786"),QSize(1024,786));
   set_resolution_box->insertItem(1,tr("1440x900"),QSize(1440,900));
+  set_resolution_box->insertItem(1,tr("1600x900"),QSize(1600,900));
   set_resolution_box->insertItem(1,tr("1280x1024"),QSize(1280,1024));
   set_resolution_box->insertItem(1,tr("1280x960"),QSize(1280,960));
   set_resolution_box->insertItem(1,tr("1280x768"),QSize(1280,768));
