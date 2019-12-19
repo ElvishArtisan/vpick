@@ -2,7 +2,7 @@
 //
 // Configure a Host
 //
-//   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2019 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -51,6 +51,8 @@ class HostDialog : public QDialog
  private:
   QLabel *host_label_label;
   QLineEdit *host_label_edit;
+  QLabel *host_type_label;
+  QComboBox *host_type_box;
   QLabel *host_hostname_label;
   QLineEdit *host_hostname_edit;
   QLabel *host_password_label;

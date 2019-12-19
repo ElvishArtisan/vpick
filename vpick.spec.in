@@ -28,7 +28,7 @@ Packager: Fred Gleason <fredg@paravelsystems.com>
 Group: Productivity/Multimedia/Other
 Source: %{name}-@VERSION@.tar.gz
 BuildRoot: /var/tmp/%{name}-@VERSION@
-Requires: tigervnc-server-minimal ssvnc xinput_calibrator fvwm synergy
+Requires: tigervnc-server-minimal ssvnc xinput_calibrator fvwm synergy virt-viewer
 
 
 %description

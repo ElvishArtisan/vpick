@@ -34,7 +34,7 @@
 class Config
 {
  public:
-  enum Type {VncPlain=0};
+  enum Type {VncPlain=0,Spice=1,LastType=2};
   enum SynergyMode {NoSynergy=0,ClientSynergy=1,ServerSynergy=2};
   Config();
   SynergyMode synergyMode() const;
@@ -63,6 +63,7 @@ class Config
   bool load();
   bool save();
   static QString hostName();
+  static QString typeString(Type type);
 
  private:
   SynergyMode conf_synergy_mode;

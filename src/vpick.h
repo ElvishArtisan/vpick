@@ -63,6 +63,8 @@ class MainWidget : public QMainWindow
  private:
   void EditViewer(int id);
   void StartViewer(int id);
+  void StartVnc(int id);
+  void StartSpice(int id);
   void SetButtonIcons(const QPixmap &pix);
   void LoadHosts();
   void AddHost(int id);

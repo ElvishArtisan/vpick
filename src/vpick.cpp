@@ -291,10 +291,25 @@ void MainWidget::EditViewer(int id)
 
 void MainWidget::StartViewer(int id)
 {
+  /*
   char tempname[PATH_MAX];
   QStringList args;
+  */
 
   if(vpick_process==NULL) {
+    switch(vpick_config->type(id)) {
+    case Config::VncPlain:
+      StartVnc(id);
+      break;
+
+    case Config::Spice:
+      StartSpice(id);
+      break;
+
+    case Config::LastType:
+      break;
+    }
+    /*
     //
     // Generate Password File
     //
@@ -324,7 +339,88 @@ void MainWidget::StartViewer(int id)
     args.push_back("-nograbkbd");  // So we don't break Synergy server
     args.push_back(vpick_config->hostname(id));
     vpick_process->start("/usr/lib/ssvnc/vncviewer",args);
+    */
   }
+}
+
+
+void MainWidget::StartVnc(int id)
+{
+  char tempname[PATH_MAX];
+  QStringList args;
+
+  //
+  // Generate Password File
+  //
+  strncpy(tempname,"/tmp/vpickXXXXXX",PATH_MAX);
+  vpick_password_file=mktemp(tempname);
+  args.push_back("-f");
+  vpick_process=new QProcess(this);
+  vpick_process->setStandardOutputFile(vpick_password_file);
+  vpick_process->start("/usr/bin/vncpasswd",args);
+  vpick_process->write(vpick_config->password(id).toUtf8());
+  vpick_process->write("\n");
+  vpick_process->waitForFinished();
+  delete vpick_process;
+
+  //
+  // Start Viewer
+  //
+  vpick_process=new QProcess(this);
+  connect(vpick_process,SIGNAL(error(QProcess::ProcessError)),
+	  this,SLOT(processErrorData(QProcess::ProcessError)));
+  connect(vpick_process,SIGNAL(finished(int,QProcess::ExitStatus)),
+	  this,SLOT(processFinishedData(int,QProcess::ExitStatus)));
+  args.clear();
+  args.push_back("-passwd");
+  args.push_back(vpick_password_file);
+  args.push_back("-fullscreen");
+  args.push_back("-nograbkbd");  // So we don't break Synergy server
+  args.push_back(vpick_config->hostname(id));
+  vpick_process->start("/usr/lib/ssvnc/vncviewer",args);
+}
+
+
+void MainWidget::StartSpice(int id)
+{
+  char tempname[PATH_MAX];
+  QStringList args;
+  FILE *f=NULL;
+  QStringList f0=vpick_config->hostname(id).split(":");
+
+  //
+  // Generate Connection File
+  //
+  strncpy(tempname,"/tmp/vpickXXXXXX",PATH_MAX);
+  vpick_password_file=mktemp(tempname);
+  if((f=fopen(vpick_password_file.toUtf8(),"w"))==NULL) {
+    return;
+  }
+  fprintf(f,"[virt-viewer]\n");
+  fprintf(f,"type=spice\n");
+  fprintf(f,"host=%s\n",(const char *)f0.at(0).toUtf8());
+  if(f0.size()==2) {
+    fprintf(f,"port=%d\n",f0.at(1).toInt());
+  }
+  else {
+    fprintf(f,"port=5900\n");
+  }
+  fprintf(f,"password=%s\n",(const char *)vpick_config->password(id).toUtf8());
+  fprintf(f,"fullscreen=1\n");
+  fprintf(f,"delete-this_file=1\n");
+  fclose(f);
+
+  //
+  // Start Viewer
+  //
+  vpick_process=new QProcess(this);
+  connect(vpick_process,SIGNAL(error(QProcess::ProcessError)),
+	  this,SLOT(processErrorData(QProcess::ProcessError)));
+  connect(vpick_process,SIGNAL(finished(int,QProcess::ExitStatus)),
+	  this,SLOT(processFinishedData(int,QProcess::ExitStatus)));
+  args.clear();
+  args.push_back(vpick_password_file);
+  vpick_process->start("/usr/bin/remote-viewer",args);
 }
 
 

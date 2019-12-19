@@ -21,6 +21,8 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#include <QObject>
+
 #include "config.h"
 #include "profile.h"
 
@@ -242,5 +244,26 @@ QString Config::hostName()
   if(gethostname(hostname,255)==0) {
     ret=hostname;
   }
+  return ret;
+}
+
+
+QString Config::typeString(Config::Type type)
+{
+  QString ret=QObject::tr("Unknown");
+
+  switch(type) {
+  case Config::VncPlain:
+    ret="VNC";
+    break;
+
+  case Config::Spice:
+    ret="SPICE";
+    break;
+
+  case Config::LastType:
+    break;
+  }
+
   return ret;
 }

@@ -35,12 +35,23 @@ HostDialog::HostDialog(Config *config,QWidget *parent)
   QFont button_font("helvetica",16,QFont::Bold);
   button_font.setPixelSize(16);
 
+  setWindowTitle(tr("Host Settings"));
+
   host_label_label=new QLabel(tr("Label")+":",this);
   host_label_label->setFont(label_font);
   host_label_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
   host_label_edit=new QLineEdit(this);
 
-  host_hostname_label=new QLabel(tr("Hostname")+":",this);
+  host_type_label=new QLabel(tr("Host Type")+":",this);
+  host_type_label->setFont(label_font);
+  host_type_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  host_type_box=new QComboBox(this);
+  for(int i=0;i<Config::LastType;i++) {
+    host_type_box->insertItem(host_type_box->count(),
+			      Config::typeString((Config::Type)i));
+  }
+
+  host_hostname_label=new QLabel(tr("Host Name")+":",this);
   host_hostname_label->setFont(label_font);
   host_hostname_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
   host_hostname_edit=new QLineEdit(this);
@@ -73,7 +84,7 @@ HostDialog::HostDialog(Config *config,QWidget *parent)
 
 QSize HostDialog::sizeHint() const
 {
-  return QSize(300,192);
+  return QSize(300,214);
 }
 
 
@@ -82,6 +93,7 @@ int HostDialog::exec(int id)
   host_id=id;
 
   host_label_edit->setText(host_config->title(id));
+  host_type_box->setCurrentIndex((int)host_config->type(id));
   host_hostname_edit->setText(host_config->hostname(id));
   host_password_edit->setText(host_config->password(id));
   host_color_box->setCurrentColor(host_config->color(id));
@@ -94,6 +106,7 @@ int HostDialog::exec(int id)
 void HostDialog::okData()
 {
   host_config->setTitle(host_id,host_label_edit->text());
+  host_config->setType(host_id,(Config::Type)host_type_box->currentIndex());
   host_config->setHostname(host_id,host_hostname_edit->text());
   host_config->setPassword(host_id,host_password_edit->text());
   host_config->setColor(host_id,host_color_box->currentColor());
@@ -121,17 +134,20 @@ void HostDialog::resizeEvent(QResizeEvent *e)
   host_label_label->setGeometry(10,10,110,20);
   host_label_edit->setGeometry(125,10,size().width()-140,20);
 
-  host_hostname_label->setGeometry(10,32,110,20);
-  host_hostname_edit->setGeometry(125,32,size().width()-140,20);
+  host_type_label->setGeometry(10,32,110,20);
+  host_type_box->setGeometry(125,32,size().width()-140,20);
 
-  host_password_label->setGeometry(10,54,110,20);
-  host_password_edit->setGeometry(125,54,size().width()-140,20);
+  host_hostname_label->setGeometry(10,54,110,20);
+  host_hostname_edit->setGeometry(125,54,size().width()-140,20);
 
-  host_color_label->setGeometry(10,76,110,20);
-  host_color_box->setGeometry(125,76,size().width()-140,20);
+  host_password_label->setGeometry(10,76,110,20);
+  host_password_edit->setGeometry(125,76,size().width()-140,20);
 
-  host_autoconnect_check->setGeometry(125,97,20,20);
-  host_autoconnect_label->setGeometry(150,95,size().width()-165,20);
+  host_color_label->setGeometry(10,98,110,20);
+  host_color_box->setGeometry(125,98,size().width()-140,20);
+
+  host_autoconnect_check->setGeometry(125,119,20,20);
+  host_autoconnect_label->setGeometry(150,119,size().width()-165,20);
 
   host_ok_button->setGeometry(size().width()-180,size().height()-60,80,50);
   host_cancel_button->setGeometry(size().width()-90,size().height()-60,80,50);
