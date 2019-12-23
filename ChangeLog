@@ -130,3 +130,5 @@
 	* Incremented the package version to 0.9.1.
 2019-12-19 Fred Gleason <fredg@paravelsystems.com>
 	* Added support for SPICE connections.
+2019-12-23 Fred Gleason <fredg@paravelsystems.com>
+	* Modified the 'make rpm' target to do a multi-threaded build.

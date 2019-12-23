@@ -43,7 +43,7 @@ VPick is a small "chooser" application for thin host clients.
 
 %build
 %configure
-make
+make -j @CPUS_AVAIL@
 
 
 %install
