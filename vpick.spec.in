@@ -53,7 +53,7 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 %post
 /usr/sbin/groupadd -r -g 152 %{name} &>/dev/null || :
-/usr/sbin/useradd -o -u 152 -g %{name} -s /bin/false -r -c "Host chooser" -d /dev/null %{name} &>/dev/null || :
+/usr/sbin/useradd -o -u 152 -g %{name} -G audio -s /bin/false -r -c "Host chooser" %{name} &>/dev/null || :
 /usr/bin/systemctl daemon-reload
 /usr/bin/systemctl set-default vpick.target
 

@@ -144,3 +144,6 @@
 	'/etc/synergy.conf' to /home/vpick/synergy.conf'.
 	* Removed creation of a default vpick(1) configuration file in
 	the RPM 'post' rule.
+2020-03-02 Fred Gleason <fredg@paravelsystems.com>
+	* Added the 'vpick' user to the 'audio' group.
+	* Added a home directory of 'home/vpick' to the 'vpick' user.
