@@ -137,3 +137,10 @@
 2020-03-02 Fred Gleason <fredg@paravelsystems.com>
 	* Added a systemd 'vpick.target' definition for CentOS.
 	* Added a PAM 'xserver' profile for CentOS.
+2020-03-02 Fred Gleason <fredg@paravelsystems.com>
+	* Changed the location of the vpick(1) configuration file from
+	'/etc/vpick.conf' to /home/vpick/vpick.conf'.
+	* Changed the location of the synergy(7) configuration file from
+	'/etc/synergy.conf' to /home/vpick/synergy.conf'.
+	* Removed creation of a default vpick(1) configuration file in
+	the RPM 'post' rule.

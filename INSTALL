@@ -56,3 +56,25 @@ for a detailed list.
 VNC Server Script Mod
 ---------------------
 runuser -l ${USER} -c "x11vnc -display :${DISP} -rfbauth /home/${USER}/.vnc/passwd -nopw -forever -shared -quiet" &
+
+
+Building a CentOS 7 AltArch Host
+--------------------------------
+1) Prepare a MicroSD from 'CentOS-Userland-7-armv7hl-RaspberryPI-Minimal-1908-sda.raw.xz'
+
+2) Resize the third partition to use all remain space on the card
+
+3) Run 'yum update', then reboot
+
+4) Change hostname to 'viewer'
+
+5) Run 'nmtui' and change IP address to '192.168.21.100'.
+
+6) Enable EPEL (baseurl=https://armv7.dev.centos.org/repodir/epel-pass-1/
+
+7) Do yum groupinstall "x window system"
+
+8) Copy conf/rasppi/config.txt /boot/ on target
+
+8) Do yum install alsa-utils alsa-plugins-pulseaudio vpick.rpm ssvnc.rpm xinput_calibrator.rpm
+

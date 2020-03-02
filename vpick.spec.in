@@ -54,9 +54,6 @@ make install DESTDIR=$RPM_BUILD_ROOT
 %post
 /usr/sbin/groupadd -r -g 152 %{name} &>/dev/null || :
 /usr/sbin/useradd -o -u 152 -g %{name} -s /bin/false -r -c "Host chooser" -d /dev/null %{name} &>/dev/null || :
-if test ! -f /etc/vpick.conf ; then
-    cp %{_datadir}/doc/vpick-@VERSION@/vpick-sample.conf /etc/vpick.conf
-fi
 /usr/bin/systemctl daemon-reload
 /usr/bin/systemctl set-default vpick.target
 
