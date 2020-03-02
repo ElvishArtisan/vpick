@@ -4,7 +4,7 @@ dnl Autoconf configuration
 dnl
 dnl Use autoconf to process this into a configure script
 dnl
-dnl   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+dnl   (C) Copyright 2016-2020 Fred Gleason <fredg@paravelsystems.com>
 dnl
 dnl   This program is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License version 2 as
@@ -100,8 +100,8 @@ AC_CONFIG_FILES([ \
     conf/Makefile \
     icons/Makefile \
     src/Makefile \
+    systemd/Makefile \
     xdg/Makefile \
-    vpick.service\
     vpick.spec \
     Makefile ])
 AC_OUTPUT()

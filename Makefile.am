@@ -4,7 +4,7 @@
 ##
 ## Use automake to process this into a Makefile.in
 ##
-##   (C) Copyright 2014,2016 Fred Gleason <fredg@paravelsystems.com>
+##   (C) Copyright 2014-2020 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -28,14 +28,8 @@
 SUBDIRS = conf\
           icons\
           src\
+          systemd\
           xdg
-
-install-exec-local:	
-	mkdir -p $(DESTDIR)/usr/lib/systemd/system
-	cp vpick.service $(DESTDIR)/usr/lib/systemd/system/vpick.service
-
-uninstall-local:	
-	rm -f $(DESTDIR)/usr/lib/systemd/system/vpick.service
 
 rpm:	dist
 	cp vpick-$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES/
@@ -49,8 +43,7 @@ EXTRA_DIST = vpick.spec.in\
              autogen.sh\
              get_distro.sh\
              get_target.sh\
-             PACKAGE_VERSION\
-             vpick.service.in
+             PACKAGE_VERSION
 
 CLEANFILES = *~\
              *.deb\
@@ -63,8 +56,7 @@ CLEANFILES = *~\
 DISTCLEANFILES = vpick.spec\
                  config.guess\
                  config.sub\
-                 ltmain.sh\
-                 vpick.service
+                 ltmain.sh
 
 MAINTAINERCLEANFILES = *~\
                        *.tar.gz\
