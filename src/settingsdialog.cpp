@@ -1,8 +1,8 @@
 // settingsdialog.cpp
 //
-// Configure system settings
+// Configure the local host device
 //
-//   (C) Copyright 2016-2017 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2020 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -149,6 +149,17 @@ SettingsDialog::SettingsDialog(Config *c,QWidget *parent)
   set_cancel_button=new QPushButton(tr("Cancel"),this);
   set_cancel_button->setFont(button_font);
   connect(set_cancel_button,SIGNAL(clicked()),this,SLOT(cancelData()));
+
+  //
+  // Disable IP settings controls
+  //
+  set_dhcp_label->setDisabled(true);
+  set_dhcp_box->setDisabled(true);
+
+  set_resolution_label->setDisabled(true);
+  set_resolution_box->setDisabled(true);
+
+  set_calibrate_button->setDisabled(true);
 }
 
 
@@ -241,6 +252,9 @@ void SettingsDialog::resizeEvent(QResizeEvent *e)
 
 void SettingsDialog::Load()
 {
+  /*
+   * IP Setting disabled until we get all of the PulseAudio junk sorted
+   *
   FILE *f=NULL;
   char line[1024];
 
@@ -260,6 +274,8 @@ void SettingsDialog::Load()
   set_ipgateway_edit->setText(set_values["GATEWAY"]);
   set_dns1_edit->setText(set_values["DNS1"]);
   set_dns2_edit->setText(set_values["DNS2"]);
+  */
+  set_dhcp_box->setCurrentIndex(0);
 
   set_rpiconfig->load();
   set_resolution_box->setCurrentItemData(set_rpiconfig->framebufferSize());
