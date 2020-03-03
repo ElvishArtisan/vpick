@@ -148,4 +148,7 @@
 	* Added the 'vpick' user to the 'audio' group.
 	* Added a home directory of 'home/vpick' to the 'vpick' user.
 2020-03-02 Fred Gleason <fredg@paravelsystems.com>
-	* Incremented the package version to 0.9.3.
+	* Incremented the package version to 0.9.3
+2020-03-02 Fred Gleason <fredg@paravelsystems.com>
+	* Changed the location of the config file from
+	'/home/vpick/vpick.conf' to `$(HOME)/vpick.conf`.

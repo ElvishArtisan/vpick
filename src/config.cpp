@@ -28,6 +28,12 @@
 
 Config::Config()
 {
+  if(getenv("HOME")!=NULL) {
+    conf_filename=QString(getenv("HOME"))+"/vpick.conf";
+  }
+  else {
+    conf_filename="/etc/vpick.conf";
+  }
 }
 
 
@@ -178,7 +184,7 @@ bool Config::load()
   int count=0;
   QString section=QString().sprintf("Host%d",count+1);
   Profile *p=new Profile();
-  p->setSource(VPICK_CONF_FILE);
+  p->setSource(conf_filename);
 
   conf_synergy_mode=(Config::SynergyMode)p->intValue("Synergy","Mode");
   conf_synergy_screenname=
@@ -209,7 +215,7 @@ bool Config::save()
 {
   FILE *f=NULL;
 
-  if((f=fopen((QString(VPICK_CONF_FILE)+"-back").toUtf8(),"w"))==NULL) {
+  if((f=fopen((conf_filename+"-back").toUtf8(),"w"))==NULL) {
     return false;
   }
   fprintf(f,"[Synergy]\n");
@@ -229,7 +235,7 @@ bool Config::save()
     fprintf(f,"\n");
   }
   fclose(f);
-  rename((VPICK_CONF_FILE+"-back").toUtf8(),VPICK_CONF_FILE.toUtf8());
+  rename((conf_filename+"-back").toUtf8(),conf_filename.toUtf8());
 
   return true;
 }
