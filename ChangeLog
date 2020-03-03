@@ -157,3 +157,5 @@
 	'Settings' dialog.
 2020-03-03 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.10.0centos0.
+2020-03-03 Fred Gleason <fredg@paravelsystems.com>
+	* Disabled saving of IP setting parameters.

@@ -218,6 +218,9 @@ void MainWidget::removeToggledData(bool state)
 void MainWidget::settingsClickedData()
 {
   if(vpick_settings_dialog->exec()==0) {
+    /*
+     * IP Setting disabled until we get all of the PulseAudio junk sorted
+     *
     QStringList args;
     args.push_back("restart");
     args.push_back("network");
@@ -227,6 +230,7 @@ void MainWidget::settingsClickedData()
     delete proc;
     setWindowTitle(tr("VNC Picker")+" ["+
 		  InterfaceIPv4Address(VPICK_NETWORK_INTERFACE).toString()+"]");
+    */
   }
 }
 

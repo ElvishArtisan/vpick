@@ -288,6 +288,9 @@ bool SettingsDialog::Save()
   FILE *f=NULL;
   std::vector<QString> dns_servers;
 
+  /*
+   * IP Setting disabled until we get all of the PulseAudio junk sorted
+   *
   if(set_dhcp_box->currentIndex()!=0) {  // Manual Setup
     if(!ValidIp(set_ipaddress_edit->text())) {
       QMessageBox::information(this,tr("VPick - Error"),
@@ -352,9 +355,11 @@ bool SettingsDialog::Save()
 
   set_rpiconfig->
     setFramebufferSize(set_resolution_box->currentItemData().toSize());
+  */
+
   if(set_rpiconfig->wasChanged()) {
     set_rpiconfig->save();
-    system("/sbin/reboot");
+    // system("/sbin/reboot");
   }
 
   return true;
