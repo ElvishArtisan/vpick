@@ -134,6 +134,7 @@
 	* Modified the 'make rpm' target to do a multi-threaded build.
 2019-12-23 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.9.2.
+<<<<<<< HEAD
 2020-03-02 Fred Gleason <fredg@paravelsystems.com>
 	* Added a systemd 'vpick.target' definition for CentOS.
 	* Added a PAM 'xserver' profile for CentOS.
@@ -161,3 +162,5 @@
 	* Disabled saving of IP setting parameters.
 2020-03-03 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.10.0centos1.
+2021-09-08 Fred Gleason <fredg@paravelsystems.com>
+	* Ported to Qt5.

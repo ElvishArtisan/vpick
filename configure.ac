@@ -4,7 +4,7 @@ dnl Autoconf configuration
 dnl
 dnl Use autoconf to process this into a configure script
 dnl
-dnl   (C) Copyright 2016-2020 Fred Gleason <fredg@paravelsystems.com>
+dnl   (C) Copyright 2016-2021 Fred Gleason <fredg@paravelsystems.com>
 dnl
 dnl   This program is free software; you can redistribute it and/or modify
 dnl   it under the terms of the GNU General Public License version 2 as
@@ -34,9 +34,9 @@ AC_LANG(C++)
 #
 # Check for Qt (Mandatory)
 #
-PKG_CHECK_MODULES(QT4,QtGui QtCore QtNetwork,[],[AC_MSG_ERROR([*** Qt4 not found ***])])
-AC_CHECK_PROG(MOC_NAME,moc-qt4,[moc-qt4],[moc])
-AC_SUBST(MOC,$MOC_NAME)
+PKG_CHECK_MODULES(QT5,Qt5Gui Qt5Widgets Qt5Core Qt5Network,[],[AC_MSG_ERROR([*** Qt5 not found ***])])
+AC_CHECK_PROG(MOC_NAME,moc-qt5,[moc-qt5],[moc])
+AC_SUBST(QT_MOC,$MOC_NAME)
 
 #
 # Check for DocBook Toolchain
@@ -72,12 +72,6 @@ fi
 #
 AR_GET_DISTRO()
 AC_SUBST(DISTRO,$ar_gcc_distro)
-
-#
-# Libraries
-#
-AC_SUBST(GUILIBS,"-lQtCore -lQtNetwork -lQtGui")
-AC_SUBST(GUIFLAGS,"")
 
 #
 # Configure RPM Build

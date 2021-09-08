@@ -2,7 +2,7 @@
 //
 // Process Command-Line Switches
 //
-//   (C) Copyright 2012-2015 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2012-2021 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -21,38 +21,40 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <QApplication>
+
 #include "cmdswitch.h"
 
-CmdSwitch::CmdSwitch(int argc,char *argv[],const char *modname,
-			 const char *usage)
+CmdSwitch::CmdSwitch(const char *modname,const char *usage)
 {
   unsigned l=0;
   bool handled=false;
+  QStringList args=qApp->arguments();
 
-  for(int i=1;i<argc;i++) {
+  for(int i=1;i<args.size();i++) {
 #ifndef WIN32
-    if(!strcmp(argv[i],"--version")) {
+    if(args.at(i)=="--version") {
       printf("%s v%s\n",modname,VERSION);
       exit(0);
     }
 #endif  // WIN32
-    if(!strcmp(argv[i],"--help")) {
+    if(args.at(i)=="--help") {
       printf("\n%s %s\n",modname,usage);
       exit(0);
     }
-    l=strlen(argv[i]);
+    //    l=strlen(argv[i]);
     handled=false;
-    for(unsigned j=0;j<l;j++) {
-      if(argv[i][j]=='=') {
-	switch_keys.push_back(QString(argv[i]).left(j));
-	switch_values.push_back(QString(argv[i]).right(l-(j+1)));
+    for(int j=0;j<args.at(i).length();j++) {
+      if(args.at(i).at(j)==QChar('=')) {
+	switch_keys.push_back(args.at(i).left(j));
+	switch_values.push_back(args.at(i).right(l-(j+1)));
 	switch_processed.push_back(false);
-	j=l;
+	j=args.at(i).length();
 	handled=true;
       }
     }
     if(!handled) {
-      switch_keys.push_back(QString(argv[i]));
+      switch_keys.push_back(QString(args.at(i)));
       switch_values.push_back(QString(""));
       switch_processed.push_back(false);
     }
