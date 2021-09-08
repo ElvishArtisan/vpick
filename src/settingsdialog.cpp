@@ -2,7 +2,7 @@
 //
 // Configure system settings
 //
-//   (C) Copyright 2016-2017 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2021 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -149,6 +149,19 @@ SettingsDialog::SettingsDialog(Config *c,QWidget *parent)
   set_cancel_button=new QPushButton(tr("Cancel"),this);
   set_cancel_button->setFont(button_font);
   connect(set_cancel_button,SIGNAL(clicked()),this,SLOT(cancelData()));
+
+#ifdef DESKTOP
+  //
+  // Disable IP settings controls
+  //
+  set_dhcp_label->setDisabled(true);
+  set_dhcp_box->setDisabled(true);
+
+  set_resolution_label->setDisabled(true);
+  set_resolution_box->setDisabled(true);
+
+  set_calibrate_button->setDisabled(true);
+#endif  // DESKTOP
 }
 
 
@@ -260,6 +273,9 @@ void SettingsDialog::Load()
   set_ipgateway_edit->setText(set_values["GATEWAY"]);
   set_dns1_edit->setText(set_values["DNS1"]);
   set_dns2_edit->setText(set_values["DNS2"]);
+#ifdef DESKTOP
+  set_dhcp_box->setCurrentIndex(0);
+#endif  // DESKTOP
 
   set_rpiconfig->load();
   set_resolution_box->setCurrentItemData(set_rpiconfig->framebufferSize());
@@ -338,7 +354,9 @@ bool SettingsDialog::Save()
     setFramebufferSize(set_resolution_box->currentItemData().toSize());
   if(set_rpiconfig->wasChanged()) {
     set_rpiconfig->save();
+#ifdef EMBEDDED
     system("/sbin/reboot");
+#endif  // EMBEDDED
   }
 
   return true;

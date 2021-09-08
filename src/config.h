@@ -2,7 +2,7 @@
 //
 // vpick(1) Host Chooser Configuration
 //
-//   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2021 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -28,7 +28,10 @@
 #include <QString>
 
 #define VPICK_NETWORK_INTERFACE QString("eth0")
+#ifdef EMBEDDED
 #define VPICK_CONF_FILE QString("/etc/vpick.conf")
+#endif  // EMBEDDED
+
 #define VPICK_SYNERGY_CONF_FILE QString("/etc/synergy.conf")
 
 class Config
@@ -75,6 +78,9 @@ class Config
   std::vector<QString> conf_passwords;
   std::vector<unsigned> conf_autoconnects;
   std::vector<Qt::GlobalColor> conf_colors;
+#ifdef DESKTOP
+  QString conf_filename;
+#endif  // DESKTOP
 };
 
 

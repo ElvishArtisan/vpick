@@ -31,9 +31,13 @@ INSTALLATION
 Once the prerequisites are set up, building and installation of the code is
 done by cd'ing to the top of the source tree and typing './configure
 [options]', 'make', followed (as root) by 'make install'.  Those who
-obtained the source via CVS will need to do './autogen.sh' first.  There
-are a number of options for the 'configure' script; do './configure --help'
-for a detailed list.
+obtained the source via git(1) will need to do './autogen.sh' first.
+At a minimum, you will need to specify the target platform by giving either
+the '--with-desktop' or the '--with-embedded' switch to configure. The
+'--with-desktop' will generate an installation that is appropriate for
+running under an external desktop system that provides its own window manager,
+while '--with-embedded' intended for 'appliance' environments with no
+independently configured window manager.
 
 
 VNC Server Script Mod

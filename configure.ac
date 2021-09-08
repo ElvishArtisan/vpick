@@ -32,6 +32,37 @@ AC_PROG_CXX
 AC_LANG(C++)
 
 #
+# Target Platform
+#
+AC_ARG_WITH(desktop,[  --with-desktop          Build for desktop use],[TARGET_DESKTOP=yes],[])
+AC_ARG_WITH(embedded,[  --with-embedded         Build embedded use],[TARGET_EMBEDDED=yes],[])
+
+#
+# Determine Target Platform
+#
+if test -z $TARGET_DESKTOP ; then
+  if test -z $TARGET_EMBEDDED ; then
+    AC_MSG_NOTICE([No target platform specified, assuming desktop (--with-desktop)])
+    TARGET_DESKTOP=yes
+  fi
+fi
+if test $TARGET_DESKTOP ; then
+  if test $TARGET_EMBEDDED ; then
+    AC_MSG_ERROR(*** Only one target platform may be specified! ***)
+  fi
+fi
+if test $TARGET_DESKTOP ; then
+  AC_MSG_NOTICE([Configuring for desktop platform])
+  AC_DEFINE(DESKTOP,"yes")
+  ln -sf vpick-desktop.spec vpick.spec
+fi
+if test $TARGET_EMBEDDED ; then
+  AC_MSG_NOTICE([Configuring for embedded platform])
+  AC_DEFINE(EMBEDDED,"yes")
+  ln -sf vpick-embedded.spec vpick.spec
+fi
+
+#
 # Check for Qt (Mandatory)
 #
 PKG_CHECK_MODULES(QT5,Qt5Gui Qt5Widgets Qt5Core Qt5Network,[],[AC_MSG_ERROR([*** Qt5 not found ***])])
@@ -94,12 +125,28 @@ AC_CONFIG_FILES([ \
     conf/Makefile \
     icons/Makefile \
     src/Makefile \
+    systemd/Makefile \
     xdg/Makefile \
     vpick.service\
-    vpick.spec \
+    vpick-embedded.spec \
+    vpick-desktop.spec \
     Makefile ])
 AC_OUTPUT()
 
+#
+# Configuration Results
+#
+AC_MSG_NOTICE()
+AC_MSG_NOTICE("|-----------------------------------------------------|")
+AC_MSG_NOTICE("|         *** VPICK CONFIGURATION SUMMARY ***         |")
+AC_MSG_NOTICE("|-----------------------------------------------------|")
+if test $TARGET_DESKTOP ; then
+AC_MSG_NOTICE("|                            Build Target: Desktop    |")
+fi
+if test $TARGET_EMBEDDED ; then
+AC_MSG_NOTICE("|                            Build Target: Embedded   |")
+fi
+AC_MSG_NOTICE("|-----------------------------------------------------|")
 AC_MSG_NOTICE()
 AC_MSG_NOTICE(Now enter 'make' to build the software.)
 AC_MSG_NOTICE()

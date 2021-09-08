@@ -2,7 +2,7 @@
 //
 // vpick(1) Host Chooser Configuration
 //
-//   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2021 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -28,6 +28,14 @@
 
 Config::Config()
 {
+#ifdef DESKTOP
+  if(getenv("HOME")!=NULL) {
+    conf_filename=QString(getenv("HOME"))+"/vpick.conf";
+  }
+  else {
+    conf_filename="/etc/vpick.conf";
+  }
+#endif  // DESKTOP
 }
 
 
@@ -178,7 +186,12 @@ bool Config::load()
   int count=0;
   QString section=QString().sprintf("Host%d",count+1);
   Profile *p=new Profile();
+#ifdef DESKTOP
+  p->setSource(conf_filename);
+#endif  // DESKTOP
+#ifdef EMBEDDED
   p->setSource(VPICK_CONF_FILE);
+#endif  // EMBEDDED
 
   conf_synergy_mode=(Config::SynergyMode)p->intValue("Synergy","Mode");
   conf_synergy_screenname=
@@ -209,7 +222,12 @@ bool Config::save()
 {
   FILE *f=NULL;
 
+#ifdef DESKTOP
+  if((f=fopen((conf_filename+"-back").toUtf8(),"w"))==NULL) {
+#endif  // DESKTOP
+#ifdef EMBEDDED
   if((f=fopen((QString(VPICK_CONF_FILE)+"-back").toUtf8(),"w"))==NULL) {
+#endif  // EMBEDDED
     return false;
   }
   fprintf(f,"[Synergy]\n");
@@ -229,7 +247,12 @@ bool Config::save()
     fprintf(f,"\n");
   }
   fclose(f);
+#ifdef DESKTOP
+  rename((conf_filename+"-back").toUtf8(),conf_filename.toUtf8());
+#endif  // DESKTOP
+#ifdef EMBEDDED
   rename((VPICK_CONF_FILE+"-back").toUtf8(),VPICK_CONF_FILE.toUtf8());
+#endif  // EMBEDDED
 
   return true;
 }

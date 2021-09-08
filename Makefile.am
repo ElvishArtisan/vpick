@@ -28,6 +28,7 @@
 SUBDIRS = conf\
           icons\
           src\
+          systemd\
           xdg
 
 install-exec-local:	
@@ -45,7 +46,8 @@ rpm:	dist
 	rm $(HOME)/rpmbuild/SOURCES/vpick-$(VERSION).tar.gz
 	rm -rf $(HOME)/rpmbuild/BUILD/vpick-$(VERSION)
 
-EXTRA_DIST = vpick.spec.in\
+EXTRA_DIST = vpick-embedded.spec.in\
+             vpick-desktop.spec.in\
              autogen.sh\
              get_distro.pl\
              get_target.sh\
@@ -60,7 +62,7 @@ CLEANFILES = *~\
              *.tgz\
              *.zip
 
-DISTCLEANFILES = vpick.spec\
+DISTCLEANFILES = *.spec\
                  config.guess\
                  config.sub\
                  ltmain.sh\
