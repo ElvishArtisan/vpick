@@ -2,7 +2,7 @@
 //
 // vpick(1) Host Chooser
 //
-//   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2021 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -46,7 +46,7 @@ MainWidget::MainWidget(QWidget *parent)
 {
   vpick_autoconnect_id=-1;
 
-  CmdSwitch *cmd=new CmdSwitch(qApp->argc(),qApp->argv(),"vpick",VERSION);
+  CmdSwitch *cmd=new CmdSwitch("vpick",VERSION);
   for(unsigned i=0;i<cmd->keys();i++) {
     if(!cmd->processed(i)) {
       fprintf(stderr,"unknown option\n");

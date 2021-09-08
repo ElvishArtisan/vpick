@@ -2,7 +2,7 @@
 //
 // ComboBox widget for picking colors
 //
-//   (C) Copyright 2015-2017 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2021 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -53,10 +53,10 @@ Qt::GlobalColor ColorBox::currentColor() const
 }
 
 
-bool ColorBox::setCurrentColor(Qt::GlobalColor color)
+bool ColorBox::setCurrentColor(const QColor &color)
 {
   for(int i=0;i<count();i++) {
-    if((Qt::GlobalColor)itemData(i).toInt()==color) {
+    if(itemData(i,Qt::DisplayRole).value<QColor>()==color) {
       setCurrentIndex(i);
       return true;
     }
@@ -65,7 +65,7 @@ bool ColorBox::setCurrentColor(Qt::GlobalColor color)
 }
 
 
-void ColorBox::InsertColor(const QString &name,Qt::GlobalColor color)
+void ColorBox::InsertColor(const QString &name,const QColor &color)
 {
   if(color!=Qt::transparent) {
     QPixmap pix(20,font().pointSize());
@@ -77,7 +77,7 @@ void ColorBox::InsertColor(const QString &name,Qt::GlobalColor color)
     p->setBrush(color);
     p->drawRect(1,1,pix.size().width()-3,pix.size().height()-3);
     delete p;
-    insertItem(count(),pix,name,(int)color);
+    insertItem(count(),pix,name,color);
   }
   else {
     insertItem(count(),name,color);

@@ -2,7 +2,7 @@
 //
 // Drag and drop source for Synergy screens
 //
-//   (C) Copyright 2017 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2017-2021 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -19,6 +19,7 @@
 //
 
 #include <QApplication>
+#include <QDrag>
 #include <QMouseEvent>
 
 #include "screendata.h"
