@@ -3,9 +3,13 @@ This is the installation file for the vpick package.
 MANDATORY PREREQUISITES
 ---------------------------------------------------------------------------
 You will need the following installed and configured properly on your 
-system before building GlassCoder:
+system before building vpick:
 
 Qt5 Toolkit, v5.9.7 or better (http://www.qt.io/).
+
+SSVNC Enhanced TightVNC Viewer (http://ssvnc.sourceforge.net/)
+
+TightVNC (https://www.tightvnc.com)
 
 
 DOCUMENTATION
