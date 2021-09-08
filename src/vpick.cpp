@@ -359,7 +359,7 @@ void MainWidget::StartVnc(int id)
   vpick_process->setStandardOutputFile(vpick_password_file);
   vpick_process->start("/usr/bin/vncpasswd",args);
   vpick_process->write(vpick_config->password(id).toUtf8());
-  vpick_process->write("\n");
+  vpick_process->closeWriteChannel();
   vpick_process->waitForFinished();
   delete vpick_process;
 
