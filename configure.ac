@@ -103,6 +103,49 @@ fi
 #
 AR_GET_DISTRO()
 AC_SUBST(DISTRO,$ar_gcc_distro)
+AC_MSG_NOTICE($ar_distro_id)
+DISTRO_NAME="|                     Distribution Name ... Unknown   |"
+case "$ar_distro_id" in
+     debian)
+       AC_MSG_NOTICE([Distro is Debian-ish])
+       DISTRO_FAMILY="|                   Distribution Family ... Debian    |"
+       DISTRO_IS_DEBIANISH=yes
+       DISTRO_NAME="|                     Distribution Name ... Debian    |"
+     ;;
+
+     raspbian)
+       AC_MSG_NOTICE([Distro is Debian-ish])
+       DISTRO_FAMILY="|                  Distribution Family ... Debian    |"
+       DISTRO_IS_DEBIANISH=yes
+       DISTRO_NAME="|                    Distribution Name ... Raspbian  |"
+     ;;
+
+     ubuntu)
+       AC_MSG_NOTICE([Distro is Debian-ish])
+       DISTRO_FAMILY="|                   Distribution Family ... Debian    |"
+       DISTRO_IS_DEBIANISH=yes
+       DISTRO_NAME="|                     Distribution Name ... Ubuntu    |"
+     ;;
+
+     centos|rhel|fedora)
+       AC_MSG_NOTICE([Distro is RedHat-ish])
+       DISTRO_FAMILY="|                   Distribution Family ... RedHat    |"
+       if test $ar_distro_id = "centos" ; then
+         DISTRO_NAME="|                     Distribution Name ... CentOS    |"
+       fi
+       if test $ar_distro_id = "fedora" ; then
+         DISTRO_NAME="|                     Distribution Name ... Fedora    |"
+       fi
+       if test $ar_distro_id = "rhel" ; then
+         DISTRO_NAME="|                     Distribution Name ... RHEL      |"
+       fi
+     ;;
+
+     *)
+       AC_MSG_NOTICE([Distro is unknown])
+       DISTRO_FAMILY="|                   Distribution Family ... Unknown   |"
+     ;;
+esac
 
 #
 # Configure RPM Build
@@ -140,11 +183,15 @@ AC_MSG_NOTICE()
 AC_MSG_NOTICE("|-----------------------------------------------------|")
 AC_MSG_NOTICE("|         *** VPICK CONFIGURATION SUMMARY ***         |")
 AC_MSG_NOTICE("|-----------------------------------------------------|")
+AC_MSG_NOTICE("| Platform Information:                               |")
+AC_MSG_NOTICE("$DISTRO_NAME")
+AC_MSG_NOTICE("$DISTRO_FAMILY")
+AC_MSG_NOTICE("|                                                     |")
 if test $TARGET_DESKTOP ; then
-AC_MSG_NOTICE("|                            Build Target: Desktop    |")
+AC_MSG_NOTICE("|                          Build Target ... Desktop   |")
 fi
 if test $TARGET_EMBEDDED ; then
-AC_MSG_NOTICE("|                            Build Target: Embedded   |")
+AC_MSG_NOTICE("|                          Build Target ... Embedded  |")
 fi
 AC_MSG_NOTICE("|-----------------------------------------------------|")
 AC_MSG_NOTICE()

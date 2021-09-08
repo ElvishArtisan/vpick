@@ -139,3 +139,6 @@
 2021-09-08 Fred Gleason <fredg@paravelsystems.com>
 	* Added '--with-desktop' and '--with-embedded' switches to
 	'./configure'.
+2021-09-08 Fred Gleason <fredg@paravelsystems.com>
+	* Added 'Distribution Name' and 'Distribution Family' lines
+	to the 'Configuration Summary' in './configure'.
