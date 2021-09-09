@@ -31,11 +31,12 @@ class ColorBox : public QComboBox
  Q_OBJECT;
  public:
   ColorBox(QWidget *parent=0);
-  Qt::GlobalColor currentColor() const;
+  QColor currentColor() const;
   bool setCurrentColor(const QColor &color);
 
  private:
   void InsertColor(const QString &name,const QColor &color);
+  QColor d_default_color;
 };
 
 

@@ -153,13 +153,13 @@ void Config::setFullscreen(unsigned n,bool state)
 }
 
 
-Qt::GlobalColor Config::color(unsigned n) const
+QColor Config::color(unsigned n) const
 {
   return conf_colors[n];
 }
 
 
-void Config::setColor(unsigned n,Qt::GlobalColor color)
+void Config::setColor(unsigned n,const QColor &color)
 {
   conf_colors[n]=color;
 }
@@ -217,8 +217,7 @@ bool Config::load()
     conf_passwords.push_back(p->stringValue(section,"Password"));
     conf_autoconnects.push_back(p->boolValue(section,"Autoconnect"));
     conf_fullscreens.push_back(p->boolValue(section,"Fullscreen"));
-    conf_colors.push_back((Qt::GlobalColor)p->
-			  intValue(section,"Color",(int)Qt::transparent));
+    conf_colors.push_back(p->stringValue(section,"Color"));
     conf_titles.push_back(p->stringValue(section,"Title",QString().
 					 sprintf("Host %d",count+1)));
     count++;
@@ -257,7 +256,12 @@ bool Config::save()
     fprintf(f,"Password=%s\n",(const char *)conf_passwords[i].toUtf8());
     fprintf(f,"Autoconnect=%u\n",conf_autoconnects[i]);
     fprintf(f,"Fullscreen=%u\n",conf_fullscreens[i]);
-    fprintf(f,"Color=%d\n",conf_colors[i]);
+    if(conf_colors[i].isValid()) {
+      fprintf(f,"Color=%s\n",conf_colors[i].name().toUtf8().constData());
+    }
+    else {
+      fprintf(f,"Color=\n");
+    }
     fprintf(f,"\n");
   }
   fclose(f);

@@ -22,22 +22,22 @@
 
 #include "hostbutton.h"
 
-HostButton::HostButton(const QString &text,Qt::GlobalColor color,QWidget *parent)
+HostButton::HostButton(const QString &text,const QColor &color,QWidget *parent)
   : QPushButton(text,parent)
 {
-  if(color!=Qt::transparent) {
-    setStyleSheet("color: "+QColor(TextColor(color)).name()+
-		  ";background-color: "+QColor(color).name());
+  if(color.isValid()) {
+    setStyleSheet("color: "+TextColor(color).name()+
+		  ";background-color: "+color.name());
   }
 }
 
 
-void HostButton::setText(const QString &text,Qt::GlobalColor color)
+void HostButton::setText(const QString &text,const QColor &color)
 {
   QPushButton::setText(text);
-  if(color!=Qt::transparent) {
-    setStyleSheet("color: "+QColor(TextColor(color)).name()+
-		  ";background-color: "+QColor(color).name());
+  if(color.isValid()) {
+    setStyleSheet("color: "+TextColor(color).name()+
+		  ";background-color: "+color.name());
   }
   else {
     setStyleSheet("");
@@ -45,83 +45,23 @@ void HostButton::setText(const QString &text,Qt::GlobalColor color)
 }
 
 
-Qt::GlobalColor HostButton::TextColor(Qt::GlobalColor color)
+QColor HostButton::TextColor(const QColor &color)
 {
-  Qt::GlobalColor ret=Qt::black;
-  switch(color) {
-  case Qt::white:
-    ret=Qt::black;
-    break;
+  int h,s,v;
+  QColor ret=color;
 
-  case Qt::black:
+  color.getHsv(&h,&s,&v);
+  if(v<128) {
     ret=Qt::white;
-    break;
-
-  case Qt::cyan:
-    ret=Qt::black;
-    break;
-
-  case Qt::darkCyan:
-    ret=Qt::white;
-    break;
-
-  case Qt::red:
-    ret=Qt::white;
-    break;
-
-  case Qt::darkRed:
-    ret=Qt::white;
-    break;
-
-  case Qt::magenta:
-    ret=Qt::white;
-    break;
-
-  case Qt::darkMagenta:
-    ret=Qt::white;
-    break;
-
-  case Qt::green:
-    ret=Qt::black;
-    break;
-
-  case Qt::darkGreen:
-    ret=Qt::black;
-    break;
-
-  case Qt::yellow:
-    ret=Qt::black;
-    break;
-
-  case Qt::darkYellow:
-    ret=Qt::black;
-    break;
-
-  case Qt::blue:
-    ret=Qt::white;
-    break;
-
-  case Qt::darkBlue:
-    ret=Qt::white;
-    break;
-
-  case Qt::gray:
-    ret=Qt::black;
-    break;
-
-  case Qt::darkGray:
-    ret=Qt::black;
-    break;
-
-  case Qt::lightGray:
-    ret=Qt::black;
-    break;
-
-  case Qt::transparent:
-  case Qt::color0:
-  case Qt::color1:
-    break;
-
   }
+  else {
+    if((h>210)&&(h<270)&&(s>128)) {  // Special case for blue
+      ret=Qt::white;
+    }
+    else {
+      ret=Qt::black;
+    }
+  }
+
   return ret;
 }

@@ -19,6 +19,7 @@
 //
 
 #include <QPainter>
+#include <QPalette>
 #include <QPixmap>
 
 #include "colorbox.h"
@@ -26,7 +27,9 @@
 ColorBox::ColorBox(QWidget *parent)
   : QComboBox(parent)
 {
-  InsertColor(tr("None"),Qt::transparent);
+  d_default_color=palette().color(QPalette::Background);
+
+  InsertColor(tr("None"),QColor());
   InsertColor(tr("White"),Qt::white);
   InsertColor(tr("Black"),Qt::black);
   InsertColor(tr("Cyan"),Qt::cyan);
@@ -47,16 +50,16 @@ ColorBox::ColorBox(QWidget *parent)
 }
 
 
-Qt::GlobalColor ColorBox::currentColor() const
+QColor ColorBox::currentColor() const
 {
-  return (Qt::GlobalColor)itemData(currentIndex()).toInt();
+  return itemData(currentIndex()).value<QColor>();
 }
 
 
 bool ColorBox::setCurrentColor(const QColor &color)
 {
   for(int i=0;i<count();i++) {
-    if(itemData(i,Qt::DisplayRole).value<QColor>()==color) {
+    if(itemData(i).value<QColor>()==color) {
       setCurrentIndex(i);
       return true;
     }
@@ -67,19 +70,20 @@ bool ColorBox::setCurrentColor(const QColor &color)
 
 void ColorBox::InsertColor(const QString &name,const QColor &color)
 {
-  if(color!=Qt::transparent) {
-    QPixmap pix(20,font().pointSize());
-    QPainter *p=new QPainter(&pix);
-    p->setPen(Qt::black);
-    p->setBrush(Qt::black);
-    p->drawRect(0,0,pix.size().width()-1,pix.size().height()-1);
+  QPixmap pix(20,font().pointSize());
+  QPainter *p=new QPainter(&pix);
+  p->setPen(Qt::black);
+  p->setBrush(Qt::black);
+  p->drawRect(0,0,pix.size().width()-1,pix.size().height()-1);
+  if(color.isValid()) {
     p->setPen(color);
     p->setBrush(color);
-    p->drawRect(1,1,pix.size().width()-3,pix.size().height()-3);
-    delete p;
-    insertItem(count(),pix,name,color);
   }
   else {
-    insertItem(count(),name,color);
+    p->setPen(d_default_color);
+    p->setBrush(d_default_color);
   }
+  p->drawRect(1,1,pix.size().width()-3,pix.size().height()-3);
+  delete p;
+  insertItem(count(),pix,name,color);
 }

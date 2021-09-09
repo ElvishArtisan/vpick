@@ -27,11 +27,11 @@ class HostButton : public QPushButton
 {
  Q_OBJECT;
  public:
- HostButton(const QString &text,Qt::GlobalColor color,QWidget *parent=0);
- void setText(const QString &text,Qt::GlobalColor color);
+ HostButton(const QString &text,const QColor &color,QWidget *parent=0);
+ void setText(const QString &text,const QColor &color);
 
  private:
-  Qt::GlobalColor TextColor(Qt::GlobalColor color);
+  QColor TextColor(const QColor &color);
 };
 
 

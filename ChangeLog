@@ -151,3 +151,6 @@
 	* Changed the titlebar text to 'Host Picker'.
 2021-09-09 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'Fullscreen' checkbox to the 'Host Settings' dialog.
+2021-09-09 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed various regressions affecting the proper choosing and
+	assignment of button background colors.
