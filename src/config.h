@@ -21,9 +21,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
-#include <vector>
-
 #include <QColor>
+#include <QList>
 #include <QHostAddress>
 #include <QString>
 
@@ -74,13 +73,13 @@ class Config
   SynergyMode conf_synergy_mode;
   QString conf_synergy_screenname;
   QHostAddress conf_synergy_server_address;
-  std::vector<Type> conf_types;
-  std::vector<QString> conf_titles;
-  std::vector<QString> conf_hostnames;
-  std::vector<QString> conf_passwords;
-  std::vector<unsigned> conf_autoconnects;
-  std::vector<unsigned> conf_fullscreens;
-  std::vector<QColor> conf_colors;
+  QList<Type> conf_types;
+  QList<QString> conf_titles;
+  QList<QString> conf_hostnames;
+  QList<QString> conf_passwords;
+  QList<unsigned> conf_autoconnects;
+  QList<unsigned> conf_fullscreens;
+  QList<QColor> conf_colors;
 #ifdef DESKTOP
   QString conf_filename;
 #endif  // DESKTOP

@@ -2,7 +2,7 @@
 //
 // Class for reading INI configuration files.
 //
-// (C) Copyright 2013-2016 Fred Gleason <fredg@paravelsystems.com>
+// (C) Copyright 2013-2021 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -21,8 +21,7 @@
 #ifndef PROFILE_H
 #define PROFILE_H
 
-#include <vector>
-
+#include <QList>
 #include <QString>
 #include <QTime>
 #include <QHostAddress>
@@ -55,7 +54,7 @@ class ProfileSection
 
  private:
   QString section_name;
-  std::vector<ProfileLine> section_line;
+  QList<ProfileLine> section_line;
 };
 
 
@@ -65,7 +64,7 @@ class Profile
   Profile();
   QString source() const;
   bool setSource(const QString &filename);
-  bool setSource(std::vector<QString> *values);
+  bool setSource(QList<QString> *values);
   QString stringValue(const QString &section,const QString &tag,
 		      const QString &default_value="",bool *ok=0) const;
   int intValue(const QString &section,const QString &tag,
@@ -89,7 +88,7 @@ class Profile
 
  private:
   QString profile_source;
-  std::vector<ProfileSection> profile_section;
+  QList<ProfileSection> profile_section;
 };
 
 

@@ -21,8 +21,6 @@
 #ifndef RPICONFIG_H
 #define RPICONFIG_H
 
-#include <vector>
-
 #include <QSize>
 #include <QString>
 #include <QStringList>

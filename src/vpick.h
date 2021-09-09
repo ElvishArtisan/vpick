@@ -2,7 +2,7 @@
 //
 // vpick(1) Host Chooser
 //
-//   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2021 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -21,9 +21,8 @@
 #ifndef VPICK_H
 #define VPICK_H
 
-#include <vector>
-
 #include <QLabel>
+#include <QList>
 #include <QMainWindow>
 #include <QPixmap>
 #include <QProcess>
@@ -71,8 +70,8 @@ class MainWidget : public QMainWindow
   void RemoveHost(int id);
   void SaveHosts();
   void Resize();
-  std::vector<HostButton *> vpick_buttons;
-  std::vector<QString> vpick_commands;
+  QList<HostButton *> vpick_buttons;
+  QList<QString> vpick_commands;
   QSignalMapper *vpick_button_mapper;
   QPushButton *vpick_add_button;
   QPushButton *vpick_config_button;

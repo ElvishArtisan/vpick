@@ -154,3 +154,5 @@
 2021-09-09 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed various regressions affecting the proper choosing and
 	assignment of button background colors.
+2021-09-09 Fred Gleason <fredg@paravelsystems.com>
+	* Replace 'std::vector' with 'QList'.

@@ -2,7 +2,7 @@
 //
 // A container class for profile lines.
 //
-// (C) Copyright 2013-2016 Fred Gleason <fredg@paravelsystems.com>
+// (C) Copyright 2013-2021 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -81,7 +81,7 @@ void ProfileSection::setName(QString name)
 
 bool ProfileSection::getValue(QString tag,QString *value) const
 {
-  for(unsigned i=0;i<section_line.size();i++) {
+  for(int i=0;i<section_line.size();i++) {
     if(section_line[i].tag()==tag) {
       *value=section_line[i].value();
       return true;
@@ -102,7 +102,7 @@ void ProfileSection::addValue(QString tag,QString value)
 void ProfileSection::clear()
 {
   section_name="";
-  section_line.resize(0);
+  section_line.clear();
 }
 
 
@@ -123,7 +123,7 @@ bool Profile::setSource(const QString &filename)
   int offset;
 
   profile_source=filename;
-  profile_section.resize(0);
+  profile_section.clear();
   profile_section.push_back(ProfileSection());
   profile_section.back().setName("");
   QFile *file=new QFile(filename);
@@ -155,15 +155,15 @@ bool Profile::setSource(const QString &filename)
 }
 
 
-bool Profile::setSource(std::vector<QString> *values)
+bool Profile::setSource(QList<QString> *values)
 {
   QString section;
   int offset;
 
-  profile_section.resize(0);
+  profile_section.clear();
   profile_section.push_back(ProfileSection());
   profile_section.back().setName("");
-  for(unsigned i=0;i<values->size();i++) {
+  for(int i=0;i<values->size();i++) {
     if((values->at(i).left(1)!=";")&&(values->at(i).left(1)!="#")) {
       if((values->at(i).left(1)=="[")&&(values->at(i).right(1)=="]")) {
 	section=values->at(i).mid(1,values->at(i).length()-2);
@@ -187,7 +187,7 @@ QString Profile::stringValue(const QString &section,const QString &tag,
 {
   QString result;
 
-  for(unsigned i=0;i<profile_section.size();i++) {
+  for(int i=0;i<profile_section.size();i++) {
     if(profile_section[i].name()==section) {
       if(profile_section[i].getValue(tag,&result)) {
 	if(ok!=NULL) {
@@ -355,5 +355,5 @@ QHostAddress Profile::addressValue(const QString &section,const QString &tag,
 void Profile::clear()
 {
   profile_source="";
-  profile_section.resize(0);
+  profile_section.clear();
 }

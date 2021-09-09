@@ -21,14 +21,14 @@
 #ifndef CMDSWITCH_H
 #define CMDSWITCH_H
 
-#include <vector>
+#include <QList>
 #include <QString>
 
 class CmdSwitch
 {
  public:
   CmdSwitch(const char *modname,const char *usage);
-  unsigned keys() const;
+  int keys() const;
   QString key(unsigned n) const;
   QString value(unsigned n) const;
   bool processed(unsigned n) const;
@@ -36,9 +36,9 @@ class CmdSwitch
   bool allProcessed() const;
 
  private:
-  std::vector<QString> switch_keys;
-  std::vector<QString> switch_values;
-  std::vector<bool> switch_processed;
+  QList<QString> switch_keys;
+  QList<QString> switch_values;
+  QList<bool> switch_processed;
 };
 
 

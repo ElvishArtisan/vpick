@@ -47,7 +47,7 @@ MainWidget::MainWidget(QWidget *parent)
   vpick_autoconnect_id=-1;
 
   CmdSwitch *cmd=new CmdSwitch("vpick",VERSION);
-  for(unsigned i=0;i<cmd->keys();i++) {
+  for(int i=0;i<cmd->keys();i++) {
     if(!cmd->processed(i)) {
       fprintf(stderr,"unknown option\n");
       exit(256);
@@ -267,7 +267,7 @@ void MainWidget::closeEvent(QCloseEvent *e)
 
 void MainWidget::resizeEvent(QResizeEvent *e)
 {
-  for(unsigned i=0;i<vpick_buttons.size();i++) {
+  for(int i=0;i<vpick_buttons.size();i++) {
     vpick_buttons[i]->show();
     vpick_buttons[i]->setGeometry(10,10+50*i,200,40);
   }
@@ -464,7 +464,7 @@ void MainWidget::AddHost(int id)
 
 void MainWidget::RemoveHost(int id)
 {
-  for(unsigned i=id+1;i<vpick_buttons.size();i++) {
+  for(int i=id+1;i<vpick_buttons.size();i++) {
     vpick_button_mapper->removeMappings(vpick_buttons[i]);
     vpick_button_mapper->setMapping(vpick_buttons[i],i-1);
   }
@@ -479,7 +479,7 @@ void MainWidget::RemoveHost(int id)
 
 void MainWidget::SetButtonIcons(const QPixmap &pix)
 {
-  for(unsigned i=0;i<vpick_buttons.size();i++) {
+  for(int i=0;i<vpick_buttons.size();i++) {
     vpick_buttons[i]->setIcon(pix);
   }
 }

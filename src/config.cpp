@@ -248,7 +248,7 @@ bool Config::save()
   fprintf(f,"ServerAddress=%s\n",
 	  (const char *)conf_synergy_server_address.toString().toUtf8());
   fprintf(f,"\n");
-  for(unsigned i=0;i<conf_types.size();i++) {
+  for(int i=0;i<conf_types.size();i++) {
     fprintf(f,"[Host%u]\n",i+1);
     fprintf(f,"Type=%u\n",conf_types[i]);
     fprintf(f,"Title=%s\n",(const char *)conf_titles[i].toUtf8());

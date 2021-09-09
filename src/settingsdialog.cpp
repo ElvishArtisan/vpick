@@ -21,8 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <vector>
-
+#include <QList>
 #include <QMessageBox>
 #include <QStringList>
 
@@ -286,7 +285,7 @@ void SettingsDialog::Load()
 bool SettingsDialog::Save()
 {
   FILE *f=NULL;
-  std::vector<QString> dns_servers;
+  QList<QString> dns_servers;
 
   if(set_dhcp_box->currentIndex()!=0) {  // Manual Setup
     if(!ValidIp(set_ipaddress_edit->text())) {
@@ -340,7 +339,7 @@ bool SettingsDialog::Save()
 		(const char *)it->second.toUtf8());
       }
     }
-    for(unsigned i=0;i<dns_servers.size();i++) {
+    for(int i=0;i<dns_servers.size();i++) {
       fprintf(f,"DNS%u=%s\n",i+1,(const char *)dns_servers[i].toUtf8());
     }
     fclose(f);
