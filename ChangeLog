@@ -147,3 +147,5 @@
 	'Unable to read file' error on Ubuntu.
 2021-09-08 Fred Gleason <fredg@paravelsystems.com>
 	* Updated the list of dependencies in 'INSTALL'.
+2021-09-09 Fred Gleason <fredg@paravelsystems.com>
+	* Changed the titlebar text to 'Host Picker'.
