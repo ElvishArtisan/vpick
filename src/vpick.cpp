@@ -290,11 +290,6 @@ void MainWidget::EditViewer(int id)
 
 void MainWidget::StartViewer(int id)
 {
-  /*
-  char tempname[PATH_MAX];
-  QStringList args;
-  */
-
   if(vpick_process==NULL) {
     switch(vpick_config->type(id)) {
     case Config::VncPlain:
@@ -308,37 +303,6 @@ void MainWidget::StartViewer(int id)
     case Config::LastType:
       break;
     }
-    /*
-    //
-    // Generate Password File
-    //
-    strncpy(tempname,"/tmp/vpickXXXXXX",PATH_MAX);
-    vpick_password_file=mktemp(tempname);
-    args.push_back("-f");
-    vpick_process=new QProcess(this);
-    vpick_process->setStandardOutputFile(vpick_password_file);
-    vpick_process->start("/usr/bin/vncpasswd",args);
-    vpick_process->write(vpick_config->password(id).toUtf8());
-    vpick_process->write("\n");
-    vpick_process->waitForFinished();
-    delete vpick_process;
-
-    //
-    // Start Viewer
-    //
-    vpick_process=new QProcess(this);
-    connect(vpick_process,SIGNAL(error(QProcess::ProcessError)),
-	    this,SLOT(processErrorData(QProcess::ProcessError)));
-    connect(vpick_process,SIGNAL(finished(int,QProcess::ExitStatus)),
-	    this,SLOT(processFinishedData(int,QProcess::ExitStatus)));
-    args.clear();
-    args.push_back("-passwd");
-    args.push_back(vpick_password_file);
-    args.push_back("-fullscreen");
-    args.push_back("-nograbkbd");  // So we don't break Synergy server
-    args.push_back(vpick_config->hostname(id));
-    vpick_process->start("/usr/lib/ssvnc/vncviewer",args);
-    */
   }
 }
 
@@ -347,20 +311,30 @@ void MainWidget::StartVnc(int id)
 {
   char tempname[PATH_MAX];
   QStringList args;
+  int fd;
+  QByteArray data;
 
   //
   // Generate Password File
   //
   strncpy(tempname,"/tmp/vpickXXXXXX",PATH_MAX);
-  vpick_password_file=mktemp(tempname);
+  if((fd=mkstemp(tempname))<0) {
+    QMessageBox::critical(this,tr("Host Picker"),
+			  tr("Unable to start viewer!")+"\n"+
+			  "["+strerror(errno)+"].");
+    return;
+  }
+  vpick_password_file=tempname;
   args.push_back("-f");
   vpick_process=new QProcess(this);
-  vpick_process->setStandardOutputFile(vpick_password_file);
   vpick_process->start("/usr/bin/vncpasswd",args);
   vpick_process->write(vpick_config->password(id).toUtf8());
   vpick_process->closeWriteChannel();
   vpick_process->waitForFinished();
+  data=vpick_process->readAllStandardOutput();
   delete vpick_process;
+  write(fd,data,data.size());
+  ::close(fd);
 
   //
   // Start Viewer
@@ -402,25 +376,33 @@ void MainWidget::StartSpice(int id)
   QStringList args;
   FILE *f=NULL;
   QStringList f0=vpick_config->hostname(id).split(":");
+  int fd=-1;
 
   //
   // Generate Connection File
   //
   strncpy(tempname,"/tmp/vpickXXXXXX",PATH_MAX);
-  vpick_password_file=mktemp(tempname);
+  if((fd=mkstemp(tempname))<0) {
+    QMessageBox::critical(this,tr("Host Picker"),
+			  tr("Unable to start viewer!")+"\n"+
+			  "["+strerror(errno)+"].");
+    return;
+  }
+  //  vpick_password_file=mktemp(tempname);
+  vpick_password_file=tempname;
   if((f=fopen(vpick_password_file.toUtf8(),"w"))==NULL) {
     return;
   }
   fprintf(f,"[virt-viewer]\n");
   fprintf(f,"type=spice\n");
-  fprintf(f,"host=%s\n",(const char *)f0.at(0).toUtf8());
+  fprintf(f,"host=%s\n",f0.at(0).toUtf8().constData());
   if(f0.size()==2) {
     fprintf(f,"port=%d\n",f0.at(1).toInt());
   }
   else {
     fprintf(f,"port=5900\n");
   }
-  fprintf(f,"password=%s\n",(const char *)vpick_config->password(id).toUtf8());
+  fprintf(f,"password=%s\n",vpick_config->password(id).toUtf8().constData());
   fprintf(f,"fullscreen=1\n");
   fprintf(f,"delete-this_file=1\n");
   fclose(f);

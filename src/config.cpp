@@ -174,6 +174,7 @@ unsigned Config::addHost(Type type,const QString &title,const QString &hostname,
   conf_hostnames.push_back(hostname);
   conf_passwords.push_back(passwd);
   conf_autoconnects.push_back(autoconnect);
+  conf_fullscreens.push_back(fullscreen);
   conf_colors.push_back(color);
 
   return conf_types.size()-1;
@@ -187,6 +188,7 @@ void Config::removeHost(unsigned n)
   conf_hostnames.erase(conf_hostnames.begin()+n);
   conf_passwords.erase(conf_passwords.begin()+n);
   conf_autoconnects.erase(conf_autoconnects.begin()+n);
+  conf_fullscreens.erase(conf_fullscreens.begin()+n);
   conf_colors.erase(conf_colors.begin()+n);
 }
 

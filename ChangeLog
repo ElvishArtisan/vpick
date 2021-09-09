@@ -158,3 +158,5 @@
 	* Replace 'std::vector' with 'QList'.
 2021-09-09 Fred Gleason <fredg@paravelsystems.com>
 	* Replace 'std::map' with 'QMap'.
+2021-09-09 Fred Gleason <fredg@paravelsystems.com>
+	* Refactored code to eliminate use of mktemp(3).
