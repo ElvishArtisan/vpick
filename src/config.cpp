@@ -141,6 +141,18 @@ void Config::setAutoconnect(unsigned n,bool state)
 }
 
 
+bool Config::fullscreen(unsigned n) const
+{
+  return conf_fullscreens[n];
+}
+
+
+void Config::setFullscreen(unsigned n,bool state)
+{
+  conf_fullscreens[n]=state;
+}
+
+
 Qt::GlobalColor Config::color(unsigned n) const
 {
   return conf_colors[n];
@@ -155,7 +167,7 @@ void Config::setColor(unsigned n,Qt::GlobalColor color)
 
 unsigned Config::addHost(Type type,const QString &title,const QString &hostname,
 			 const QString &passwd, bool autoconnect,
-			 Qt::GlobalColor color)
+			 bool fullscreen,Qt::GlobalColor color)
 {
   conf_types.push_back(type);
   conf_titles.push_back(title);
@@ -204,6 +216,7 @@ bool Config::load()
     conf_hostnames.push_back(p->stringValue(section,"Hostname"));
     conf_passwords.push_back(p->stringValue(section,"Password"));
     conf_autoconnects.push_back(p->boolValue(section,"Autoconnect"));
+    conf_fullscreens.push_back(p->boolValue(section,"Fullscreen"));
     conf_colors.push_back((Qt::GlobalColor)p->
 			  intValue(section,"Color",(int)Qt::transparent));
     conf_titles.push_back(p->stringValue(section,"Title",QString().
@@ -243,6 +256,7 @@ bool Config::save()
     fprintf(f,"Hostname=%s\n",(const char *)conf_hostnames[i].toUtf8());
     fprintf(f,"Password=%s\n",(const char *)conf_passwords[i].toUtf8());
     fprintf(f,"Autoconnect=%u\n",conf_autoconnects[i]);
+    fprintf(f,"Fullscreen=%u\n",conf_fullscreens[i]);
     fprintf(f,"Color=%d\n",conf_colors[i]);
     fprintf(f,"\n");
   }

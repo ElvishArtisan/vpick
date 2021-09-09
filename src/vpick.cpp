@@ -171,7 +171,7 @@ void MainWidget::addClickedData()
   vpick_remove_button->setChecked(false);
 
   vpick_config->
-    addHost(Config::VncPlain,"[new host]","","",false,Qt::transparent);
+    addHost(Config::VncPlain,"[new host]","","",false,true,Qt::transparent);
   if(vpick_host_dialog->exec(vpick_config->hostQuantity()-1)==0) {
     AddHost(vpick_config->hostQuantity()-1);
     vpick_height+=50;
@@ -371,12 +371,28 @@ void MainWidget::StartVnc(int id)
   connect(vpick_process,SIGNAL(finished(int,QProcess::ExitStatus)),
 	  this,SLOT(processFinishedData(int,QProcess::ExitStatus)));
   args.clear();
+  /* 
+   * SSVNC
+   */
   args.push_back("-passwd");
   args.push_back(vpick_password_file);
-  args.push_back("-fullscreen");
+  if(vpick_config->fullscreen(id)) {
+    args.push_back("-fullscreen");
+  }
   args.push_back("-nograbkbd");  // So we don't break Synergy server
   args.push_back(vpick_config->hostname(id));
   vpick_process->start("/usr/lib/ssvnc/vncviewer",args);
+
+  /*
+   * TightVNC
+   *
+  args.push_back("-passwd");
+  args.push_back(vpick_password_file);
+  //  args.push_back("-fullscreen");
+  //  args.push_back("-nograbkbd");  // So we don't break Synergy server
+  args.push_back(vpick_config->hostname(id));
+  vpick_process->start("/usr/bin/vncviewer",args);
+  */
 }
 
 

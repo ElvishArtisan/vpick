@@ -2,7 +2,7 @@
 //
 // Configure a Host
 //
-//   (C) Copyright 2016-2019 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2021 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -61,6 +61,8 @@ class HostDialog : public QDialog
   ColorBox *host_color_box;
   QCheckBox *host_autoconnect_check;
   QLabel *host_autoconnect_label;
+  QCheckBox *host_fullscreen_check;
+  QLabel *host_fullscreen_label;
   QPushButton *host_ok_button;
   QPushButton *host_cancel_button;
   Config *host_config;

@@ -57,10 +57,12 @@ class Config
   void setPassword(unsigned n,const QString &);
   bool autoconnect(unsigned n) const;
   void setAutoconnect(unsigned n,bool state);
+  bool fullscreen(unsigned n) const;
+  void setFullscreen(unsigned n,bool state);
   Qt::GlobalColor color(unsigned n) const;
   void setColor(unsigned n,Qt::GlobalColor color);
   unsigned addHost(Type type,const QString &title,const QString &hostname,
-		   const QString &passwd,bool autoconnect,
+		   const QString &passwd,bool autoconnect,bool fullscreen,
 		   Qt::GlobalColor color);
   void removeHost(unsigned n);
   bool load();
@@ -77,6 +79,7 @@ class Config
   std::vector<QString> conf_hostnames;
   std::vector<QString> conf_passwords;
   std::vector<unsigned> conf_autoconnects;
+  std::vector<unsigned> conf_fullscreens;
   std::vector<Qt::GlobalColor> conf_colors;
 #ifdef DESKTOP
   QString conf_filename;

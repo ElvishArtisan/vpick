@@ -2,7 +2,7 @@
 //
 // Configure a Host
 //
-//   (C) Copyright 2016 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2021 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -72,6 +72,11 @@ HostDialog::HostDialog(Config *config,QWidget *parent)
   host_autoconnect_label->setFont(check_font);
   host_autoconnect_label->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 
+  host_fullscreen_check=new QCheckBox(this);
+  host_fullscreen_label=new QLabel(tr("Fullscreen"),this);
+  host_fullscreen_label->setFont(check_font);
+  host_fullscreen_label->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+
   host_ok_button=new QPushButton(tr("OK"),this);
   host_ok_button->setFont(button_font);
   connect(host_ok_button,SIGNAL(clicked()),this,SLOT(okData()));
@@ -84,7 +89,7 @@ HostDialog::HostDialog(Config *config,QWidget *parent)
 
 QSize HostDialog::sizeHint() const
 {
-  return QSize(300,214);
+  return QSize(300,214+19);
 }
 
 
@@ -98,6 +103,7 @@ int HostDialog::exec(int id)
   host_password_edit->setText(host_config->password(id));
   host_color_box->setCurrentColor(host_config->color(id));
   host_autoconnect_check->setChecked(host_config->autoconnect(id));
+  host_fullscreen_check->setChecked(host_config->fullscreen(id));
 
   return QDialog::exec();
 }
@@ -111,6 +117,7 @@ void HostDialog::okData()
   host_config->setPassword(host_id,host_password_edit->text());
   host_config->setColor(host_id,host_color_box->currentColor());
   host_config->setAutoconnect(host_id,host_autoconnect_check->isChecked());
+  host_config->setFullscreen(host_id,host_fullscreen_check->isChecked());
   host_config->save();
 
   done(0);
@@ -148,6 +155,9 @@ void HostDialog::resizeEvent(QResizeEvent *e)
 
   host_autoconnect_check->setGeometry(125,119,20,20);
   host_autoconnect_label->setGeometry(150,119,size().width()-165,20);
+
+  host_fullscreen_check->setGeometry(125,138,20,20);
+  host_fullscreen_label->setGeometry(150,138,size().width()-165,20);
 
   host_ok_button->setGeometry(size().width()-180,size().height()-60,80,50);
   host_cancel_button->setGeometry(size().width()-90,size().height()-60,80,50);
