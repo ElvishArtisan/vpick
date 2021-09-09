@@ -31,13 +31,6 @@ SUBDIRS = conf\
           systemd\
           xdg
 
-install-exec-local:	
-	mkdir -p $(DESTDIR)/usr/lib/systemd/system
-	cp vpick.service $(DESTDIR)/usr/lib/systemd/system/vpick.service
-
-uninstall-local:	
-	rm -f $(DESTDIR)/usr/lib/systemd/system/vpick.service
-
 rpm:	dist
 	cp vpick-$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES/
 	$(RPMBUILD) -ba --target $(ARCH)-$(VENDOR)-linux vpick.spec
@@ -51,8 +44,7 @@ EXTRA_DIST = vpick-embedded.spec.in\
              autogen.sh\
              get_distro.pl\
              get_target.sh\
-             PACKAGE_VERSION\
-             vpick.service.in
+             PACKAGE_VERSION
 
 CLEANFILES = *~\
              *.deb\

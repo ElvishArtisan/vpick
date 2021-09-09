@@ -2,7 +2,6 @@
 *.o
 *.spec
 *.rpm
-*.service
 *.tar.gz
 .deps
 aclocal.m4

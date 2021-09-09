@@ -34,8 +34,16 @@ AC_LANG(C++)
 #
 # Target Platform
 #
-AC_ARG_WITH(desktop,[  --with-desktop          Build for desktop use],[TARGET_DESKTOP=yes],[])
+AC_ARG_WITH(desktop,[  --with-desktop          Build for desktop use (default)],[TARGET_DESKTOP=yes],[])
 AC_ARG_WITH(embedded,[  --with-embedded         Build embedded use],[TARGET_EMBEDDED=yes],[])
+
+#
+# VNC Viewer
+#
+AC_ARG_WITH(virtviewer,[  --with-virtviewer       Use Virt-Viewer viewer for VNC (default)],[VIEWER_VIRTVIEWER=yes],[])
+AC_ARG_WITH(tigervnc,[  --with-tigervnc         Use TigerVNC viewer for VNC],[VIEWER_TIGERVNC=yes],[])
+AC_ARG_WITH(ssvnc,[  --with-ssvnc            Use SSVNC viewer for VNC],[VIEWER_SSVNC=yes],[])
+
 
 #
 # Determine Target Platform
@@ -54,12 +62,53 @@ fi
 if test $TARGET_DESKTOP ; then
   AC_MSG_NOTICE([Configuring for desktop platform])
   AC_DEFINE(DESKTOP,"yes")
+  AC_SUBST(WITH_PLATFORM_SWITCH,--with-desktop)
   ln -sf vpick-desktop.spec vpick.spec
 fi
 if test $TARGET_EMBEDDED ; then
   AC_MSG_NOTICE([Configuring for embedded platform])
   AC_DEFINE(EMBEDDED,"yes")
+  AC_SUBST(WITH_PLATFORM_SWITCH,--with-embedded)
   ln -sf vpick-embedded.spec vpick.spec
+fi
+
+#
+# Determine VNC Viewer
+#
+let vncviewers=0
+if test $VIEWER_VIRTVIEWER ; then
+  let vncviewers=vncviewers+1
+fi
+if test $VIEWER_SSVNC ; then
+  let vncviewers=vncviewers+1
+fi
+if test $VIEWER_TIGERVNC ; then
+  let vncviewers=vncviewers+1
+fi
+if test $vncviewers -eq 0 ; then
+  AC_MSG_NOTICE([No VNC viewer specified, assuming virt-viewer (--with-virt-viewer)])
+  VIEWER_VIRTVIEWER=yes
+fi
+if test $vncviewers -gt 1 ; then
+  AC_MSG_ERROR([*** Only one VNC viewer may be specified ***])
+fi
+if test $VIEWER_VIRTVIEWER ; then
+  AC_MSG_NOTICE([Configuring for virt-viewer])
+  AC_DEFINE(VIRTVIEWER,1)
+  AC_SUBST(RPM_VNC_VIEWER_DEP)
+  AC_SUBST(WITH_VNC_VIEWER_SWITCH,--with-virtviewer)
+fi
+if test $VIEWER_SSVNC ; then
+  AC_MSG_NOTICE([Configuring for SSVNC])
+  AC_DEFINE(SSVNC,1)
+  AC_SUBST(RPM_VNC_VIEWER_DEP,ssvnc)
+  AC_SUBST(WITH_VNC_VIEWER_SWITCH,--with-ssvnc)
+fi
+if test $VIEWER_TIGERVNC ; then
+  AC_MSG_NOTICE([Configuring for TigerVNC])
+  AC_DEFINE(TIGERVNC,1)
+  AC_SUBST(RPM_VNC_VIEWER_DEP,tigervnc)
+  AC_SUBST(WITH_VNC_VIEWER_SWITCH,--with-tigervnc)
 fi
 
 #
@@ -104,46 +153,46 @@ fi
 AR_GET_DISTRO()
 AC_SUBST(DISTRO,$ar_gcc_distro)
 AC_MSG_NOTICE($ar_distro_id)
-DISTRO_NAME="|                     Distribution Name ... Unknown   |"
+DISTRO_NAME="|                   Distribution Name ... Unknown     |"
 case "$ar_distro_id" in
      debian)
        AC_MSG_NOTICE([Distro is Debian-ish])
-       DISTRO_FAMILY="|                   Distribution Family ... Debian    |"
+       DISTRO_FAMILY="|                 Distribution Family ... Debian      |"
        DISTRO_IS_DEBIANISH=yes
-       DISTRO_NAME="|                     Distribution Name ... Debian    |"
+       DISTRO_NAME="|                   Distribution Name ... Debian      |"
      ;;
 
      raspbian)
        AC_MSG_NOTICE([Distro is Debian-ish])
-       DISTRO_FAMILY="|                  Distribution Family ... Debian    |"
+       DISTRO_FAMILY="|                Distribution Family ... Debian      |"
        DISTRO_IS_DEBIANISH=yes
-       DISTRO_NAME="|                    Distribution Name ... Raspbian  |"
+       DISTRO_NAME="|                  Distribution Name ... Raspbian    |"
      ;;
 
      ubuntu)
        AC_MSG_NOTICE([Distro is Debian-ish])
-       DISTRO_FAMILY="|                   Distribution Family ... Debian    |"
+       DISTRO_FAMILY="|                 Distribution Family ... Debian      |"
        DISTRO_IS_DEBIANISH=yes
-       DISTRO_NAME="|                     Distribution Name ... Ubuntu    |"
+       DISTRO_NAME="|                   Distribution Name ... Ubuntu      |"
      ;;
 
      centos|rhel|fedora)
        AC_MSG_NOTICE([Distro is RedHat-ish])
-       DISTRO_FAMILY="|                   Distribution Family ... RedHat    |"
+       DISTRO_FAMILY="|                 Distribution Family ... RedHat      |"
        if test $ar_distro_id = "centos" ; then
-         DISTRO_NAME="|                     Distribution Name ... CentOS    |"
+         DISTRO_NAME="|                   Distribution Name ... CentOS      |"
        fi
        if test $ar_distro_id = "fedora" ; then
-         DISTRO_NAME="|                     Distribution Name ... Fedora    |"
+         DISTRO_NAME="|                   Distribution Name ... Fedora      |"
        fi
        if test $ar_distro_id = "rhel" ; then
-         DISTRO_NAME="|                     Distribution Name ... RHEL      |"
+         DISTRO_NAME="|                   Distribution Name ... RHEL        |"
        fi
      ;;
 
      *)
        AC_MSG_NOTICE([Distro is unknown])
-       DISTRO_FAMILY="|                   Distribution Family ... Unknown   |"
+       DISTRO_FAMILY="|                 Distribution Family ... Unknown     |"
      ;;
 esac
 
@@ -188,10 +237,20 @@ AC_MSG_NOTICE("$DISTRO_NAME")
 AC_MSG_NOTICE("$DISTRO_FAMILY")
 AC_MSG_NOTICE("|                                                     |")
 if test $TARGET_DESKTOP ; then
-AC_MSG_NOTICE("|                          Build Target ... Desktop   |")
+AC_MSG_NOTICE("| Build Options:                                      |")
+AC_MSG_NOTICE("|                        Build Target ... Desktop     |")
 fi
 if test $TARGET_EMBEDDED ; then
-AC_MSG_NOTICE("|                          Build Target ... Embedded  |")
+AC_MSG_NOTICE("|                        Build Target ... Embedded    |")
+fi
+if test $VIEWER_VIRTVIEWER ; then
+AC_MSG_NOTICE("|                          VNC Viewer ... virt-viewer |")
+fi
+if test $VIEWER_SSVNC ; then
+AC_MSG_NOTICE("|                          VNC Viewer ... ssvnc       |")
+fi
+if test $VIEWER_TIGERVNC ; then
+AC_MSG_NOTICE("|                          VNC Viewer ... TigerVnc    |")
 fi
 AC_MSG_NOTICE("|-----------------------------------------------------|")
 AC_MSG_NOTICE()

@@ -63,7 +63,9 @@ class MainWidget : public QMainWindow
   void EditViewer(int id);
   void StartViewer(int id);
   void StartVnc(int id);
+  bool GenerateVncPassword(int id);
   void StartSpice(int id);
+  bool GenerateConnectionFile(int id);
   void SetButtonIcons(const QPixmap &pix);
   void LoadHosts();
   void AddHost(int id);

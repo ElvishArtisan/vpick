@@ -1,4 +1,4 @@
-## vpick.spec.in
+## vpick-embedded.spec.in
 ##
 ##    Host picker applet for thin clients
 ##
@@ -28,7 +28,7 @@ Packager: Fred Gleason <fredg@paravelsystems.com>
 Group: Productivity/Multimedia/Other
 Source: %{name}-@VERSION@.tar.gz
 BuildRoot: /var/tmp/%{name}-@VERSION@
-Requires: tigervnc-server-minimal ssvnc xinput_calibrator fvwm synergy virt-viewer
+Requires: tigervnc-server-minimal @RPM_VNC_VIEWER_DEP@ xinput_calibrator fvwm synergy virt-viewer
 
 
 %description
@@ -42,7 +42,7 @@ VPick is a small "chooser" application for thin host clients.
 
 
 %build
-%configure
+%configure @WITH_PLATFORM_SWITCH@ @WITH_VNC_VIEWER_SWITCH@
 make -j @CPUS_AVAIL@
 
 
