@@ -156,3 +156,5 @@
 	assignment of button background colors.
 2021-09-09 Fred Gleason <fredg@paravelsystems.com>
 	* Replace 'std::vector' with 'QList'.
+2021-09-09 Fred Gleason <fredg@paravelsystems.com>
+	* Replace 'std::map' with 'QMap'.

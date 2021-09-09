@@ -332,15 +332,15 @@ bool SettingsDialog::Save()
   }
   if((f=fopen(("/etc/sysconfig/network-scripts/ifcfg-"+
 	       VPICK_NETWORK_INTERFACE+"-back").toUtf8(),"w"))!=NULL) {
-    for(std::map<QString,QString>::const_iterator it=set_values.begin();
+    for(QMap<QString,QString>::const_iterator it=set_values.begin();
 	it!=set_values.end();it++) {
-      if(it->first.left(3)!="DNS") {
-	fprintf(f,"%s=%s\n",(const char *)it->first.toUtf8(),
-		(const char *)it->second.toUtf8());
+      if(it.key().left(3)!="DNS") {
+	fprintf(f,"%s=%s\n",it.key().toUtf8().constData(),
+		it.value().toUtf8().constData());
       }
     }
     for(int i=0;i<dns_servers.size();i++) {
-      fprintf(f,"DNS%u=%s\n",i+1,(const char *)dns_servers[i].toUtf8());
+      fprintf(f,"DNS%u=%s\n",i+1,dns_servers[i].toUtf8().constData());
     }
     fclose(f);
     rename(("/etc/sysconfig/network-scripts/ifcfg-"+VPICK_NETWORK_INTERFACE+

@@ -21,12 +21,11 @@
 #ifndef SETTINGSDIALOG_H
 #define SETTINGSDIALOG_H
 
-#include <map>
-
 #include <QComboBox>
 #include <QDialog>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMap>
 #include <QPushButton>
 
 #include "combobox.h"
@@ -76,7 +75,7 @@ class SettingsDialog : public QDialog
   QPushButton *set_calibrate_button;
   QPushButton *set_ok_button;
   QPushButton *set_cancel_button;
-  std::map<QString,QString> set_values;
+  QMap<QString,QString> set_values;
   RpiConfig *set_rpiconfig;
   Config *set_config;
   SynergyDialog *set_synergy_dialog;
