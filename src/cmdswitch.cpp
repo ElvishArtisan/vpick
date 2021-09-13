@@ -27,8 +27,6 @@
 
 CmdSwitch::CmdSwitch(const char *modname,const char *usage)
 {
-  unsigned l=0;
-  bool handled=false;
   QStringList args=qApp->arguments();
 
   for(int i=1;i<args.size();i++) {
@@ -42,20 +40,29 @@ CmdSwitch::CmdSwitch(const char *modname,const char *usage)
       printf("\n%s %s\n",modname,usage);
       exit(0);
     }
-    //    l=strlen(argv[i]);
-    handled=false;
-    for(int j=0;j<args.at(i).length();j++) {
-      if(args.at(i).at(j)==QChar('=')) {
-	switch_keys.push_back(args.at(i).left(j));
-	switch_values.push_back(args.at(i).right(l-(j+1)));
-	switch_processed.push_back(false);
-	j=args.at(i).length();
-	handled=true;
+    QStringList f0=args.at(i).split("=",QString::KeepEmptyParts);
+    if(f0.size()>=2) {
+      if(f0.at(0).left(1)=="-") {
+	switch_keys.push_back(f0.at(0));
+	for(int i=2;i<f0.size();i++) {
+	  f0[1]+="="+f0.at(i);
+	}
+	if(f0.at(1).isEmpty()) {
+	  switch_values.push_back("");
+	}
+	else {
+	  switch_values.push_back(f0.at(1));
+	}
       }
+      else {
+	switch_keys.push_back(f0.join("="));
+	switch_values.push_back("");
+      }
+      switch_processed.push_back(false);
     }
-    if(!handled) {
-      switch_keys.push_back(QString(args.at(i)));
-      switch_values.push_back(QString(""));
+    else {
+      switch_keys.push_back(f0.at(0));
+      switch_values.push_back("");
       switch_processed.push_back(false);
     }
   }

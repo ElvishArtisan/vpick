@@ -26,16 +26,42 @@
 #include "config.h"
 #include "profile.h"
 
-Config::Config()
+Config::Config(const QSize &screen_size)
 {
 #ifdef DESKTOP
   if(getenv("HOME")!=NULL) {
-    conf_filename=QString(getenv("HOME"))+"/vpick.conf";
+    conf_filename=QString(getenv("HOME"))+"/.vpickrc";
   }
   else {
     conf_filename="/etc/vpick.conf";
   }
 #endif  // DESKTOP
+
+  conf_screen_size=screen_size;
+  //  printf("screen: %dx%d\n",screen_size.width(),screen_size.height());
+}
+
+
+QSize Config::screenSize() const
+{
+  return conf_screen_size;
+}
+
+
+QSize Config::canvasSize() const
+{
+  int max_x=0;
+  int max_y=0;
+
+  for(int i=0;i<conf_positions.size();i++) {
+    if(conf_positions.at(i).x()>max_x) {
+      max_x=conf_positions.at(i).x();
+    }
+    if(conf_positions.at(i).y()>max_y) {
+      max_y=conf_positions.at(i).y();
+    }
+  }
+  return QSize(1+max_x,1+max_y);
 }
 
 
@@ -81,94 +107,114 @@ unsigned Config::hostQuantity() const
 }
 
 
-Config::Type Config::type(unsigned n)
+QPoint Config::position(int n) const
+{
+  return conf_positions.at(n);
+}
+
+
+void Config::setPosition(int n,const QPoint &pos)
+{
+  conf_positions[n]=pos;
+}
+
+
+void Config::setPosition(int n,int x,int y)
+{
+  conf_positions[n].setX(x);
+  conf_positions[n].setY(y);
+}
+
+
+Config::Type Config::type(int n)
 {
   return conf_types[n];
 }
 
 
-void Config::setType(unsigned n,Config::Type type)
+void Config::setType(int n,Config::Type type)
 {
   conf_types[n]=type;
 }
 
 
-QString Config::title(unsigned n) const
+QString Config::title(int n) const
 {
   return conf_titles[n];
 }
 
 
-void Config::setTitle(unsigned n,const QString &str)
+void Config::setTitle(int n,const QString &str)
 {
   conf_titles[n]=str;
 }
 
 
-QString Config::hostname(unsigned n) const
+QString Config::hostname(int n) const
 {
   return conf_hostnames[n];
 }
 
 
-void Config::setHostname(unsigned n,const QString &str)
+void Config::setHostname(int n,const QString &str)
 {
   conf_hostnames[n]=str;
 }
 
 
-QString Config::password(unsigned n) const
+QString Config::password(int n) const
 {
   return conf_passwords[n];
 }
 
 
-void Config::setPassword(unsigned n,const QString &str)
+void Config::setPassword(int n,const QString &str)
 {
   conf_passwords[n]=str;
 }
 
 
-bool Config::autoconnect(unsigned n) const
+bool Config::autoconnect(int n) const
 {
   return conf_autoconnects[n];
 }
 
 
-void Config::setAutoconnect(unsigned n,bool state)
+void Config::setAutoconnect(int n,bool state)
 {
   conf_autoconnects[n]=state;
 }
 
 
-bool Config::fullscreen(unsigned n) const
+bool Config::fullscreen(int n) const
 {
   return conf_fullscreens[n];
 }
 
 
-void Config::setFullscreen(unsigned n,bool state)
+void Config::setFullscreen(int n,bool state)
 {
   conf_fullscreens[n]=state;
 }
 
 
-QColor Config::color(unsigned n) const
+QColor Config::color(int n) const
 {
   return conf_colors[n];
 }
 
 
-void Config::setColor(unsigned n,const QColor &color)
+void Config::setColor(int n,const QColor &color)
 {
   conf_colors[n]=color;
 }
 
 
-unsigned Config::addHost(Type type,const QString &title,const QString &hostname,
-			 const QString &passwd, bool autoconnect,
-			 bool fullscreen,Qt::GlobalColor color)
+int Config::addHost(Type type,const QString &title,const QString &hostname,
+		    const QString &passwd,bool autoconnect,bool fullscreen,
+		    const QColor &color)
 {
+  conf_positions.push_back(nextFreePosition());
   conf_types.push_back(type);
   conf_titles.push_back(title);
   conf_hostnames.push_back(hostname);
@@ -181,8 +227,9 @@ unsigned Config::addHost(Type type,const QString &title,const QString &hostname,
 }
 
 
-void Config::removeHost(unsigned n)
+void Config::removeHost(int n)
 {
+  conf_positions.erase(conf_positions.begin()+n);
   conf_types.erase(conf_types.begin()+n);
   conf_titles.erase(conf_titles.begin()+n);
   conf_hostnames.erase(conf_hostnames.begin()+n);
@@ -190,6 +237,29 @@ void Config::removeHost(unsigned n)
   conf_autoconnects.erase(conf_autoconnects.begin()+n);
   conf_fullscreens.erase(conf_fullscreens.begin()+n);
   conf_colors.erase(conf_colors.begin()+n);
+}
+
+
+QPoint Config::nextFreePosition() const
+{
+  QSize screen_size=screenSize();
+
+  for(int i=0;i<screen_size.width();i++) {
+    for(int j=0;j<screen_size.height();j++) {
+      bool found=false;
+      for(int k=0;k<conf_positions.size();k++) {
+	if((conf_positions.at(k).x()==i)&&(conf_positions.at(k).y()==j)) {
+	  found=true;
+	}
+      }
+      if(!found) {
+	printf("nextFreePosition: (%d,%d)\n",i,j);
+	return QPoint(i,j);
+      }
+    }
+  }
+  printf("nextFreePosition: NONE!\n");
+  return QPoint(-1,-1);
 }
 
 
@@ -214,6 +284,8 @@ bool Config::load()
   
   type=(Config::Type)p->intValue(section,"Type",(int)Config::VncPlain,&ok);
   while(ok) {
+    conf_positions.
+      push_back(QPoint(p->intValue(section,"X"),p->intValue(section,"Y")));
     conf_types.push_back(type);
     conf_hostnames.push_back(p->stringValue(section,"Hostname"));
     conf_passwords.push_back(p->stringValue(section,"Password"));
@@ -252,10 +324,12 @@ bool Config::save()
   fprintf(f,"\n");
   for(int i=0;i<conf_types.size();i++) {
     fprintf(f,"[Host%u]\n",i+1);
-    fprintf(f,"Type=%u\n",conf_types[i]);
-    fprintf(f,"Title=%s\n",(const char *)conf_titles[i].toUtf8());
-    fprintf(f,"Hostname=%s\n",(const char *)conf_hostnames[i].toUtf8());
-    fprintf(f,"Password=%s\n",(const char *)conf_passwords[i].toUtf8());
+    fprintf(f,"X=%d\n",conf_positions.at(i).x());
+    fprintf(f,"Y=%d\n",conf_positions.at(i).y());
+    fprintf(f,"Type=%u\n",conf_types.at(i));
+    fprintf(f,"Title=%s\n",conf_titles.at(i).toUtf8().constData());
+    fprintf(f,"Hostname=%s\n",conf_hostnames.at(i).toUtf8().constData());
+    fprintf(f,"Password=%s\n",conf_passwords.at(i).toUtf8().constData());
     fprintf(f,"Autoconnect=%u\n",conf_autoconnects[i]);
     fprintf(f,"Fullscreen=%u\n",conf_fullscreens[i]);
     if(conf_colors[i].isValid()) {

@@ -35,7 +35,7 @@
 #include "hostdialog.h"
 #include "settingsdialog.h"
 
-#define VPICK_USAGE "[options]\n"
+#define VPICK_USAGE "[--logical-screen-size=<x-buttons>x<y-buttons>]\n"
 
 class MainWidget : public QMainWindow
 {

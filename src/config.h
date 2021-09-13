@@ -24,6 +24,8 @@
 #include <QColor>
 #include <QList>
 #include <QHostAddress>
+#include <QPoint>
+#include <QSize>
 #include <QString>
 
 #define VPICK_NETWORK_INTERFACE QString("eth0")
@@ -32,13 +34,18 @@
 #endif  // EMBEDDED
 
 #define VPICK_SYNERGY_CONF_FILE QString("/etc/synergy.conf")
+#define VPICK_BUTTON_WIDTH 200
+#define VPICK_BUTTON_HEIGHT 40
+#define VPICK_BUTTON_MARGIN 10
 
 class Config
 {
  public:
   enum Type {VncPlain=0,Spice=1,LastType=2};
   enum SynergyMode {NoSynergy=0,ClientSynergy=1,ServerSynergy=2};
-  Config();
+  Config(const QSize &screen_size);
+  QSize screenSize() const;
+  QSize canvasSize() const;
   SynergyMode synergyMode() const;
   void setSynergyMode(SynergyMode mode);
   QString synergyScreenname() const;
@@ -46,34 +53,41 @@ class Config
   QHostAddress synergyServerAddress() const;
   void setSynergyServerAddress(const QHostAddress &addr);
   unsigned hostQuantity() const;
-  Type type(unsigned n);
-  void setType(unsigned n,Type type);
-  QString title(unsigned n) const;
-  void setTitle(unsigned n,const QString &str);
-  QString hostname(unsigned n) const;
-  void setHostname(unsigned n,const QString &str);
-  QString password(unsigned n) const;
-  void setPassword(unsigned n,const QString &);
-  bool autoconnect(unsigned n) const;
-  void setAutoconnect(unsigned n,bool state);
-  bool fullscreen(unsigned n) const;
-  void setFullscreen(unsigned n,bool state);
-  QColor color(unsigned n) const;
-  void setColor(unsigned n,const QColor &color);
-  unsigned addHost(Type type,const QString &title,const QString &hostname,
-		   const QString &passwd,bool autoconnect,bool fullscreen,
-		   Qt::GlobalColor color);
-  void removeHost(unsigned n);
+  QPoint position(int n) const;
+  void setPosition(int n,const QPoint &pos);
+  void setPosition(int n,int x,int y);
+  Type type(int n);
+  void setType(int n,Type type);
+  QString title(int n) const;
+  void setTitle(int n,const QString &str);
+  QString hostname(int n) const;
+  void setHostname(int n,const QString &str);
+  QString password(int n) const;
+  void setPassword(int n,const QString &);
+  bool autoconnect(int n) const;
+  void setAutoconnect(int n,bool state);
+  bool fullscreen(int n) const;
+  void setFullscreen(int n,bool state);
+  QColor color(int n) const;
+  void setColor(int n,const QColor &color);
+  int addHost(Type type,const QString &title,const QString &hostname,
+	      const QString &passwd,bool autoconnect,bool fullscreen,
+	      const QColor &color);
+  void removeHost(int n);
+  QPoint nextFreePosition() const;
   bool load();
   bool save();
   static QString hostName();
   static QString typeString(Type type);
 
  private:
+  QSize conf_screen_size;
+  QSize conf_canvas_size;
   SynergyMode conf_synergy_mode;
   QString conf_synergy_screenname;
   QHostAddress conf_synergy_server_address;
   QList<Type> conf_types;
+  QList<QPoint> conf_positions;
   QList<QString> conf_titles;
   QList<QString> conf_hostnames;
   QList<QString> conf_passwords;

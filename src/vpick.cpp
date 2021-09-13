@@ -24,6 +24,7 @@
 #include <unistd.h>
 
 #include <QApplication>
+#include <QDesktopWidget>
 #include <QMessageBox>
 #include <QProcess>
 #include <QResizeEvent>
@@ -44,15 +45,42 @@
 MainWidget::MainWidget(QWidget *parent)
   : QMainWindow(parent)
 {
+  bool ok=false;
+
   vpick_autoconnect_id=-1;
 
-  CmdSwitch *cmd=new CmdSwitch("vpick",VERSION);
+  QDesktopWidget *desktop=QApplication::desktop();
+  QSize logical_size=QSize(desktop->screenGeometry(this).size().width()/(VPICK_BUTTON_MARGIN+VPICK_BUTTON_WIDTH),
+			   desktop->screenGeometry(this).size().height()/(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT));
+
+  CmdSwitch *cmd=new CmdSwitch("vpick",VPICK_USAGE);
   for(int i=0;i<cmd->keys();i++) {
+    if(cmd->key(i)=="--logical-screen-size") {
+      QStringList f0=cmd->value(i).split("x",QString::KeepEmptyParts);
+      if(f0.size()!=2) {
+	fprintf(stderr,"vpick: invalid argument 1\n");
+	exit(1);
+      }
+      printf("0: %s\n",f0.at(0).toUtf8().constData());
+      int x_buttons=f0.at(0).toUInt(&ok);
+      if(!ok) {
+	fprintf(stderr,"vpick: invalid argument 2\n");
+	exit(1);
+      }
+      int y_buttons=f0.at(1).toUInt(&ok);
+      if(!ok) {
+	fprintf(stderr,"vpick: invalid argument 3\n");
+	exit(1);
+      }
+      logical_size=QSize(x_buttons,y_buttons);
+      cmd->setProcessed(i,true);
+    }
     if(!cmd->processed(i)) {
       fprintf(stderr,"unknown option\n");
       exit(256);
     }
   }
+  printf("logical_size: %dx%d\n",logical_size.width(),logical_size.height());
   vpick_process=NULL;
   setWindowTitle(tr("Host Picker"));
   setWindowIcon(QPixmap(vpick_16x16_xpm));
@@ -64,7 +92,7 @@ MainWidget::MainWidget(QWidget *parent)
   connect(vpick_button_mapper,SIGNAL(mapped(int)),
 	  this,SLOT(buttonClickedData(int)));
 
-  vpick_config=new Config();
+  vpick_config=new Config(logical_size);
   vpick_config->load();
   LoadHosts();
 
@@ -126,8 +154,7 @@ MainWidget::MainWidget(QWidget *parent)
   vpick_process_timer->setSingleShot(true);
   connect(vpick_process_timer,SIGNAL(timeout()),this,SLOT(processKillData()));
 
-  setMaximumSize(sizeHint());
-  setMinimumSize(sizeHint());
+  Resize();
 
   //
   // Autoconnect
@@ -148,7 +175,9 @@ MainWidget::MainWidget(QWidget *parent)
 
 QSize MainWidget::sizeHint() const
 {
-  return QSize(220,vpick_height);
+  QSize canvas_size=vpick_config->canvasSize();
+  return QSize(VPICK_BUTTON_MARGIN+(VPICK_BUTTON_MARGIN+VPICK_BUTTON_WIDTH)*canvas_size.width(),
+	       VPICK_BUTTON_MARGIN+(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT)*(1+canvas_size.height()));
 }
 
 
@@ -270,16 +299,38 @@ void MainWidget::closeEvent(QCloseEvent *e)
 
 void MainWidget::resizeEvent(QResizeEvent *e)
 {
+  int w=size().width();
+  int h=size().height();
+
   for(int i=0;i<vpick_buttons.size();i++) {
     vpick_buttons[i]->show();
-    vpick_buttons[i]->setGeometry(10,10+50*i,200,40);
+    vpick_buttons[i]->
+      setGeometry(VPICK_BUTTON_MARGIN+(VPICK_BUTTON_MARGIN+VPICK_BUTTON_WIDTH)*vpick_config->position(i).x(),
+		  VPICK_BUTTON_MARGIN+(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT)*vpick_config->position(i).y(),
+		  VPICK_BUTTON_WIDTH,
+		  VPICK_BUTTON_HEIGHT);
+    //    vpick_buttons[i]->setGeometry(10,10+50*i,200,40);
   }
 
-  vpick_add_button->setGeometry(10,10+50*vpick_buttons.size(),40,40);
-  vpick_config_button->setGeometry(55,10+50*vpick_buttons.size(),40,40);
-  vpick_remove_button->setGeometry(100,10+50*vpick_buttons.size(),40,40);
+  vpick_add_button->setGeometry(VPICK_BUTTON_MARGIN,
+				h-(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT),
+				VPICK_BUTTON_HEIGHT,
+				VPICK_BUTTON_HEIGHT);
+  vpick_config_button->setGeometry(3*VPICK_BUTTON_MARGIN/2+VPICK_BUTTON_HEIGHT,
+				   h-(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT),
+				   VPICK_BUTTON_HEIGHT,
+				   VPICK_BUTTON_HEIGHT);
+  vpick_remove_button->setGeometry(2*VPICK_BUTTON_MARGIN+2*VPICK_BUTTON_HEIGHT,
+				   h-(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT),
+				   VPICK_BUTTON_HEIGHT,
+				   VPICK_BUTTON_HEIGHT);
   vpick_settings_button->
-    setGeometry(size().width()-50,10+50*vpick_buttons.size(),40,40);
+    setGeometry(w-(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT),
+		h-(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT),
+		VPICK_BUTTON_HEIGHT,
+		VPICK_BUTTON_HEIGHT);
+  //  vpick_settings_button->
+  //    setGeometry(size().width()-50,10+50*vpick_buttons.size(),40,40);
 }
 
 
@@ -545,8 +596,8 @@ void MainWidget::SaveHosts()
 
 void MainWidget::Resize()
 {
-  setMaximumHeight(vpick_height);
-  setMinimumHeight(vpick_height);
+  setMaximumSize(sizeHint());
+  setMinimumSize(sizeHint());
 }
 
 
