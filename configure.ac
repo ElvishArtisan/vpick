@@ -219,7 +219,6 @@ AC_CONFIG_FILES([ \
     src/Makefile \
     systemd/Makefile \
     xdg/Makefile \
-    vpick.service\
     vpick-embedded.spec \
     vpick-desktop.spec \
     Makefile ])

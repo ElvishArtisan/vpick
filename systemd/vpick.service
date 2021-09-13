@@ -4,7 +4,8 @@ After=network.target remote-fs.target nss-lookup.target
 
 [Service]
 Type=simple
-ExecStart=/usr/sbin/runuser -u vpick /usr/bin/xinit /usr/bin/fvwm
+#EnvironmentFile=/etc/sysconfig/webhost
+ExecStart=/usr/bin/xinit /usr/bin/fvwm
 PrivateTmp=false
 Restart=always
 

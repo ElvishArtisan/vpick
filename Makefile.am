@@ -57,8 +57,7 @@ CLEANFILES = *~\
 DISTCLEANFILES = *.spec\
                  config.guess\
                  config.sub\
-                 ltmain.sh\
-                 vpick.service
+                 ltmain.sh
 
 MAINTAINERCLEANFILES = *~\
                        *.tar.gz\

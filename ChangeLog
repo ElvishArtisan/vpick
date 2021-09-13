@@ -166,3 +166,5 @@
 2021-09-13 Fred Gleason <fredg@paravelsystems.com>
 	* Added logic to position host buttons in multiple columns.
 	* Added a '--logical-screen-size' switch to vpick(1).
+2021-09-13 Fred Gleason <fredg@paravelsystems.com>
+	* Removed stale Systemd service file 'vpick.service.in'.
