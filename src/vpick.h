@@ -33,6 +33,7 @@
 #include "config.h"
 #include "hostbutton.h"
 #include "hostdialog.h"
+#include "layoutdialog.h"
 #include "settingsdialog.h"
 
 #define VPICK_USAGE "[--logical-screen-size=<x-buttons>x<y-buttons>]\n"
@@ -85,6 +86,7 @@ class MainWidget : public QMainWindow
   QString vpick_password_file;
   HostDialog *vpick_host_dialog;
   SettingsDialog *vpick_settings_dialog;
+  LayoutDialog *vpick_layout_dialog;
   Config *vpick_config;
   QPixmap *vpick_lightbulb_map;
   QPixmap *vpick_noexit_map;

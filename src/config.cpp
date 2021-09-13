@@ -101,7 +101,7 @@ void Config::setSynergyServerAddress(const QHostAddress &addr)
 }
 
 
-unsigned Config::hostQuantity() const
+int Config::hostQuantity() const
 {
   return conf_types.size();
 }

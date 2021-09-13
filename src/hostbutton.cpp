@@ -20,11 +20,21 @@
 
 #include <stdio.h>
 
+#include <QDrag>
+#include <QMimeData>
+
+#include "config.h"
 #include "hostbutton.h"
 
-HostButton::HostButton(const QString &text,const QColor &color,QWidget *parent)
+#include "../icons/vpick-16x16.xpm"
+
+HostButton::HostButton(int id,const QString &text,const QColor &color,QWidget *parent)
   : QPushButton(text,parent)
 {
+  d_id=id;
+  d_allow_drags=false;
+  d_move_count=-1;
+
   if(color.isValid()) {
     setStyleSheet("color: "+TextColor(color).name()+
 		  ";background-color: "+color.name());
@@ -42,6 +52,43 @@ void HostButton::setText(const QString &text,const QColor &color)
   else {
     setStyleSheet("");
   }
+}
+
+
+void HostButton::setAllowDrags(bool state)
+{
+  d_allow_drags=state;
+}
+
+
+void HostButton::mousePressEvent(QMouseEvent *e)
+{
+  d_move_count=10;
+  QPushButton::mousePressEvent(e);
+}
+
+
+void HostButton::mouseMoveEvent(QMouseEvent *e)
+{
+  if(d_allow_drags) {
+    d_move_count--;
+    if(d_move_count==0) {
+      QPushButton::mouseReleaseEvent(e);
+      QDrag *drag=new QDrag(this);
+      QMimeData *mdata=new QMimeData();
+      mdata->setData(VPICK_MIMETYPE,QString::asprintf("%d",d_id).toUtf8());
+      drag->setMimeData(mdata);
+      drag->setPixmap(QPixmap(vpick_16x16_xpm));
+      drag->exec();
+    }
+  }
+}
+
+
+void HostButton::mouseReleaseEvent(QMouseEvent *e)
+{
+  d_move_count=-1;
+  QPushButton::mouseReleaseEvent(e);
 }
 
 

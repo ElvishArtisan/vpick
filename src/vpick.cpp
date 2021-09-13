@@ -101,6 +101,7 @@ MainWidget::MainWidget(QWidget *parent)
   //
   vpick_host_dialog=new HostDialog(vpick_config,this);
   vpick_settings_dialog=new SettingsDialog(vpick_config,this);
+  vpick_layout_dialog=new LayoutDialog(vpick_config,this);
 
   //
   // Icons
@@ -144,7 +145,7 @@ MainWidget::MainWidget(QWidget *parent)
   connect(vpick_settings_button,SIGNAL(clicked()),
 	  this,SLOT(settingsClickedData()));
 #ifdef DESKTOP
-  vpick_settings_button->hide();
+  //  vpick_settings_button->hide();
 #endif  // DESKTOP
 
   //
@@ -159,7 +160,7 @@ MainWidget::MainWidget(QWidget *parent)
   //
   // Autoconnect
   //
-  for(unsigned i=0;i<vpick_config->hostQuantity();i++) {
+  for(int i=0;i<vpick_config->hostQuantity();i++) {
     if(vpick_config->autoconnect(i)) {
       vpick_autoconnect_id=i;
       vpick_autoconnect_timer=new QTimer(this);
@@ -248,6 +249,7 @@ void MainWidget::removeToggledData(bool state)
 
 void MainWidget::settingsClickedData()
 {
+#ifdef EMBEDDED
   if(vpick_settings_dialog->exec()==0) {
     QStringList args;
     args.push_back("restart");
@@ -259,6 +261,11 @@ void MainWidget::settingsClickedData()
     setWindowTitle(tr("VNC Picker")+" ["+
 		  InterfaceIPv4Address(VPICK_NETWORK_INTERFACE).toString()+"]");
   }
+#endif  // EMBEDDED
+
+#ifdef DESKTOP
+  vpick_layout_dialog->exec();
+#endif  // DESKTOP
 }
 
 
@@ -545,7 +552,7 @@ bool MainWidget::GenerateConnectionFile(int id)
 
 void MainWidget::LoadHosts()
 {
-  for(unsigned i=0;i<vpick_config->hostQuantity();i++) {
+  for(int i=0;i<vpick_config->hostQuantity();i++) {
     AddHost(i);
   }
   vpick_height=10+50*(vpick_buttons.size()+1);
@@ -558,7 +565,7 @@ void MainWidget::AddHost(int id)
   font.setPixelSize(16);
 
   vpick_buttons.
-    push_back(new HostButton(vpick_config->title(id),vpick_config->color(id),this));
+    push_back(new HostButton(vpick_buttons.size(),vpick_config->title(id),vpick_config->color(id),this));
   vpick_buttons.back()->setFont(font);
   vpick_button_mapper->setMapping(vpick_buttons.back(),vpick_buttons.size()-1);
   connect(vpick_buttons.back(),SIGNAL(clicked()),

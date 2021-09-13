@@ -37,7 +37,7 @@
 #define VPICK_BUTTON_WIDTH 200
 #define VPICK_BUTTON_HEIGHT 40
 #define VPICK_BUTTON_MARGIN 10
-
+#define VPICK_MIMETYPE "application/vpick-button"
 class Config
 {
  public:
@@ -52,7 +52,7 @@ class Config
   void setSynergyScreenname(const QString &str);
   QHostAddress synergyServerAddress() const;
   void setSynergyServerAddress(const QHostAddress &addr);
-  unsigned hostQuantity() const;
+  int hostQuantity() const;
   QPoint position(int n) const;
   void setPosition(int n,const QPoint &pos);
   void setPosition(int n,int x,int y);

@@ -1,8 +1,8 @@
-// hostbutton.h
+// layoutdialog.h
 //
-// Button widget for host entries
+// Manage button layout
 //
-//   (C) Copyright 2015-2017 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2021 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -18,30 +18,36 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
-#ifndef HOSTBUTTON_H
-#define HOSTBUTTON_H
+#ifndef LAYOUTDIALOG_H
+#define LAYOUTDIALOG_H
 
-#include <QPushButton>
+#include <QDialog>
+#include <QList>
 
-class HostButton : public QPushButton
+#include "config.h"
+#include "hostbutton.h"
+
+class LayoutDialog : public QDialog
 {
  Q_OBJECT;
  public:
- HostButton(int id,const QString &text,const QColor &color,QWidget *parent=0);
- void setText(const QString &text,const QColor &color);
- void setAllowDrags(bool state);
+  LayoutDialog(Config *config,QWidget *parent=0);
+  QSize sizeHint() const;
+
+ public slots:
+  int exec();
 
  protected:
-  void mousePressEvent(QMouseEvent *e);
-  void mouseMoveEvent(QMouseEvent *e);
-  void mouseReleaseEvent(QMouseEvent *e);
+  void closeEvent(QCloseEvent *e);
+  void resizeEvent(QResizeEvent *e);
+  void paintEvent(QPaintEvent *e);
+  void dragEnterEvent(QDragEnterEvent *e);
+  void dropEvent(QDropEvent *e);
 
  private:
-  int d_id;
-  QColor TextColor(const QColor &color);
-  int d_move_count;
-  bool d_allow_drags;
+  QList<HostButton *> d_buttons;
+  Config *d_config;
 };
 
 
-#endif  // HOSTBUTTON_H
+#endif  // LAYOUTDIALOG_H
