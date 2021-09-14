@@ -38,7 +38,6 @@ Config::Config(const QSize &screen_size)
 #endif  // DESKTOP
 
   conf_screen_size=screen_size;
-  //  printf("screen: %dx%d\n",screen_size.width(),screen_size.height());
 }
 
 
@@ -266,12 +265,11 @@ QPoint Config::nextFreePosition() const
 	}
       }
       if(!found) {
-	printf("nextFreePosition: (%d,%d)\n",i,j);
 	return QPoint(i,j);
       }
     }
   }
-  printf("nextFreePosition: NONE!\n");
+
   return QPoint(-1,-1);
 }
 

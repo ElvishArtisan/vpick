@@ -61,26 +61,31 @@ MainWidget::MainWidget(QWidget *parent)
     if(cmd->key(i)=="--logical-screen-size") {
       QStringList f0=cmd->value(i).split("x",QString::KeepEmptyParts);
       if(f0.size()!=2) {
-	fprintf(stderr,"vpick: invalid argument 1\n");
+	fprintf(stderr,"vpick: invalid argument\n");
 	exit(1);
       }
-      int x_buttons=f0.at(0).toUInt(&ok);
-      if(!ok) {
-	fprintf(stderr,"vpick: invalid argument 2\n");
+      int x_buttons=f0.at(0).toInt(&ok);
+      if((!ok)||(x_buttons<0)) {
+	fprintf(stderr,"vpick: invalid argument\n");
 	exit(1);
       }
-      int y_buttons=f0.at(1).toUInt(&ok);
-      if(!ok) {
-	fprintf(stderr,"vpick: invalid argument 3\n");
+      int y_buttons=f0.at(1).toInt(&ok);
+      if((!ok)||(y_buttons<0)) {
+	fprintf(stderr,"vpick: invalid argument\n");
 	exit(1);
       }
-      logical_screen_size=QSize(x_buttons,y_buttons);
+      logical_screen_size=QSize(x_buttons,y_buttons+1);
       cmd->setProcessed(i,true);
     }
     if(!cmd->processed(i)) {
       fprintf(stderr,"unknown option\n");
       exit(256);
     }
+  }
+  if((logical_screen_size.width()<2)||(logical_screen_size.height()<3)) {
+    QMessageBox::critical(this,"VPick - "+tr("Error"),
+			  tr("Screen size is too small!"));
+    exit(1);
   }
   vpick_process=NULL;
   setWindowTitle(tr("Host Picker"));

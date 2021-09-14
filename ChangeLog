@@ -177,3 +177,6 @@
 2021-09-14 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug that allowed buttons to be dropped on the navigation
 	row in the layout dialog.
+2021-09-14 Fred Gleason <fredg@paravelsystems.com>
+	* Added limit checks to the argument of the '--logical-screen-size'
+	switch.
