@@ -50,8 +50,11 @@ MainWidget::MainWidget(QWidget *parent)
   vpick_autoconnect_id=-1;
 
   QDesktopWidget *desktop=QApplication::desktop();
-  QSize logical_size=QSize(desktop->screenGeometry(this).size().width()/(VPICK_BUTTON_MARGIN+VPICK_BUTTON_WIDTH),
-			   desktop->screenGeometry(this).size().height()/(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT));
+  QSize logical_screen_size=
+    QSize(desktop->screenGeometry(this).size().width()/
+	  (VPICK_BUTTON_MARGIN+VPICK_BUTTON_WIDTH),
+	  desktop->screenGeometry(this).size().height()/
+	  (VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT)-1);
 
   CmdSwitch *cmd=new CmdSwitch("vpick",VPICK_USAGE);
   for(int i=0;i<cmd->keys();i++) {
@@ -61,7 +64,6 @@ MainWidget::MainWidget(QWidget *parent)
 	fprintf(stderr,"vpick: invalid argument 1\n");
 	exit(1);
       }
-      printf("0: %s\n",f0.at(0).toUtf8().constData());
       int x_buttons=f0.at(0).toUInt(&ok);
       if(!ok) {
 	fprintf(stderr,"vpick: invalid argument 2\n");
@@ -72,7 +74,7 @@ MainWidget::MainWidget(QWidget *parent)
 	fprintf(stderr,"vpick: invalid argument 3\n");
 	exit(1);
       }
-      logical_size=QSize(x_buttons,y_buttons);
+      logical_screen_size=QSize(x_buttons,y_buttons);
       cmd->setProcessed(i,true);
     }
     if(!cmd->processed(i)) {
@@ -80,7 +82,6 @@ MainWidget::MainWidget(QWidget *parent)
       exit(256);
     }
   }
-  printf("logical_size: %dx%d\n",logical_size.width(),logical_size.height());
   vpick_process=NULL;
   setWindowTitle(tr("Host Picker"));
   setWindowIcon(QPixmap(vpick_16x16_xpm));
@@ -92,7 +93,7 @@ MainWidget::MainWidget(QWidget *parent)
   connect(vpick_button_mapper,SIGNAL(mapped(int)),
 	  this,SLOT(buttonClickedData(int)));
 
-  vpick_config=new Config(logical_size);
+  vpick_config=new Config(logical_screen_size);
   vpick_config->load();
   LoadHosts();
 
@@ -264,7 +265,10 @@ void MainWidget::settingsClickedData()
 #endif  // EMBEDDED
 
 #ifdef DESKTOP
-  vpick_layout_dialog->exec();
+  if(vpick_layout_dialog->exec()) {
+    vpick_config->save();
+    Resize();
+  }
 #endif  // DESKTOP
 }
 

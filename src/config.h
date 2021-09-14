@@ -74,6 +74,7 @@ class Config
 	      const QString &passwd,bool autoconnect,bool fullscreen,
 	      const QColor &color);
   void removeHost(int n);
+  bool positionIsFree(const QPoint &pt) const;
   QPoint nextFreePosition() const;
   bool load();
   bool save();

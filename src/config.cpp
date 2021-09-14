@@ -240,6 +240,19 @@ void Config::removeHost(int n)
 }
 
 
+bool Config::positionIsFree(const QPoint &pt) const
+{
+
+  for(int i=0;i<conf_positions.size();i++) {
+    if(conf_positions.at(i)==pt) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+
 QPoint Config::nextFreePosition() const
 {
   QSize screen_size=screenSize();
@@ -282,6 +295,21 @@ bool Config::load()
     p->stringValue("Synergy","Screenname",Config::hostName());
   conf_synergy_server_address=p->addressValue("Synergy","ServerAddress","");
   
+  //
+  // Clear previous Host entries
+  //
+  conf_positions.clear();
+  conf_types.clear();
+  conf_hostnames.clear();
+  conf_passwords.clear();
+  conf_autoconnects.clear();
+  conf_fullscreens.clear();
+  conf_colors.clear();
+  conf_titles.clear();
+
+  //
+  // Load new Host entries
+  //
   type=(Config::Type)p->intValue(section,"Type",(int)Config::VncPlain,&ok);
   while(ok) {
     conf_positions.

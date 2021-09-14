@@ -170,3 +170,5 @@
 	* Removed stale Systemd service file 'vpick.service.in'.
 2021-09-13 Fred Gleason <fredg@paravelsystems.com>
 	* Stubbed out a layout screen.
+2021-09-14 Fred Gleason <fredg@paravelsystems.com>
+	* Completed the layout dialog.

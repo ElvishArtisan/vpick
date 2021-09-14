@@ -22,6 +22,7 @@
 #define LAYOUTDIALOG_H
 
 #include <QDialog>
+#include <QLabel>
 #include <QList>
 
 #include "config.h"
@@ -37,16 +38,27 @@ class LayoutDialog : public QDialog
  public slots:
   int exec();
 
+ private slots:
+  void saveData();
+  void cancelData();
+
  protected:
   void closeEvent(QCloseEvent *e);
   void resizeEvent(QResizeEvent *e);
   void paintEvent(QPaintEvent *e);
   void dragEnterEvent(QDragEnterEvent *e);
+  void dragMoveEvent(QDragMoveEvent *e);
   void dropEvent(QDropEvent *e);
 
  private:
+  void UpdateLayout();
+  void ClearButtons();
   QList<HostButton *> d_buttons;
+  QLabel *d_instructions_label;
+  QPushButton *d_save_button;
+  QPushButton *d_cancel_button;
   Config *d_config;
+  bool d_changed;
 };
 
 
