@@ -258,7 +258,7 @@ QPoint Config::nextFreePosition() const
   QSize screen_size=screenSize();
 
   for(int i=0;i<screen_size.width();i++) {
-    for(int j=0;j<screen_size.height();j++) {
+    for(int j=0;j<(screen_size.height()-1);j++) {  // Bottom row is navigation!
       bool found=false;
       for(int k=0;k<conf_positions.size();k++) {
 	if((conf_positions.at(k).x()==i)&&(conf_positions.at(k).y()==j)) {

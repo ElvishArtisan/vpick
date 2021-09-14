@@ -158,7 +158,8 @@ void LayoutDialog::dragMoveEvent(QDragMoveEvent *e)
   QPoint pos=QPoint(e->pos().x()/(VPICK_BUTTON_MARGIN+VPICK_BUTTON_WIDTH),
 		    e->pos().y()/(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT));
 
-  if(d_config->positionIsFree(pos)) {
+  if((pos.y()<d_config->screenSize().height()-1)&&
+     d_config->positionIsFree(pos)) {
     e->accept();
   }
   else {
