@@ -172,3 +172,5 @@
 	* Stubbed out a layout screen.
 2021-09-14 Fred Gleason <fredg@paravelsystems.com>
 	* Completed the layout dialog.
+2021-09-14 Fred Gleason <fredg@paravelsystems.com>
+	* Added interlocked enablement to the navigation buttons.

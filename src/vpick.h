@@ -71,7 +71,7 @@ class MainWidget : public QMainWindow
   void LoadHosts();
   void AddHost(int id);
   void RemoveHost(int id);
-  void SaveHosts();
+  void UpdateNavigationButtons();
   void Resize();
   QList<HostButton *> vpick_buttons;
   QList<QString> vpick_commands;

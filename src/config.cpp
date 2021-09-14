@@ -276,6 +276,14 @@ QPoint Config::nextFreePosition() const
 }
 
 
+bool Config::hasFreePosition() const
+{
+  QPoint pos=nextFreePosition();
+
+  return (pos.x()>=0)&&(pos.y()>=0);
+}
+
+
 bool Config::load()
 {
   Config::Type type;

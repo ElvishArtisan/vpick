@@ -95,7 +95,6 @@ MainWidget::MainWidget(QWidget *parent)
 
   vpick_config=new Config(logical_screen_size);
   vpick_config->load();
-  LoadHosts();
 
   //
   // Dialogs
@@ -145,9 +144,6 @@ MainWidget::MainWidget(QWidget *parent)
   vpick_settings_button->setIcon(QPixmap(settings_xpm));
   connect(vpick_settings_button,SIGNAL(clicked()),
 	  this,SLOT(settingsClickedData()));
-#ifdef DESKTOP
-  //  vpick_settings_button->hide();
-#endif  // DESKTOP
 
   //
   // Process Timer
@@ -155,6 +151,8 @@ MainWidget::MainWidget(QWidget *parent)
   vpick_process_timer=new QTimer(this);
   vpick_process_timer->setSingleShot(true);
   connect(vpick_process_timer,SIGNAL(timeout()),this,SLOT(processKillData()));
+
+  LoadHosts();
 
   Resize();
 
@@ -214,6 +212,7 @@ void MainWidget::addClickedData()
   else {
     vpick_config->removeHost(vpick_config->hostQuantity()-1);
   }
+  UpdateNavigationButtons();
 }
 
 
@@ -229,6 +228,7 @@ void MainWidget::setupToggledData(bool state)
   vpick_add_button->setDisabled(state);
   vpick_remove_button->setDisabled(state);
   vpick_settings_button->setDisabled(state);
+  UpdateNavigationButtons();
 }
 
 
@@ -245,6 +245,7 @@ void MainWidget::removeToggledData(bool state)
   vpick_add_button->setDisabled(state);
   vpick_config_button->setDisabled(state);
   vpick_settings_button->setDisabled(state);
+  UpdateNavigationButtons();
 }
 
 
@@ -270,6 +271,7 @@ void MainWidget::settingsClickedData()
     Resize();
   }
 #endif  // DESKTOP
+  UpdateNavigationButtons();
 }
 
 
@@ -560,6 +562,7 @@ void MainWidget::LoadHosts()
     AddHost(i);
   }
   vpick_height=10+50*(vpick_buttons.size()+1);
+  UpdateNavigationButtons();
 }
 
 
@@ -588,6 +591,7 @@ void MainWidget::RemoveHost(int id)
   delete vpick_buttons[id];
   vpick_buttons.erase(vpick_buttons.begin()+id);
   vpick_height-=50;
+  UpdateNavigationButtons();
   Resize();
 }
 
@@ -600,8 +604,19 @@ void MainWidget::SetButtonIcons(const QPixmap &pix)
 }
 
 
-void MainWidget::SaveHosts()
+void MainWidget::UpdateNavigationButtons()
 {
+  vpick_add_button->setEnabled(vpick_config->hasFreePosition());
+  vpick_config_button->setEnabled(vpick_config->hostQuantity()>0);
+  vpick_remove_button->setEnabled(vpick_config->hostQuantity()>0);
+#ifdef EMBEDDED
+  vpick_settings_button->setEnabled(true);
+#endif  // EMBEDDED
+
+#ifdef DESKTOP
+  vpick_settings_button->setEnabled((vpick_config->hostQuantity()>0)&&
+				    vpick_config->hasFreePosition());
+#endif  // DESKTOP
 }
 
 

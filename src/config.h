@@ -76,6 +76,7 @@ class Config
   void removeHost(int n);
   bool positionIsFree(const QPoint &pt) const;
   QPoint nextFreePosition() const;
+  bool hasFreePosition() const;
   bool load();
   bool save();
   static QString hostName();
