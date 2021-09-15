@@ -180,3 +180,7 @@
 2021-09-14 Fred Gleason <fredg@paravelsystems.com>
 	* Added limit checks to the argument of the '--logical-screen-size'
 	switch.
+2021-09-14 Fred Gleason <fredg@paravelsystems.com>
+	* Added logic to generate button position information when loading
+	old configs that lack such data.
+	* Added checks to avoid overflowing the capacity of a screen.

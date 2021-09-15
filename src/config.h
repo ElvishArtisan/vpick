@@ -75,10 +75,11 @@ class Config
 	      const QColor &color);
   void removeHost(int n);
   bool positionIsFree(const QPoint &pt) const;
-  QPoint nextFreePosition() const;
+  QPoint nextFreePosition(bool *ok=NULL) const;
   bool hasFreePosition() const;
   bool load();
   bool save();
+  bool fixup();
   static QString hostName();
   static QString typeString(Type type);
 

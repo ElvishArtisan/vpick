@@ -252,7 +252,7 @@ bool Config::positionIsFree(const QPoint &pt) const
 }
 
 
-QPoint Config::nextFreePosition() const
+QPoint Config::nextFreePosition(bool *ok) const
 {
   QSize screen_size=screenSize();
 
@@ -265,9 +265,15 @@ QPoint Config::nextFreePosition() const
 	}
       }
       if(!found) {
+	if(ok!=NULL) {
+	  *ok=true;
+	}
 	return QPoint(i,j);
       }
     }
+  }
+  if(ok!=NULL) {
+    *ok=false;
   }
 
   return QPoint(-1,-1);
@@ -313,13 +319,28 @@ bool Config::load()
   conf_colors.clear();
   conf_titles.clear();
 
+  bool x_ok=false;
+  bool y_ok=false;
+  bool next_ok=false;
+  QPoint next_free_pos=nextFreePosition(&next_ok);
+  if(!next_ok) {
+    return false;
+  }
+
   //
   // Load new Host entries
   //
   type=(Config::Type)p->intValue(section,"Type",(int)Config::VncPlain,&ok);
   while(ok) {
     conf_positions.
-      push_back(QPoint(p->intValue(section,"X"),p->intValue(section,"Y")));
+      push_back(QPoint(p->intValue(section,"X",next_free_pos.x(),&x_ok),
+		       p->intValue(section,"Y",next_free_pos.y(),&y_ok)));
+    if((!x_ok)||(!y_ok)) {
+      next_free_pos=nextFreePosition(&next_ok);
+      if(!next_ok) {
+	return false;
+      }
+    }
     conf_types.push_back(type);
     conf_hostnames.push_back(p->stringValue(section,"Hostname"));
     conf_passwords.push_back(p->stringValue(section,"Password"));
@@ -381,6 +402,26 @@ bool Config::save()
 #ifdef EMBEDDED
   rename((VPICK_CONF_FILE+"-back").toUtf8(),VPICK_CONF_FILE.toUtf8());
 #endif  // EMBEDDED
+
+  return true;
+}
+
+
+bool Config::fixup()
+{
+  for(int i=0;i<hostQuantity();i++) {
+    QPoint pos=position(i);
+    if((pos.x()>=screenSize().width())||(pos.y()>=(screenSize().height()-1))) {
+      //
+      // Outside of the current screen, try to relocate to a free position
+      //
+      pos=nextFreePosition();
+      if((pos.x()<0)||(pos.y()<0)) {  // No free positions left!
+	return false;
+      }
+      setPosition(i,pos);
+    }
+  }
 
   return true;
 }

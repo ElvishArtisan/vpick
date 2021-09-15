@@ -72,6 +72,7 @@ class MainWidget : public QMainWindow
   void AddHost(int id);
   void RemoveHost(int id);
   void UpdateNavigationButtons();
+  void UpdateLayout();
   void Resize();
   QList<HostButton *> vpick_buttons;
   QList<QString> vpick_commands;

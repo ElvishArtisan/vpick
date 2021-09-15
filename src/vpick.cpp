@@ -99,7 +99,11 @@ MainWidget::MainWidget(QWidget *parent)
 	  this,SLOT(buttonClickedData(int)));
 
   vpick_config=new Config(logical_screen_size);
-  vpick_config->load();
+  if((!vpick_config->load())||(!vpick_config->fixup())) {
+    QMessageBox::critical(this,"VPick - "+tr("Error"),
+			  tr("Too many buttons to fit on this screen!"));
+    exit(1);
+  }
 
   //
   // Dialogs
@@ -212,11 +216,12 @@ void MainWidget::addClickedData()
   if(vpick_host_dialog->exec(vpick_config->hostQuantity()-1)==0) {
     AddHost(vpick_config->hostQuantity()-1);
     vpick_height+=50;
-    Resize();
   }
   else {
     vpick_config->removeHost(vpick_config->hostQuantity()-1);
   }
+  UpdateLayout();
+  Resize();
   UpdateNavigationButtons();
 }
 
@@ -250,6 +255,8 @@ void MainWidget::removeToggledData(bool state)
   vpick_add_button->setDisabled(state);
   vpick_config_button->setDisabled(state);
   vpick_settings_button->setDisabled(state);
+  UpdateLayout();
+  Resize();
   UpdateNavigationButtons();
 }
 
@@ -273,6 +280,7 @@ void MainWidget::settingsClickedData()
 #ifdef DESKTOP
   if(vpick_layout_dialog->exec()) {
     vpick_config->save();
+    UpdateLayout();
     Resize();
   }
 #endif  // DESKTOP
@@ -317,38 +325,7 @@ void MainWidget::closeEvent(QCloseEvent *e)
 
 void MainWidget::resizeEvent(QResizeEvent *e)
 {
-  int w=size().width();
-  int h=size().height();
-
-  for(int i=0;i<vpick_buttons.size();i++) {
-    vpick_buttons[i]->show();
-    vpick_buttons[i]->
-      setGeometry(VPICK_BUTTON_MARGIN+(VPICK_BUTTON_MARGIN+VPICK_BUTTON_WIDTH)*vpick_config->position(i).x(),
-		  VPICK_BUTTON_MARGIN+(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT)*vpick_config->position(i).y(),
-		  VPICK_BUTTON_WIDTH,
-		  VPICK_BUTTON_HEIGHT);
-    //    vpick_buttons[i]->setGeometry(10,10+50*i,200,40);
-  }
-
-  vpick_add_button->setGeometry(VPICK_BUTTON_MARGIN,
-				h-(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT),
-				VPICK_BUTTON_HEIGHT,
-				VPICK_BUTTON_HEIGHT);
-  vpick_config_button->setGeometry(3*VPICK_BUTTON_MARGIN/2+VPICK_BUTTON_HEIGHT,
-				   h-(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT),
-				   VPICK_BUTTON_HEIGHT,
-				   VPICK_BUTTON_HEIGHT);
-  vpick_remove_button->setGeometry(2*VPICK_BUTTON_MARGIN+2*VPICK_BUTTON_HEIGHT,
-				   h-(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT),
-				   VPICK_BUTTON_HEIGHT,
-				   VPICK_BUTTON_HEIGHT);
-  vpick_settings_button->
-    setGeometry(w-(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT),
-		h-(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT),
-		VPICK_BUTTON_HEIGHT,
-		VPICK_BUTTON_HEIGHT);
-  //  vpick_settings_button->
-  //    setGeometry(size().width()-50,10+50*vpick_buttons.size(),40,40);
+  UpdateLayout();
 }
 
 
@@ -382,30 +359,6 @@ void MainWidget::StartViewer(int id)
 void MainWidget::StartVnc(int id)
 {
   QStringList args;
-
-  //
-  // Generate Password File
-  //
-  /*
-  strncpy(tempname,"/tmp/vpickXXXXXX",PATH_MAX);
-  if((fd=mkstemp(tempname))<0) {
-    QMessageBox::critical(this,tr("Host Picker"),
-			  tr("Unable to start viewer!")+"\n"+
-			  "["+strerror(errno)+"].");
-    return;
-  }
-  vpick_password_file=tempname;
-  args.push_back("-f");
-  vpick_process=new QProcess(this);
-  vpick_process->start("/usr/bin/vncpasswd",args);
-  vpick_process->write(vpick_config->password(id).toUtf8());
-  vpick_process->closeWriteChannel();
-  vpick_process->waitForFinished();
-  data=vpick_process->readAllStandardOutput();
-  delete vpick_process;
-  write(fd,data,data.size());
-  ::close(fd);
-  */
 
   //
   // Start Viewer
@@ -622,6 +575,40 @@ void MainWidget::UpdateNavigationButtons()
   vpick_settings_button->setEnabled((vpick_config->hostQuantity()>0)&&
 				    vpick_config->hasFreePosition());
 #endif  // DESKTOP
+}
+
+
+void MainWidget::UpdateLayout()
+{
+  int w=size().width();
+  int h=size().height();
+
+  for(int i=0;i<vpick_buttons.size();i++) {
+    vpick_buttons[i]->show();
+    vpick_buttons[i]->
+      setGeometry(VPICK_BUTTON_MARGIN+(VPICK_BUTTON_MARGIN+VPICK_BUTTON_WIDTH)*vpick_config->position(i).x(),
+		  VPICK_BUTTON_MARGIN+(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT)*vpick_config->position(i).y(),
+		  VPICK_BUTTON_WIDTH,
+		  VPICK_BUTTON_HEIGHT);
+  }
+
+  vpick_add_button->setGeometry(VPICK_BUTTON_MARGIN,
+				h-(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT),
+				VPICK_BUTTON_HEIGHT,
+				VPICK_BUTTON_HEIGHT);
+  vpick_config_button->setGeometry(3*VPICK_BUTTON_MARGIN/2+VPICK_BUTTON_HEIGHT,
+				   h-(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT),
+				   VPICK_BUTTON_HEIGHT,
+				   VPICK_BUTTON_HEIGHT);
+  vpick_remove_button->setGeometry(2*VPICK_BUTTON_MARGIN+2*VPICK_BUTTON_HEIGHT,
+				   h-(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT),
+				   VPICK_BUTTON_HEIGHT,
+				   VPICK_BUTTON_HEIGHT);
+  vpick_settings_button->
+    setGeometry(w-(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT),
+		h-(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT),
+		VPICK_BUTTON_HEIGHT,
+		VPICK_BUTTON_HEIGHT);
 }
 
 
