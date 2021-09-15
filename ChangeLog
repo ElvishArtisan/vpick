@@ -184,3 +184,6 @@
 	* Added logic to generate button position information when loading
 	old configs that lack such data.
 	* Added checks to avoid overflowing the capacity of a screen.
+2021-09-15 Fred Gleason <fredg@paravelsystems.com>
+	* Updated the warning dialog displayed when canceling layout
+	changes to allow the changes to be saved.

@@ -90,27 +90,42 @@ void LayoutDialog::saveData()
 }
 
 
-void LayoutDialog::cancelData()
+bool LayoutDialog::cancelData()
 {
   if(d_changed) {
-    if(QMessageBox::question(this,"VPick - "+tr("Layout Changed"),
-	  tr("This will cause changes made to the layout to be reset!")+"\n\n"+
-			     tr("Proceed?"),QMessageBox::Yes,QMessageBox::No)!=
-       QMessageBox::Yes) {
-      return;
+    switch(QMessageBox::question(this,"VPick - "+tr("Layout Changed"),
+				 tr("Save changes to the button layout?"),
+				 QMessageBox::Yes,QMessageBox::No,
+				 QMessageBox::Cancel)) {
+    case QMessageBox::Yes:
+      saveData();
+      return true;
+
+    case QMessageBox::No:
+      ClearButtons();
+      d_config->load();
+      d_changed=false;
+      done(true);
+      return true;
+
+    default:
+      return false;
     }
   }
-  ClearButtons();
-  d_config->load();
-  d_changed=false;
-
   done(false);
+
+  return false;
 }
 
 
 void LayoutDialog::closeEvent(QCloseEvent *e)
 {
-  cancelData();
+  if(cancelData()) {
+    e->accept();
+  }
+  else {
+    e->ignore();
+  }
 }
 
 

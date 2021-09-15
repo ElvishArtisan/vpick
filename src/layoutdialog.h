@@ -40,7 +40,7 @@ class LayoutDialog : public QDialog
 
  private slots:
   void saveData();
-  void cancelData();
+  bool cancelData();
 
  protected:
   void closeEvent(QCloseEvent *e);
