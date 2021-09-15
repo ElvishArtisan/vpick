@@ -506,7 +506,12 @@ bool MainWidget::GenerateConnectionFile(int id)
     fprintf(f,"port=5900\n");
   }
   fprintf(f,"password=%s\n",vpick_config->password(id).toUtf8().constData());
-  fprintf(f,"fullscreen=1\n");
+  if(vpick_config->fullscreen(id)) {
+    fprintf(f,"fullscreen=1\n");
+  }
+  else {
+    fprintf(f,"fullscreen=0\n");
+  }
   fprintf(f,"delete-this_file=1\n");
   fclose(f);
 

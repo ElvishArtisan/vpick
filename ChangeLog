@@ -187,3 +187,7 @@
 2021-09-15 Fred Gleason <fredg@paravelsystems.com>
 	* Updated the warning dialog displayed when canceling layout
 	changes to allow the changes to be saved.
+2021-09-15 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug that caused the 'Fullscreen' attribute to be
+	assumed to always be 'true' when making connections using
+	virt-viewer(1).
