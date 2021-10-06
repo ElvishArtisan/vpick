@@ -176,7 +176,7 @@ case "$ar_distro_id" in
        DISTRO_NAME="|                   Distribution Name ... Ubuntu      |"
      ;;
 
-     centos|rhel|fedora)
+     centos|rhel|fedora|rocky|redsleeve)
        AC_MSG_NOTICE([Distro is RedHat-ish])
        DISTRO_FAMILY="|                 Distribution Family ... RedHat      |"
        if test $ar_distro_id = "centos" ; then
@@ -187,6 +187,12 @@ case "$ar_distro_id" in
        fi
        if test $ar_distro_id = "rhel" ; then
          DISTRO_NAME="|                   Distribution Name ... RHEL        |"
+       fi
+       if test $ar_distro_id = "rocky" ; then
+         DISTRO_NAME="|                   Distribution Name ... Rocky       |"
+       fi
+       if test $ar_distro_id = "redsleeve" ; then
+         DISTRO_NAME="|                   Distribution Name ... Redsleeve   |"
        fi
      ;;
 

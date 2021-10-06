@@ -191,3 +191,5 @@
 	* Fixed a bug that caused the 'Fullscreen' attribute to be
 	assumed to always be 'true' when making connections using
 	virt-viewer(1).
+2021-10-07 Fred Gleason <fredg@paravelsystems.com>
+	*Updated the build system to detect RedSleeve Linux.
