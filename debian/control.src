@@ -1,0 +1,12 @@
+Source: vpick
+Section: audio
+Priority: optional
+Maintainer: Fred Gleason <fredg@paravelsystems.com>
+Build-Depends: debhelper-compat (= 12)
+Standards-Version: 4.4.1
+
+Package: vpick
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, tigervnc-common, virt-viewer
+Description: Host picker applet for thin clients
+ VPick is a small "chooser" application for thin host clients.

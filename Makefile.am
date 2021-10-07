@@ -26,10 +26,15 @@
 
 #SUBDIRS = $(DOCBOOK_AM_OPT) src
 SUBDIRS = conf\
+          debian\
+          helpers\
           icons\
           src\
           systemd\
           xdg
+
+deb:	dist
+	./build_debs.sh
 
 rpm:	dist
 	cp vpick-$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES/
@@ -47,14 +52,22 @@ EXTRA_DIST = vpick-embedded.spec.in\
              PACKAGE_VERSION
 
 CLEANFILES = *~\
+             *.buildinfo\
+             *.changes\
+             *.ddeb\
              *.deb\
+             *.dsc\
              *.mo\
              *.rpm\
+             *.spec\
              *.tar.gz\
+             *.tar.xz\
              *.tgz\
-             *.zip
+             *.zip\
+             py-compile
 
 DISTCLEANFILES = *.spec\
+                 build_debs.sh\
                  config.guess\
                  config.sub\
                  ltmain.sh
