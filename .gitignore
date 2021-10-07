@@ -1,11 +1,18 @@
 *~
+*.buildinfo
+*.changes
+*.deb
+*.ddeb
+*.dsc
 *.o
 *.spec
+*.tar.xz
 *.rpm
 *.tar.gz
 .deps
 aclocal.m4
 autom4te.cache
+build_debs.sh
 compile
 config.guess
 config.log
@@ -18,4 +25,6 @@ Makefile
 Makefile.in
 missing
 moc_*
+debian/changelog
+debian/control
 src/vpick
