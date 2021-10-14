@@ -197,3 +197,5 @@
 	* Added a 'make deb' target.
 2021-10-14 Fred Gleason <fredg@paravelsystems.com>
 	* Adjusted the alignment of report fields in 'configure.ac'.
+2021-10-14 Fred Gleason <fredg@paravelsystems.com>
+	* Added 'fvwm' and 'synergy' dependencies to the Debian package.
