@@ -506,12 +506,17 @@ bool MainWidget::GenerateConnectionFile(int id)
     fprintf(f,"port=5900\n");
   }
   fprintf(f,"password=%s\n",vpick_config->password(id).toUtf8().constData());
+#ifdef DESKTOP
   if(vpick_config->fullscreen(id)) {
     fprintf(f,"fullscreen=1\n");
   }
   else {
     fprintf(f,"fullscreen=0\n");
   }
+#endif  // DESKTOP
+#ifdef EMBEDDED
+  fprintf(f,"fullscreen=1\n");
+#endif  // EMBEDDED  
   fprintf(f,"delete-this_file=1\n");
   fclose(f);
 

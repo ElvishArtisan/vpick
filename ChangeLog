@@ -199,3 +199,5 @@
 	* Adjusted the alignment of report fields in 'configure.ac'.
 2021-10-14 Fred Gleason <fredg@paravelsystems.com>
 	* Added 'fvwm' and 'synergy' dependencies to the Debian package.
+2021-10-14 Fred Gleason <fredg@paravelsystems.com>
+	* Forced fullscreen mode for all hosts in 'Embedded' mode.

@@ -63,12 +63,14 @@ if test $TARGET_DESKTOP ; then
   AC_MSG_NOTICE([Configuring for desktop platform])
   AC_DEFINE(DESKTOP,"yes")
   AC_SUBST(WITH_PLATFORM_SWITCH,--with-desktop)
+  AC_SUBST(VIRT_VIEWER_SETTINGS_ASKQUIT,"")
   ln -sf vpick-desktop.spec vpick.spec
 fi
 if test $TARGET_EMBEDDED ; then
   AC_MSG_NOTICE([Configuring for embedded platform])
   AC_DEFINE(EMBEDDED,"yes")
   AC_SUBST(WITH_PLATFORM_SWITCH,--with-embedded)
+  AC_SUBST(VIRT_VIEWER_SETTINGS_ASKQUIT,ask-quit=false)
   ln -sf vpick-embedded.spec vpick.spec
 fi
 
@@ -232,6 +234,7 @@ AC_SUBST_FILE(GENERATED_XML_FILE_WARNING)
 GENERATED_XML_FILE_WARNING=$srcdir/helpers/xml_file_warning
 
 AC_CONFIG_FILES([ \
+    conf/virt-viewer-settings \
     conf/Makefile \
     debian/Makefile \
     debian/source/Makefile \

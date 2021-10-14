@@ -25,15 +25,20 @@
 install-exec-am:	
 	mkdir -p $(DESTDIR)/etc
 	cp system.fvwm2rc $(DESTDIR)/etc/
+	mkdir -p $(DESTDIR)/root/.config/virt-viewer
+	cp virt-viewer-settings $(DESTDIR)/root/.config/virt-viewer/settings
 
 uninstall-local:	
 	rm -f $(DESTDIR)/etc/system.fvwm2rc
+	rm -f $(DESTDIR)/root/.config/virt-viewer/settings
 
 EXTRA_DIST = config-sample.txt\
              system.fvwm2rc\
+             virt-viewer-settings.in\
              vpick-sample.conf
 
 CLEANFILES = *~
-DISTCLEANFILES = moc_*
+DISTCLEANFILES = moc_*\
+                 virt-viewer-settings
 MAINTAINERCLEANFILES = *~\
                        Makefile.in
