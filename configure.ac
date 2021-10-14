@@ -157,21 +157,21 @@ DISTRO_NAME="|                   Distribution Name ... Unknown     |"
 case "$ar_distro_id" in
      debian)
        AC_MSG_NOTICE([Distro is Debian-ish])
-       DISTRO_FAMILY="|                 Distribution Family ... Debian      |"
+       DISTRO_FAMILY="|                 Distribution Family ... Debian       |"
        DISTRO_IS_DEBIANISH=yes
-       DISTRO_NAME="|                   Distribution Name ... Debian      |"
+       DISTRO_NAME="|                   Distribution Name ... Debian       |"
      ;;
 
      raspbian)
        AC_MSG_NOTICE([Distro is Debian-ish])
-       DISTRO_FAMILY="|                Distribution Family ... Debian      |"
+       DISTRO_FAMILY="|                Distribution Family ... Debian       |"
        DISTRO_IS_DEBIANISH=yes
-       DISTRO_NAME="|                  Distribution Name ... Raspbian    |"
+       DISTRO_NAME="|                  Distribution Name ... Raspbian     |"
      ;;
 
      ubuntu)
        AC_MSG_NOTICE([Distro is Debian-ish])
-       DISTRO_FAMILY="|                 Distribution Family ... Debian      |"
+       DISTRO_FAMILY="|                 Distribution Family ... Debian       |"
        DISTRO_IS_DEBIANISH=yes
        DISTRO_NAME="|                   Distribution Name ... Ubuntu      |"
      ;;
