@@ -25,6 +25,7 @@ Makefile
 Makefile.in
 missing
 moc_*
+conf/virt-viewer-settings
 debian/changelog
 debian/control
 src/vpick
