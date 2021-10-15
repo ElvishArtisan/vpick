@@ -166,6 +166,15 @@ MainWidget::MainWidget(QWidget *parent)
   Resize();
 
   //
+  // Titlebar Updates
+  //
+  vpick_titlebar_timer=new QTimer(this);
+  connect(vpick_titlebar_timer,SIGNAL(timeout()),this,SLOT(titlebarData()));
+#ifdef EMBEDDED
+  vpick_titlebar_timer->start(10000);
+#endif  // EMBEDDED
+  
+  //
   // Autoconnect
   //
   for(int i=0;i<vpick_config->hostQuantity();i++) {
@@ -299,6 +308,18 @@ void MainWidget::processErrorData(QProcess::ProcessError err)
 void MainWidget::autoconnectData()
 {
   buttonClickedData(vpick_autoconnect_id);
+}
+
+
+void MainWidget::titlebarData()
+{
+  QHostAddress addr=InterfaceIPv4Address(VPICK_NETWORK_INTERFACE);
+  if(addr.isNull()) {
+    setWindowTitle(tr("Host Picker"));
+  }
+  else {
+    setWindowTitle(tr("Host Picker")+" - "+addr.toString());
+  }    
 }
 
 

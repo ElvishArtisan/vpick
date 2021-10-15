@@ -33,6 +33,7 @@ QHostAddress InterfaceIPv4Address(const QString &iface);
 QHostAddress InterfaceIPv4Netmask(const QString &iface);
 uint64_t InterfaceMacAddress(const QString &iface);
 QString MacAddressText(uint64_t mac);
-
+QHostAddress NetmaskText(int mask);
+int NetmaskValue(const QHostAddress &mask);
 
 #endif  // NETWORK_H

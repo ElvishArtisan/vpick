@@ -149,3 +149,30 @@ QString MacAddressText(uint64_t mac)
 			   0xFF&(unsigned)(mac>>8),
 			   0xFF&(unsigned)mac);
 }
+
+
+QHostAddress NetmaskText(int mask)
+{
+  int bits=0;
+
+  for(int i=0;i<mask;i++) {
+    bits=(bits<<1)|1;
+  }
+  for(int i=0;i<(32-mask);i++) {
+    bits=bits<<1;
+  }
+  return QHostAddress(bits);
+}
+
+
+int NetmaskValue(const QHostAddress &mask)
+{
+  int ret=0;
+  int bits=mask.toIPv4Address();
+
+  while(bits!=0) {
+    bits=bits<<1;
+    ret++;
+  }
+  return ret;
+}

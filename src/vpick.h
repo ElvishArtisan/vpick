@@ -55,7 +55,8 @@ class MainWidget : public QMainWindow
   void processFinishedData(int exit_code,QProcess::ExitStatus status);
   void processKillData();
   void autoconnectData();
-
+  void titlebarData();
+  
  protected:
   void closeEvent(QCloseEvent *e);
   void resizeEvent(QResizeEvent *e);
@@ -95,6 +96,7 @@ class MainWidget : public QMainWindow
   QPixmap *vpick_minussign_map;
   QTimer *vpick_autoconnect_timer;
   int vpick_autoconnect_id;
+  QTimer *vpick_titlebar_timer;
 };
 
 

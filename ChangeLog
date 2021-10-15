@@ -201,3 +201,5 @@
 	* Added 'fvwm' and 'synergy' dependencies to the Debian package.
 2021-10-14 Fred Gleason <fredg@paravelsystems.com>
 	* Forced fullscreen mode for all hosts in 'Embedded' mode.
+2021-10-15 Fred Gleason <fredg@paravelsystems.com>
+	* Roughed-in code for managing network interfaces on Raspian.

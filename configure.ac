@@ -162,13 +162,15 @@ case "$ar_distro_id" in
        DISTRO_FAMILY="|                 Distribution Family ... Debian       |"
        DISTRO_IS_DEBIANISH=yes
        DISTRO_NAME="|                   Distribution Name ... Debian       |"
-     ;;
+       AC_DEFINE(DEBIAN)
+       ;;
 
      raspbian)
        AC_MSG_NOTICE([Distro is Debian-ish])
        DISTRO_FAMILY="|                Distribution Family ... Debian       |"
        DISTRO_IS_DEBIANISH=yes
        DISTRO_NAME="|                  Distribution Name ... Raspbian     |"
+       AC_DEFINE(DEBIAN)
      ;;
 
      ubuntu)
@@ -176,6 +178,7 @@ case "$ar_distro_id" in
        DISTRO_FAMILY="|                 Distribution Family ... Debian       |"
        DISTRO_IS_DEBIANISH=yes
        DISTRO_NAME="|                   Distribution Name ... Ubuntu      |"
+       AC_DEFINE(DEBIAN)
      ;;
 
      centos|rhel|fedora|rocky|redsleeve)
@@ -196,6 +199,7 @@ case "$ar_distro_id" in
        if test $ar_distro_id = "redsleeve" ; then
          DISTRO_NAME="|                   Distribution Name ... Redsleeve   |"
        fi
+       AC_DEFINE(REDHAT)
      ;;
 
      *)

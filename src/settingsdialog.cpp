@@ -23,9 +23,10 @@
 
 #include <QList>
 #include <QMessageBox>
-#include <QStringList>
+#include <QProcess>
 
 #include "config.h"
+#include "network.h"
 #include "settingsdialog.h"
 
 SettingsDialog::SettingsDialog(Config *c,QWidget *parent)
@@ -94,8 +95,8 @@ SettingsDialog::SettingsDialog(Config *c,QWidget *parent)
   set_dns_label=new QLabel(tr("DNS Servers")+":",this);
   set_dns_label->setFont(label_font);
   set_dns_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
-  set_dns1_edit=new QLineEdit(this);
-  set_dns2_edit=new QLineEdit(this);
+  set_dns_edits[0]=new QLineEdit(this);
+  set_dns_edits[1]=new QLineEdit(this);
 
   //
   // Resolution
@@ -192,8 +193,8 @@ void SettingsDialog::dhcpChangedData(int n)
   set_ipgateway_label->setEnabled(n);
   set_ipgateway_edit->setEnabled(n);
   set_dns_label->setEnabled(n);
-  set_dns1_edit->setEnabled(n);
-  set_dns2_edit->setEnabled(n);
+  set_dns_edits[0]->setEnabled(n);
+  set_dns_edits[1]->setEnabled(n);
 }
 
 
@@ -238,8 +239,8 @@ void SettingsDialog::resizeEvent(QResizeEvent *e)
   set_ipgateway_edit->setGeometry(125,76,size().width()-135,20);
 
   set_dns_label->setGeometry(10,110,110,20);
-  set_dns1_edit->setGeometry(125,110,size().width()-135,20);
-  set_dns2_edit->setGeometry(125,132,size().width()-135,20);
+  set_dns_edits[0]->setGeometry(125,110,size().width()-135,20);
+  set_dns_edits[1]->setGeometry(125,132,size().width()-135,20);
 
   set_resolution_label->setGeometry(10,166,110,20);
   set_resolution_box->setGeometry(125,166,size().width()-135,20);
@@ -256,6 +257,7 @@ void SettingsDialog::Load()
   FILE *f=NULL;
   char line[1024];
 
+#ifdef REDHAT
   if((f=fopen(("/etc/sysconfig/network-scripts/ifcfg-"+VPICK_NETWORK_INTERFACE).
 	      toUtf8(),"r"))!=NULL) {
     while(fgets(line,1024,f)!=NULL) {
@@ -270,8 +272,67 @@ void SettingsDialog::Load()
   set_ipaddress_edit->setText(set_values["IPADDR"]);
   set_ipnetmask_edit->setText(set_values["NETMASK"]);
   set_ipgateway_edit->setText(set_values["GATEWAY"]);
-  set_dns1_edit->setText(set_values["DNS1"]);
-  set_dns2_edit->setText(set_values["DNS2"]);
+  set_dns_edits[0]->setText(set_values["DNS1"]);
+  set_dns_edits[1]->setText(set_values["DNS2"]);
+#endif  // REDHAT
+
+#ifdef DEBIAN
+  bool ok=false;
+  set_dhcp_box->setCurrentIndex(0);
+  set_ipaddress_edit->setText("");
+  set_ipnetmask_edit->setText("");
+  set_ipgateway_edit->setText("");
+  set_dns_edits[0]->setText("");
+  set_dns_edits[1]->setText("");
+  if((f=fopen("/etc/dhcpcd.conf","r"))!=NULL) {
+    while(fgets(line,1024,f)!=NULL) {
+      QString str=QString(line).trimmed();
+      if(str.left(7)=="static ") {
+	QStringList f0=str.right(str.length()-7).split("=");
+	if(f0.size()==2) {
+	  if(f0.at(0)=="ip_address") {
+	    set_dhcp_box->setCurrentIndex(1);
+	    QStringList f1=f0.at(1).split("/");
+	    if(f1.size()==2) {
+	      QHostAddress addr(f1.at(0));
+	      if(!addr.isNull()) {
+		unsigned mask=f1.at(1).toUInt(&ok);
+		if(ok&&(mask<=32)) {
+		  set_ipaddress_edit->setText(addr.toString());
+		  set_ipnetmask_edit->setText(NetmaskText(mask).toString());
+		}
+	      }
+	    }
+	  }
+	  if(f0.at(0)=="routers") {
+	    QHostAddress addr(f0.at(1));
+	    if(!addr.isNull()) {
+	      set_ipgateway_edit->setText(addr.toString());
+	    }
+	  }
+	  if(f0.at(0)=="domain_name_servers") {
+	    QStringList f1=f0.at(1).split(" ");
+	    for(int i=0;i<2;i++) {
+	      if(i<f1.size()) {
+		QHostAddress addr(f1.at(i));
+		if(!addr.isNull()) {
+		  set_dns_edits[i]->setText(addr.toString());
+		}
+	      }
+	    }
+	  }
+	}
+      }
+      else {
+	if(str.left(9)!="interface") {
+	  set_dhcpcd_values.push_back(str);
+	}
+      }
+    }
+    fclose(f);
+  }
+#endif  // DEBIAN
+
 #ifdef DESKTOP
   set_dhcp_box->setCurrentIndex(0);
 #endif  // DESKTOP
@@ -284,9 +345,11 @@ void SettingsDialog::Load()
 
 bool SettingsDialog::Save()
 {
-  FILE *f=NULL;
   QList<QString> dns_servers;
 
+  //
+  // Sanity Check
+  //
   if(set_dhcp_box->currentIndex()!=0) {  // Manual Setup
     if(!ValidIp(set_ipaddress_edit->text())) {
       QMessageBox::information(this,tr("VPick - Error"),
@@ -303,22 +366,25 @@ bool SettingsDialog::Save()
 			       tr("Invalid IP Gateway value!"));
       return false;
     }
-    if(!set_dns1_edit->text().isEmpty()) {
-      if(!ValidIp(set_dns1_edit->text())) {
+    if(!set_dns_edits[0]->text().isEmpty()) {
+      if(!ValidIp(set_dns_edits[0]->text())) {
 	QMessageBox::information(this,tr("VPick - Error"),
 				 tr("Invalid DNS Server value!"));
 	return false;
       }
-      dns_servers.push_back(set_dns1_edit->text());
+      dns_servers.push_back(set_dns_edits[0]->text());
     }
-    if(!set_dns2_edit->text().isEmpty()) {
-      if(!ValidIp(set_dns2_edit->text())) {
+    if(!set_dns_edits[1]->text().isEmpty()) {
+      if(!ValidIp(set_dns_edits[1]->text())) {
 	QMessageBox::information(this,tr("VPick - Error"),
 				 tr("Invalid DNS Server value!"));
 	return false;
       }
-      dns_servers.push_back(set_dns2_edit->text());
+      dns_servers.push_back(set_dns_edits[1]->text());
     }
+  }
+#ifdef REDHAT
+  if(set_dhcp_box->currentIndex()!=0) {  // Manual Setup
     set_values["BOOTPROTO"]="none";
     set_values["IPADDR"]=set_ipaddress_edit->text();
     set_values["NETMASK"]=set_ipnetmask_edit->text();
@@ -348,7 +414,44 @@ bool SettingsDialog::Save()
 	   ("/etc/sysconfig/network-scripts/ifcfg-"+VPICK_NETWORK_INTERFACE).
 	   toUtf8());
   }
+#endif  // REDHAT
 
+#ifdef DEBIAN
+  FILE *f=NULL;
+  if((f=fopen("/etc/dhcpcd.conf-TEMP","w"))!=NULL) {
+    for(int i=0;i<set_dhcpcd_values.size();i++) {
+      fprintf(f,"%s\n",set_dhcpcd_values.at(i).toUtf8().constData());
+    }
+    if(set_dhcp_box->currentIndex()>0) {
+      fprintf(f,"interface %s\n",VPICK_NETWORK_INTERFACE.toUtf8().constData());
+      fprintf(f,"static ip_address=%s/%d\n",
+	      set_ipaddress_edit->text().toUtf8().constData(),
+	      NetmaskValue(QHostAddress(set_ipnetmask_edit->text())));
+      fprintf(f,"static routers=%s\n",
+	      set_ipgateway_edit->text().toUtf8().constData());
+      fprintf(f,"static domain_name_servers=");
+      for(int i=0;i<2;i++) {
+	QHostAddress addr(set_dns_edits[i]->text());
+	if(!addr.isNull()) {
+	  fprintf(f,"%s ",addr.toString().toUtf8().constData());
+	}
+      }
+      fprintf(f,"\n");
+    }
+    fclose(f);
+    rename("/etc/dhcpcd.conf-TEMP","/etc/dhcpcd.conf");
+
+    QStringList args;
+    args.push_back("restart");
+    args.push_back("dhcpcd.service");
+    QProcess *proc=new QProcess(this);
+    proc->start("/bin/systemctl",args);
+    proc->waitForFinished();
+    delete proc;
+  }  
+#endif  // DEBIAN
+
+  
   set_rpiconfig->
     setFramebufferSize(set_resolution_box->currentItemData().toSize());
   if(set_rpiconfig->wasChanged()) {
