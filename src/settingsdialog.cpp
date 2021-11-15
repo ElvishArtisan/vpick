@@ -346,6 +346,7 @@ void SettingsDialog::Load()
 bool SettingsDialog::Save()
 {
   QList<QString> dns_servers;
+  FILE *f=NULL;
 
   //
   // Sanity Check
@@ -417,7 +418,6 @@ bool SettingsDialog::Save()
 #endif  // REDHAT
 
 #ifdef DEBIAN
-  FILE *f=NULL;
   if((f=fopen("/etc/dhcpcd.conf-TEMP","w"))!=NULL) {
     for(int i=0;i<set_dhcpcd_values.size();i++) {
       fprintf(f,"%s\n",set_dhcpcd_values.at(i).toUtf8().constData());
