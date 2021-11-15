@@ -44,6 +44,13 @@ while '--with-embedded' intended for 'appliance' environments with no
 independently configured window manager.
 
 
+DISTRO-SPECFIC NOTES
+--------------------
+1) RedHat Enterprise Linux 7
+
+Required build packages: git gcc-c++ automake autoconf libtool qt5-qtbase-devel rpm-build createrepo fop docbook5-style-xsl libxslt rpm-sign man-pages 
+
+
 VNC Server Script Mod
 ---------------------
 runuser -l ${USER} -c "x11vnc -display :${DISP} -rfbauth /home/${USER}/.vnc/passwd -nopw -forever -shared -quiet" &
