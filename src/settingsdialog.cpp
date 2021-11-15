@@ -257,6 +257,22 @@ void SettingsDialog::Load()
   FILE *f=NULL;
   char line[1024];
 
+  //
+  // Check for devices that require calibration
+  //
+  bool calb_needed=false;
+  QStringList args;
+  args.push_back("--list");
+  QProcess *proc=new QProcess(this);
+  proc->start("/usr/bin/xinput_calibrator",args);
+  proc->waitForFinished();
+  calb_needed=(proc->exitStatus()==QProcess::NormalExit)&&(proc->exitCode()==0);
+  delete proc;
+  set_calibrate_button->setEnabled(calb_needed);
+
+  //
+  // Load Configuration
+  //
 #ifdef REDHAT
   if((f=fopen(("/etc/sysconfig/network-scripts/ifcfg-"+VPICK_NETWORK_INTERFACE).
 	      toUtf8(),"r"))!=NULL) {

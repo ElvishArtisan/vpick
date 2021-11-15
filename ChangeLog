@@ -207,3 +207,6 @@
 	* Added a 'DISTRO-SPECFIC NOTES' section to 'INSTALL'.
 2021-11-15 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug that broke the build when using '--with-embedded'.
+2021-11-15 Fred Gleason <fredg@paravelsystems.com>
+	* Added code to gray-out the 'Calibrate Touchscreen' button if
+	no devices requiring calibration are found.
