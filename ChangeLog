@@ -212,3 +212,6 @@
 	no devices requiring calibration are found.
 2021-11-15 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'Configure Layout' button to the 'Settings' dialog.
+2021-11-15 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in --embedded mode where the main window would
+	fail to resize reliably after altering the button layout.

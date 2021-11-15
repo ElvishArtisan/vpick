@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <syslog.h>
 #include <unistd.h>
 
 #include <QApplication>
@@ -274,6 +275,9 @@ void MainWidget::settingsClickedData()
 {
 #ifdef EMBEDDED
   if(vpick_settings_dialog->exec()==0) {
+    UpdateLayout();
+    Resize();
+
     QStringList args;
     args.push_back("restart");
     args.push_back("network");
@@ -284,8 +288,10 @@ void MainWidget::settingsClickedData()
     setWindowTitle(tr("VNC Picker")+" ["+
 		  InterfaceIPv4Address(VPICK_NETWORK_INTERFACE).toString()+"]");
   }
-  UpdateLayout();
-  Resize();
+  else {
+    UpdateLayout();
+    Resize();
+  }
 #endif  // EMBEDDED
 
 #ifdef DESKTOP
@@ -649,6 +655,7 @@ void MainWidget::Resize()
 {
   setMaximumSize(sizeHint());
   setMinimumSize(sizeHint());
+  resize(sizeHint());
 }
 
 
