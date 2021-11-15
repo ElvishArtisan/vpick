@@ -284,6 +284,8 @@ void MainWidget::settingsClickedData()
     setWindowTitle(tr("VNC Picker")+" ["+
 		  InterfaceIPv4Address(VPICK_NETWORK_INTERFACE).toString()+"]");
   }
+  UpdateLayout();
+  Resize();
 #endif  // EMBEDDED
 
 #ifdef DESKTOP

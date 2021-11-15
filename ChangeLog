@@ -210,3 +210,5 @@
 2021-11-15 Fred Gleason <fredg@paravelsystems.com>
 	* Added code to gray-out the 'Calibrate Touchscreen' button if
 	no devices requiring calibration are found.
+2021-11-15 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Configure Layout' button to the 'Settings' dialog.

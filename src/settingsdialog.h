@@ -31,6 +31,7 @@
 
 #include "combobox.h"
 #include "config.h"
+#include "layoutdialog.h"
 #include "rpiconfig.h"
 #include "synergydialog.h"
 
@@ -71,6 +72,7 @@ class SettingsDialog : public QDialog
   QLineEdit *set_dns_edits[2];
   QLabel *set_resolution_label;
   ComboBox *set_resolution_box;
+  QPushButton *set_layout_button;
   QPushButton *set_synergy_button;
   QPushButton *set_calibrate_button;
   QPushButton *set_ok_button;
@@ -79,6 +81,7 @@ class SettingsDialog : public QDialog
   QStringList set_dhcpcd_values;
   RpiConfig *set_rpiconfig;
   Config *set_config;
+  LayoutDialog *set_layout_dialog;
   SynergyDialog *set_synergy_dialog;
 };
 

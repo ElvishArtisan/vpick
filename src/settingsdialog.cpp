@@ -52,6 +52,7 @@ SettingsDialog::SettingsDialog(Config *c,QWidget *parent)
   //
   // Dialogs
   //
+  set_layout_dialog=new LayoutDialog(set_config,this);
   set_synergy_dialog=new SynergyDialog(set_config,this);
 
   //
@@ -121,6 +122,14 @@ SettingsDialog::SettingsDialog(Config *c,QWidget *parent)
   set_resolution_box->insertItem(1,tr("1920x1080"),QSize(1920,1080));
 
   //
+  // Layout Button
+  //
+  set_layout_button=
+    new QPushButton(tr("Configure")+"\n"+tr("Layout"),this);
+  set_layout_button->setFont(small_button_font);
+  connect(set_layout_button,SIGNAL(clicked()),set_layout_dialog,SLOT(exec()));
+
+  //
   // Synergy Button
   //
   set_synergy_button=
@@ -167,7 +176,7 @@ SettingsDialog::SettingsDialog(Config *c,QWidget *parent)
 
 QSize SettingsDialog::sizeHint() const
 {
-  return QSize(400,265);
+  return QSize(490,265);
 }
 
 
@@ -245,8 +254,10 @@ void SettingsDialog::resizeEvent(QResizeEvent *e)
   set_resolution_label->setGeometry(10,166,110,20);
   set_resolution_box->setGeometry(125,166,size().width()-135,20);
 
-  set_synergy_button->setGeometry(10,size().height()-60,80,50);
-  set_calibrate_button->setGeometry(100,size().height()-60,80,50);
+  set_layout_button->setGeometry(10,size().height()-60,80,50);
+  set_synergy_button->setGeometry(100,size().height()-60,80,50);
+  set_calibrate_button->setGeometry(190,size().height()-60,80,50);
+
   set_ok_button->setGeometry(size().width()-180,size().height()-60,80,50);
   set_cancel_button->setGeometry(size().width()-90,size().height()-60,80,50);
 }
