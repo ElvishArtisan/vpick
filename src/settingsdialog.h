@@ -27,6 +27,7 @@
 #include <QLineEdit>
 #include <QMap>
 #include <QPushButton>
+#include <QStringList>
 
 #include "combobox.h"
 #include "config.h"
@@ -67,8 +68,7 @@ class SettingsDialog : public QDialog
   QLabel *set_ipgateway_label;
   QLineEdit *set_ipgateway_edit;
   QLabel *set_dns_label;
-  QLineEdit *set_dns1_edit;
-  QLineEdit *set_dns2_edit;
+  QLineEdit *set_dns_edits[2];
   QLabel *set_resolution_label;
   ComboBox *set_resolution_box;
   QPushButton *set_synergy_button;
@@ -76,6 +76,7 @@ class SettingsDialog : public QDialog
   QPushButton *set_ok_button;
   QPushButton *set_cancel_button;
   QMap<QString,QString> set_values;
+  QStringList set_dhcpcd_values;
   RpiConfig *set_rpiconfig;
   Config *set_config;
   SynergyDialog *set_synergy_dialog;

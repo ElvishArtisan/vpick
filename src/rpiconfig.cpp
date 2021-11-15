@@ -57,7 +57,7 @@ void RpiConfig::load()
     rpi_lines.clear();
     while(fgets(line,1024,f)!=NULL) {
       qline=QString(line).trimmed();
-      printf("LINE: %s\n",(const char *)qline.toUtf8());
+      //      printf("LINE: %s\n",(const char *)qline.toUtf8());
       if(qline.left(1)=="#") {
 	rpi_lines.push_back(qline);
       }

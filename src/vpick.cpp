@@ -166,6 +166,15 @@ MainWidget::MainWidget(QWidget *parent)
   Resize();
 
   //
+  // Titlebar Updates
+  //
+  vpick_titlebar_timer=new QTimer(this);
+  connect(vpick_titlebar_timer,SIGNAL(timeout()),this,SLOT(titlebarData()));
+#ifdef EMBEDDED
+  vpick_titlebar_timer->start(10000);
+#endif  // EMBEDDED
+  
+  //
   // Autoconnect
   //
   for(int i=0;i<vpick_config->hostQuantity();i++) {
@@ -299,6 +308,18 @@ void MainWidget::processErrorData(QProcess::ProcessError err)
 void MainWidget::autoconnectData()
 {
   buttonClickedData(vpick_autoconnect_id);
+}
+
+
+void MainWidget::titlebarData()
+{
+  QHostAddress addr=InterfaceIPv4Address(VPICK_NETWORK_INTERFACE);
+  if(addr.isNull()) {
+    setWindowTitle(tr("Host Picker"));
+  }
+  else {
+    setWindowTitle(tr("Host Picker")+" - "+addr.toString());
+  }    
 }
 
 
@@ -506,12 +527,17 @@ bool MainWidget::GenerateConnectionFile(int id)
     fprintf(f,"port=5900\n");
   }
   fprintf(f,"password=%s\n",vpick_config->password(id).toUtf8().constData());
+#ifdef DESKTOP
   if(vpick_config->fullscreen(id)) {
     fprintf(f,"fullscreen=1\n");
   }
   else {
     fprintf(f,"fullscreen=0\n");
   }
+#endif  // DESKTOP
+#ifdef EMBEDDED
+  fprintf(f,"fullscreen=1\n");
+#endif  // EMBEDDED  
   fprintf(f,"delete-this_file=1\n");
   fclose(f);
 

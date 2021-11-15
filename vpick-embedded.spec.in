@@ -72,6 +72,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/icons/hicolor/48x48/apps/vpick.png
 %{_datadir}/applications/vpick.desktop
 /etc/system.fvwm2rc
+/root/.config/virt-viewer/settings
 %doc AUTHORS
 %doc ChangeLog
 %doc COPYING 

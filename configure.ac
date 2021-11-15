@@ -63,12 +63,14 @@ if test $TARGET_DESKTOP ; then
   AC_MSG_NOTICE([Configuring for desktop platform])
   AC_DEFINE(DESKTOP,"yes")
   AC_SUBST(WITH_PLATFORM_SWITCH,--with-desktop)
+  AC_SUBST(VIRT_VIEWER_SETTINGS_ASKQUIT,"")
   ln -sf vpick-desktop.spec vpick.spec
 fi
 if test $TARGET_EMBEDDED ; then
   AC_MSG_NOTICE([Configuring for embedded platform])
   AC_DEFINE(EMBEDDED,"yes")
   AC_SUBST(WITH_PLATFORM_SWITCH,--with-embedded)
+  AC_SUBST(VIRT_VIEWER_SETTINGS_ASKQUIT,ask-quit=false)
   ln -sf vpick-embedded.spec vpick.spec
 fi
 
@@ -157,23 +159,26 @@ DISTRO_NAME="|                   Distribution Name ... Unknown     |"
 case "$ar_distro_id" in
      debian)
        AC_MSG_NOTICE([Distro is Debian-ish])
-       DISTRO_FAMILY="|                 Distribution Family ... Debian      |"
+       DISTRO_FAMILY="|                 Distribution Family ... Debian       |"
        DISTRO_IS_DEBIANISH=yes
-       DISTRO_NAME="|                   Distribution Name ... Debian      |"
-     ;;
+       DISTRO_NAME="|                   Distribution Name ... Debian       |"
+       AC_DEFINE(DEBIAN)
+       ;;
 
      raspbian)
        AC_MSG_NOTICE([Distro is Debian-ish])
-       DISTRO_FAMILY="|                Distribution Family ... Debian      |"
+       DISTRO_FAMILY="|                Distribution Family ... Debian       |"
        DISTRO_IS_DEBIANISH=yes
-       DISTRO_NAME="|                  Distribution Name ... Raspbian    |"
+       DISTRO_NAME="|                  Distribution Name ... Raspbian     |"
+       AC_DEFINE(DEBIAN)
      ;;
 
      ubuntu)
        AC_MSG_NOTICE([Distro is Debian-ish])
-       DISTRO_FAMILY="|                 Distribution Family ... Debian      |"
+       DISTRO_FAMILY="|                 Distribution Family ... Debian       |"
        DISTRO_IS_DEBIANISH=yes
        DISTRO_NAME="|                   Distribution Name ... Ubuntu      |"
+       AC_DEFINE(DEBIAN)
      ;;
 
      centos|rhel|fedora|rocky|redsleeve)
@@ -194,6 +199,7 @@ case "$ar_distro_id" in
        if test $ar_distro_id = "redsleeve" ; then
          DISTRO_NAME="|                   Distribution Name ... Redsleeve   |"
        fi
+       AC_DEFINE(REDHAT)
      ;;
 
      *)
@@ -232,6 +238,7 @@ AC_SUBST_FILE(GENERATED_XML_FILE_WARNING)
 GENERATED_XML_FILE_WARNING=$srcdir/helpers/xml_file_warning
 
 AC_CONFIG_FILES([ \
+    conf/virt-viewer-settings \
     conf/Makefile \
     debian/Makefile \
     debian/source/Makefile \

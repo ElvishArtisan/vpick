@@ -76,7 +76,10 @@ HostDialog::HostDialog(Config *config,QWidget *parent)
   host_fullscreen_label=new QLabel(tr("Fullscreen"),this);
   host_fullscreen_label->setFont(check_font);
   host_fullscreen_label->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
-
+#ifdef EMBEDDED
+  host_fullscreen_check->setDisabled(true);
+  host_fullscreen_label->setDisabled(true);
+#endif  // EMBEDDED
   host_ok_button=new QPushButton(tr("OK"),this);
   host_ok_button->setFont(button_font);
   connect(host_ok_button,SIGNAL(clicked()),this,SLOT(okData()));
