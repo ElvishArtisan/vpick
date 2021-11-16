@@ -220,3 +220,6 @@
 2021-11-16 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'xorg-x11-server-utils' dependency to the embedded RPM
 	package.
+2021-11-16 Fred Gleason <fredg@paravelsystems.com>
+	* Added '/usr/lib/systemd/system/vpick.target' to the embedded
+	RPM package.
