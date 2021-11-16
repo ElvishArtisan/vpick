@@ -28,7 +28,7 @@ Packager: Fred Gleason <fredg@paravelsystems.com>
 Group: Productivity/Multimedia/Other
 Source: %{name}-@VERSION@.tar.gz
 BuildRoot: /var/tmp/%{name}-@VERSION@
-Requires: tigervnc-server-minimal @RPM_VNC_VIEWER_DEP@ xinput_calibrator fvwm synergy virt-viewer
+Requires: tigervnc-server-minimal @RPM_VNC_VIEWER_DEP@ xorg-x11-server-utils xinput_calibrator fvwm synergy virt-viewer
 
 
 %description
@@ -82,6 +82,8 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Nov 16 2021 Fred Gleason <fredg@paravelsystems.com>
+-- Added 'xorg-x11-server-utils' dependency.
 * Fri May  5 2017 Fred Gleason <fredg@paravelsystems.com>
 -- Added fvwm dependency.
 * Mon Mar  7 2016 Fred Gleason <fredg@paravelsystems.com>
