@@ -223,3 +223,6 @@
 2021-11-16 Fred Gleason <fredg@paravelsystems.com>
 	* Added '/usr/lib/systemd/system/vpick.target' to the embedded
 	RPM package.
+2021-11-16 Fred Gleason <fredg@paravelsystems.com>
+	* Rewrote the network configuration routines for Redhat-style
+	systems to use nmcli(1).

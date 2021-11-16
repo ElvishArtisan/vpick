@@ -397,6 +397,8 @@ bool SettingsDialog::Save()
 {
   QList<QString> dns_servers;
   FILE *f=NULL;
+  QProcess *proc=NULL;
+  QStringList args;
 
   //
   // Sanity Check
@@ -445,35 +447,122 @@ bool SettingsDialog::Save()
   // Network Settings
   //
 #ifdef REDHAT
-  if(set_dhcp_box->currentIndex()!=0) {  // Manual Setup
-    set_values["BOOTPROTO"]="none";
-    set_values["IPADDR"]=set_ipaddress_edit->text();
-    set_values["NETMASK"]=set_ipnetmask_edit->text();
-    set_values["GATEWAY"]=set_ipgateway_edit->text();
+  if(set_dhcp_box->currentIndex()==0) {  // DHCP
+    //
+    // Enable DHCP
+    //
+    args.clear();
+    args.push_back("con");
+    args.push_back("mod");
+    args.push_back(VPICK_NETWORK_INTERFACE);
+    args.push_back("ipv4.method");
+    args.push_back("auto");
+    proc=new QProcess(this);
+    proc->start("/bin/nmcli",args);
+    proc->waitForFinished();
+    delete proc;
   }
-  else {   // DHCP Setup
-    set_values["BOOTPROTO"]="dhcp";
-    set_values["IPADDR"]="";
-    set_values["NETMASK"]="";
-    set_values["GATEWAY"]="";
-  }
-  if((f=fopen(("/etc/sysconfig/network-scripts/ifcfg-"+
-	       VPICK_NETWORK_INTERFACE+"-back").toUtf8(),"w"))!=NULL) {
-    for(QMap<QString,QString>::const_iterator it=set_values.begin();
-	it!=set_values.end();it++) {
-      if(it.key().left(3)!="DNS") {
-	fprintf(f,"%s=%s\n",it.key().toUtf8().constData(),
-		it.value().toUtf8().constData());
+  else {  // Manual Setup
+    //
+    // Disable DHCP
+    //
+    args.clear();
+    args.push_back("con");
+    args.push_back("mod");
+    args.push_back(VPICK_NETWORK_INTERFACE);
+    args.push_back("ipv4.method");
+    args.push_back("manual");
+    proc=new QProcess(this);
+    proc->start("/bin/nmcli",args);
+    proc->waitForFinished();
+    delete proc;
+
+    //
+    // IP Address / Netmask
+    //
+    QHostAddress netmask(set_ipnetmask_edit->text());
+    unsigned masksize=0;
+    for(unsigned i=0;i<32;i++) {
+      if((netmask.toIPv4Address()&(1<<i))!=0) {
+	masksize++;
       }
     }
-    for(int i=0;i<dns_servers.size();i++) {
-      fprintf(f,"DNS%u=%s\n",i+1,dns_servers[i].toUtf8().constData());
+    args.clear();
+    args.push_back("con");
+    args.push_back("mod");
+    args.push_back(VPICK_NETWORK_INTERFACE);
+    args.push_back("ipv4.addresses");
+    args.push_back(set_ipaddress_edit->text()+
+		   QString::asprintf("/%u",masksize));
+    proc=new QProcess(this);
+    proc->start("/bin/nmcli",args);
+    proc->waitForFinished();
+    delete proc;
+
+    //
+    // Default Gateway
+    //
+    args.clear();
+    args.push_back("con");
+    args.push_back("mod");
+    args.push_back(VPICK_NETWORK_INTERFACE);
+    args.push_back("ipv4.gateway");
+    args.push_back(set_ipgateway_edit->text());
+    proc=new QProcess(this);
+    proc->start("/bin/nmcli",args);
+    proc->waitForFinished();
+    delete proc;
+
+    //
+    // DNS
+    //
+    bool used=false;
+    for(int i=0;i<2;i++) {
+      if(!set_dns_edits[i]->text().isEmpty()) {
+	args.clear();
+	args.push_back("con");
+	args.push_back("mod");
+	args.push_back(VPICK_NETWORK_INTERFACE);
+	if(used) {
+	  args.push_back("+ipv4.dns");
+	}
+	else {
+	  args.push_back("ipv4.dns");
+	}
+	args.push_back(set_dns_edits[i]->text());
+	proc=new QProcess(this);
+	proc->start("/bin/nmcli",args);
+	proc->waitForFinished();
+	delete proc;
+	used=true;
+      }
     }
-    fclose(f);
-    rename(("/etc/sysconfig/network-scripts/ifcfg-"+VPICK_NETWORK_INTERFACE+
-	    "-back").toUtf8(),
-	   ("/etc/sysconfig/network-scripts/ifcfg-"+VPICK_NETWORK_INTERFACE).
-	   toUtf8());
+
+    //
+    // Activate
+    //
+    args.clear();
+    args.push_back("con");
+    args.push_back("up");
+    args.push_back(VPICK_NETWORK_INTERFACE);
+    proc=new QProcess(this);
+    proc->start("/bin/nmcli",args);
+    proc->waitForFinished();
+    delete proc;
+
+    //
+    // Make Persistent
+    //
+    args.clear();
+    args.push_back("con");
+    args.push_back("mod");
+    args.push_back(VPICK_NETWORK_INTERFACE);
+    args.push_back("autoconnect");
+    args.push_back("yes");
+    proc=new QProcess(this);
+    proc->start("/bin/nmcli",args);
+    proc->waitForFinished();
+    delete proc;
   }
 #endif  // REDHAT
 
@@ -501,10 +590,10 @@ bool SettingsDialog::Save()
     fclose(f);
     rename("/etc/dhcpcd.conf-TEMP","/etc/dhcpcd.conf");
 
-    QStringList args;
+    args.clear();
     args.push_back("restart");
     args.push_back("dhcpcd.service");
-    QProcess *proc=new QProcess(this);
+    proc=new QProcess(this);
     proc->start("/bin/systemctl",args);
     proc->waitForFinished();
     delete proc;
