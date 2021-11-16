@@ -72,6 +72,8 @@ class SettingsDialog : public QDialog
   QLineEdit *set_dns_edits[2];
   QLabel *set_resolution_label;
   ComboBox *set_resolution_box;
+  QLabel *set_handedness_label;
+  QComboBox *set_handedness_box;
   QPushButton *set_layout_button;
   QPushButton *set_synergy_button;
   QPushButton *set_calibrate_button;

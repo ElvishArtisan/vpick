@@ -99,12 +99,16 @@ MainWidget::MainWidget(QWidget *parent)
   connect(vpick_button_mapper,SIGNAL(mapped(int)),
 	  this,SLOT(buttonClickedData(int)));
 
+  //
+  // Load Configuration
+  //
   vpick_config=new Config(logical_screen_size);
   if((!vpick_config->load())||(!vpick_config->fixup())) {
     QMessageBox::critical(this,"VPick - "+tr("Error"),
 			  tr("Too many buttons to fit on this screen!"));
     exit(1);
   }
+  UpdatePointerDevices();
 
   //
   // Dialogs
@@ -275,8 +279,10 @@ void MainWidget::settingsClickedData()
 {
 #ifdef EMBEDDED
   if(vpick_settings_dialog->exec()==0) {
+    vpick_config->save();
     UpdateLayout();
     Resize();
+    UpdatePointerDevices();
 
     QStringList args;
     args.push_back("restart");
@@ -656,6 +662,42 @@ void MainWidget::Resize()
   setMaximumSize(sizeHint());
   setMinimumSize(sizeHint());
   resize(sizeHint());
+}
+
+
+void MainWidget::UpdatePointerDevices()
+{
+#ifdef EMBEDDED
+  QStringList args;
+  QProcess *proc=NULL;
+
+  args.push_back("-e");
+  if(vpick_config->pointerHandedness()==Config::LeftHanded) {
+    args.push_back("pointer = 3 2 1");
+  }
+  else {
+    args.push_back("pointer = 1 2 3");
+  }
+  proc=new QProcess(this);
+  proc->start("/usr/bin/xmodmap",args);
+  proc->waitForFinished();
+  if(proc->exitStatus()!=QProcess::NormalExit) {
+    QMessageBox::warning(this,tr("System Error"),
+			 tr("Mouse configuration failed!")+"\n"+
+			 "["+tr("xmodmap(1) crashed")+"]");
+    delete proc;
+    return;
+  }
+  if(proc->exitCode()!=0) {
+    QMessageBox::warning(this,tr("System Error"),
+			 tr("Mouse configuration failed!")+"\n"+
+			 tr("xmodmap(1) returned error")+":\n"+
+			 QString(proc->readAllStandardError()));
+    delete proc;
+    return;
+  }
+  delete proc;
+#endif  // EMBEDDED
 }
 
 

@@ -215,3 +215,5 @@
 2021-11-15 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in --embedded mode where the main window would
 	fail to resize reliably after altering the button layout.
+2021-11-16 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Mouse Mode' dropdown to the 'Settings' dialog.

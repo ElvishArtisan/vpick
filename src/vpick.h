@@ -75,6 +75,7 @@ class MainWidget : public QMainWindow
   void UpdateNavigationButtons();
   void UpdateLayout();
   void Resize();
+  void UpdatePointerDevices();
   QList<HostButton *> vpick_buttons;
   QList<QString> vpick_commands;
   QSignalMapper *vpick_button_mapper;

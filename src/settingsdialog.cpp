@@ -122,6 +122,16 @@ SettingsDialog::SettingsDialog(Config *c,QWidget *parent)
   set_resolution_box->insertItem(1,tr("1920x1080"),QSize(1920,1080));
 
   //
+  // Handedness
+  //
+  set_handedness_label=new QLabel(tr("Mouse Mode")+":",this);
+  set_handedness_label->setFont(label_font);
+  set_handedness_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  set_handedness_box=new QComboBox(this);
+  set_handedness_box->insertItem(0,tr("Right Handed"),Config::RightHanded);
+  set_handedness_box->insertItem(1,tr("Left Handed"),Config::LeftHanded);
+
+  //
   // Layout Button
   //
   set_layout_button=
@@ -176,7 +186,7 @@ SettingsDialog::SettingsDialog(Config *c,QWidget *parent)
 
 QSize SettingsDialog::sizeHint() const
 {
-  return QSize(490,265);
+  return QSize(490,299);
 }
 
 
@@ -254,6 +264,9 @@ void SettingsDialog::resizeEvent(QResizeEvent *e)
   set_resolution_label->setGeometry(10,166,110,20);
   set_resolution_box->setGeometry(125,166,size().width()-135,20);
 
+  set_handedness_label->setGeometry(10,200,110,20);
+  set_handedness_box->setGeometry(125,200,size().width()-135,20);
+
   set_layout_button->setGeometry(10,size().height()-60,80,50);
   set_synergy_button->setGeometry(100,size().height()-60,80,50);
   set_calibrate_button->setGeometry(190,size().height()-60,80,50);
@@ -282,7 +295,17 @@ void SettingsDialog::Load()
   set_calibrate_button->setEnabled(calb_needed);
 
   //
-  // Load Configuration
+  // Pointer Configuration
+  //
+  for(int i=0;i<set_handedness_box->count();i++) {
+    if((Config::Handedness)set_handedness_box->itemData(i).toUInt()==
+       set_config->pointerHandedness()) {
+      set_handedness_box->setCurrentIndex(i);
+    }
+  }
+
+  //
+  // Network Configuration
   //
 #ifdef REDHAT
   if((f=fopen(("/etc/sysconfig/network-scripts/ifcfg-"+VPICK_NETWORK_INTERFACE).
@@ -411,6 +434,16 @@ bool SettingsDialog::Save()
       dns_servers.push_back(set_dns_edits[1]->text());
     }
   }
+
+  //
+  // Pointer Settings
+  //
+  set_config->setPointerHandedness((Config::Handedness)
+				   set_handedness_box->currentData().toUInt());
+
+  //
+  // Network Settings
+  //
 #ifdef REDHAT
   if(set_dhcp_box->currentIndex()!=0) {  // Manual Setup
     set_values["BOOTPROTO"]="none";
@@ -478,7 +511,9 @@ bool SettingsDialog::Save()
   }  
 #endif  // DEBIAN
 
-  
+  //
+  // Firmware Settings
+  //
   set_rpiconfig->
     setFramebufferSize(set_resolution_box->currentItemData().toSize());
   if(set_rpiconfig->wasChanged()) {

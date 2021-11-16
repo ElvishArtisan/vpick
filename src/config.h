@@ -43,9 +43,12 @@ class Config
  public:
   enum Type {VncPlain=0,Spice=1,LastType=2};
   enum SynergyMode {NoSynergy=0,ClientSynergy=1,ServerSynergy=2};
+  enum Handedness {RightHanded=1,LeftHanded=2};
   Config(const QSize &screen_size);
   QSize screenSize() const;
   QSize canvasSize() const;
+  Handedness pointerHandedness() const;
+  void setPointerHandedness(Handedness hand);
   SynergyMode synergyMode() const;
   void setSynergyMode(SynergyMode mode);
   QString synergyScreenname() const;
@@ -86,6 +89,7 @@ class Config
  private:
   QSize conf_screen_size;
   QSize conf_canvas_size;
+  Handedness conf_handedness;
   SynergyMode conf_synergy_mode;
   QString conf_synergy_screenname;
   QHostAddress conf_synergy_server_address;

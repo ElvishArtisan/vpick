@@ -38,6 +38,7 @@ Config::Config(const QSize &screen_size)
 #endif  // DESKTOP
 
   conf_screen_size=screen_size;
+  conf_handedness=Config::RightHanded;
 }
 
 
@@ -61,6 +62,18 @@ QSize Config::canvasSize() const
     }
   }
   return QSize(1+max_x,1+max_y);
+}
+
+
+Config::Handedness Config::pointerHandedness() const
+{
+  return conf_handedness;
+}
+
+
+void Config::setPointerHandedness(Handedness hand)
+{
+  conf_handedness=hand;
 }
 
 
@@ -302,6 +315,19 @@ bool Config::load()
   p->setSource(VPICK_CONF_FILE);
 #endif  // EMBEDDED
 
+  //
+  // Pointer Parameters
+  //
+  if(p->stringValue("Pointers","Handedness","right").toLower()=="left") {
+    conf_handedness=Config::LeftHanded;
+  }
+  else {
+    conf_handedness=Config::RightHanded;
+  }
+
+  //
+  // Synergy Parameters
+  //
   conf_synergy_mode=(Config::SynergyMode)p->intValue("Synergy","Mode");
   conf_synergy_screenname=
     p->stringValue("Synergy","Screenname",Config::hostName());
@@ -371,6 +397,15 @@ bool Config::save()
 #endif  // EMBEDDED
     return false;
   }
+  fprintf(f,"[Pointers]\n");
+  if(conf_handedness==Config::LeftHanded) {
+    fprintf(f,"Handedness=left\n");
+  }
+  else {
+    fprintf(f,"Handedness=right\n");
+  }
+  fprintf(f,"\n");
+
   fprintf(f,"[Synergy]\n");
   fprintf(f,"Mode=%d\n",conf_synergy_mode);
   fprintf(f,"Screenname=%s\n",(const char *)conf_synergy_screenname.toUtf8());
