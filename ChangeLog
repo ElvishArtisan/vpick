@@ -229,3 +229,6 @@
 2021-11-17 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed multiple regressions with switching between static and
 	DHCP addressing configurations.
+2021-11-17 Fred Gleason <fredg@paravelsystems.com>
+	* Added configuration snippet for the X server to defeat automatic
+	screen blanking.

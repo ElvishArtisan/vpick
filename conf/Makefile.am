@@ -2,7 +2,7 @@
 ##
 ## conf/Automake.am for vpick
 ##
-##   (C) Copyright 2015 Fred Gleason <fredg@paravelsystems.com>
+##   (C) Copyright 2015-2021 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -35,7 +35,8 @@ uninstall-local:
 EXTRA_DIST = config-sample.txt\
              system.fvwm2rc\
              virt-viewer-settings.in\
-             vpick-sample.conf
+             vpick-sample.conf\
+             xorg-vpick.conf
 
 CLEANFILES = *~
 DISTCLEANFILES = moc_*\
