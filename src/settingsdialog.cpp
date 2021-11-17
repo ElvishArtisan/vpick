@@ -22,6 +22,7 @@
 #include <stdlib.h>
 
 #include <QList>
+#include <QMap>
 #include <QMessageBox>
 #include <QProcess>
 
@@ -280,6 +281,7 @@ void SettingsDialog::Load()
 {
   FILE *f=NULL;
   char line[1024];
+  QMap<QString,QString> confvalues;
 
   //
   // Check for devices that require calibration
@@ -314,16 +316,16 @@ void SettingsDialog::Load()
       QStringList f0=QString(line).trimmed().split("=",QString::KeepEmptyParts);
       QString hdr=f0[0];
       f0.erase(f0.begin());
-      set_values[hdr]=f0.join("=");
+      confvalues[hdr]=f0.join("=");
     }
     fclose(f);
   }
-  set_dhcp_box->setCurrentIndex(set_values["BOOTPROTO"].toLower()!="dhcp");
-  set_ipaddress_edit->setText(set_values["IPADDR"]);
-  set_ipnetmask_edit->setText(set_values["NETMASK"]);
-  set_ipgateway_edit->setText(set_values["GATEWAY"]);
-  set_dns_edits[0]->setText(set_values["DNS1"]);
-  set_dns_edits[1]->setText(set_values["DNS2"]);
+  set_dhcp_box->setCurrentIndex(confvalues["BOOTPROTO"].toLower()!="dhcp");
+  set_ipaddress_edit->setText(confvalues["IPADDR"]);
+  set_ipnetmask_edit->setText(confvalues["NETMASK"]);
+  set_ipgateway_edit->setText(confvalues["GATEWAY"]);
+  set_dns_edits[0]->setText(confvalues["DNS1"]);
+  set_dns_edits[1]->setText(confvalues["DNS2"]);
 #endif  // REDHAT
 
 #ifdef DEBIAN
@@ -414,7 +416,8 @@ bool SettingsDialog::Save()
 			       tr("Invalid IP Netmask value!"));
       return false;
     }
-    if(!ValidIp(set_ipgateway_edit->text())) {
+    if((!ValidIp(set_ipgateway_edit->text()))&&
+       (!set_ipgateway_edit->text().trimmed().isEmpty())) {
       QMessageBox::information(this,tr("VPick - Error"),
 			       tr("Invalid IP Gateway value!"));
       return false;
@@ -447,123 +450,98 @@ bool SettingsDialog::Save()
   // Network Settings
   //
 #ifdef REDHAT
+  QString connfile=QString("/etc/sysconfig/network-scripts/ifcfg-")+
+    VPICK_NETWORK_INTERFACE;
+  QString tempfile=connfile+"-TEMP";
   if(set_dhcp_box->currentIndex()==0) {  // DHCP
-    //
-    // Enable DHCP
-    //
-    args.clear();
-    args.push_back("con");
-    args.push_back("mod");
-    args.push_back(VPICK_NETWORK_INTERFACE);
-    args.push_back("ipv4.method");
-    args.push_back("auto");
-    proc=new QProcess(this);
-    proc->start("/bin/nmcli",args);
-    proc->waitForFinished();
-    delete proc;
+    if((f=fopen(tempfile.toUtf8(),"w"))!=NULL) {
+      fprintf(f,"AUTOCONNECT_PRIORITY=-999\n");
+      fprintf(f,"BOOTPROTO=dhcp\n");
+      fprintf(f,"BROWSER_ONLY=no\n");
+      fprintf(f,"DEFROUTE=yes\n");
+      fprintf(f,"DEVICE=%s\n",VPICK_NETWORK_INTERFACE.toUtf8().constData());
+      fprintf(f,"NAME=%s\n",VPICK_NETWORK_INTERFACE.toUtf8().constData());
+      fprintf(f,"ONBOOT=yes\n");
+      fprintf(f,"TYPE=Ethernet\n");
+      fprintf(f,"IPV4_FAILURE_FATAL=no\n");
+      fprintf(f,"IPV6INIT=yes\n");
+      fprintf(f,"IPV6_ADDR_GEN_MODE=eui64\n");
+      fprintf(f,"IPV6_AUTOCONF=yes\n");
+      fprintf(f,"IPV6_DEFROUTE=yes\n");
+      fprintf(f,"IPV6_FAILURE_FATAL=no\n");
+      fprintf(f,"PROXY_METHOD=no\n");
+      fclose(f);
+      rename(tempfile.toUtf8(),connfile.toUtf8());
+    }
   }
-  else {  // Manual Setup
-    //
-    // Disable DHCP
-    //
-    args.clear();
-    args.push_back("con");
-    args.push_back("mod");
-    args.push_back(VPICK_NETWORK_INTERFACE);
-    args.push_back("ipv4.method");
-    args.push_back("manual");
-    proc=new QProcess(this);
-    proc->start("/bin/nmcli",args);
-    proc->waitForFinished();
-    delete proc;
-
-    //
-    // IP Address / Netmask
-    //
-    QHostAddress netmask(set_ipnetmask_edit->text());
-    unsigned masksize=0;
-    for(unsigned i=0;i<32;i++) {
-      if((netmask.toIPv4Address()&(1<<i))!=0) {
-	masksize++;
+  else {  // Static
+    if((f=fopen(tempfile.toUtf8(),"w"))!=NULL) {
+      fprintf(f,"AUTOCONNECT_PRIORITY=-999\n");
+      fprintf(f,"BOOTPROTO=none\n");
+      fprintf(f,"BROWSER_ONLY=no\n");
+      if(set_ipgateway_edit->text().trimmed().isEmpty()) {
+	fprintf(f,"DEFROUTE=no\n");
+      }
+      else {
+	fprintf(f,"DEFROUTE=yes\n");
+	fprintf(f,"GATEWAY=%s\n",
+		set_ipgateway_edit->text().trimmed().toUtf8().constData());
+      }
+      fprintf(f,"DEVICE=%s\n",VPICK_NETWORK_INTERFACE.toUtf8().constData());
+      fprintf(f,"IPADDR=%s\n",
+	      set_ipaddress_edit->text().trimmed().toUtf8().constData());
+      fprintf(f,"IPV4_FAILURE_FATAL=no\n");
+      fprintf(f,"IPV6INIT=yes\n");
+      fprintf(f,"IPV6_ADDR_GEN_MODE=eui64\n");
+      fprintf(f,"IPV6_AUTOCONF=yes\n");
+      fprintf(f,"IPV6_DEFROUTE=yes\n");
+      fprintf(f,"IPV6_FAILURE_FATAL=no\n");
+      fprintf(f,"NAME=%s\n",VPICK_NETWORK_INTERFACE.toUtf8().constData());
+      fprintf(f,"NETMASK=%s\n",
+	      set_ipnetmask_edit->text().toUtf8().constData());
+      fprintf(f,"ONBOOT=yes\n");
+      fprintf(f,"PROXY_METHOD=none\n");
+      fprintf(f,"TYPE=Ethernet\n");
+      for(int i=0;i<2;i++) {
+	if(!set_dns_edits[i]->text().trimmed().isEmpty()) {
+	  fprintf(f,"DNS%d=%s\n",i+1,
+		  set_dns_edits[i]->text().trimmed().toUtf8().constData());
+	}
+      }
+      fclose(f);
+      if(rename(tempfile.toUtf8(),connfile.toUtf8())!=0) {
+	QMessageBox::critical(this,tr("System Error"),
+			      tr("Unable to finalize network configuration!")+"\n"+
+			      strerror(errno));
       }
     }
-    args.clear();
-    args.push_back("con");
-    args.push_back("mod");
-    args.push_back(VPICK_NETWORK_INTERFACE);
-    args.push_back("ipv4.addresses");
-    args.push_back(set_ipaddress_edit->text()+
-		   QString::asprintf("/%u",masksize));
-    proc=new QProcess(this);
-    proc->start("/bin/nmcli",args);
-    proc->waitForFinished();
-    delete proc;
-
-    //
-    // Default Gateway
-    //
-    args.clear();
-    args.push_back("con");
-    args.push_back("mod");
-    args.push_back(VPICK_NETWORK_INTERFACE);
-    args.push_back("ipv4.gateway");
-    args.push_back(set_ipgateway_edit->text());
-    proc=new QProcess(this);
-    proc->start("/bin/nmcli",args);
-    proc->waitForFinished();
-    delete proc;
-
-    //
-    // DNS
-    //
-    bool used=false;
-    for(int i=0;i<2;i++) {
-      if(!set_dns_edits[i]->text().isEmpty()) {
-	args.clear();
-	args.push_back("con");
-	args.push_back("mod");
-	args.push_back(VPICK_NETWORK_INTERFACE);
-	if(used) {
-	  args.push_back("+ipv4.dns");
-	}
-	else {
-	  args.push_back("ipv4.dns");
-	}
-	args.push_back(set_dns_edits[i]->text());
-	proc=new QProcess(this);
-	proc->start("/bin/nmcli",args);
-	proc->waitForFinished();
-	delete proc;
-	used=true;
-      }
-    }
-
-    //
-    // Activate
-    //
-    args.clear();
-    args.push_back("con");
-    args.push_back("up");
-    args.push_back(VPICK_NETWORK_INTERFACE);
-    proc=new QProcess(this);
-    proc->start("/bin/nmcli",args);
-    proc->waitForFinished();
-    delete proc;
-
-    //
-    // Make Persistent
-    //
-    args.clear();
-    args.push_back("con");
-    args.push_back("mod");
-    args.push_back(VPICK_NETWORK_INTERFACE);
-    args.push_back("autoconnect");
-    args.push_back("yes");
-    proc=new QProcess(this);
-    proc->start("/bin/nmcli",args);
-    proc->waitForFinished();
-    delete proc;
+    else {
+      QMessageBox::critical(this,tr("System Error"),
+			    tr("Unable to save network configuration!")+"\n"+
+			    strerror(errno));
+    }		    
   }
+  
+  //
+  // Activate Changes
+  //
+  args.clear();
+  args.push_back("con");
+  args.push_back("load");
+  args.push_back(connfile);
+  proc=new QProcess(this);
+  proc->start("/bin/nmcli",args);
+  proc->waitForFinished();
+  delete proc;
+
+  args.clear();
+  args.push_back("con");
+  args.push_back("up");
+  args.push_back(VPICK_NETWORK_INTERFACE);
+  proc=new QProcess(this);
+  proc->start("/bin/nmcli",args);
+  proc->waitForFinished();
+  delete proc;
 #endif  // REDHAT
 
 #ifdef DEBIAN

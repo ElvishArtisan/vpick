@@ -226,3 +226,6 @@
 2021-11-16 Fred Gleason <fredg@paravelsystems.com>
 	* Rewrote the network configuration routines for Redhat-style
 	systems to use nmcli(1).
+2021-11-17 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed multiple regressions with switching between static and
+	DHCP addressing configurations.

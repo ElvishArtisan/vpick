@@ -25,7 +25,6 @@
 #include <QDialog>
 #include <QLabel>
 #include <QLineEdit>
-#include <QMap>
 #include <QPushButton>
 #include <QStringList>
 
@@ -79,7 +78,6 @@ class SettingsDialog : public QDialog
   QPushButton *set_calibrate_button;
   QPushButton *set_ok_button;
   QPushButton *set_cancel_button;
-  QMap<QString,QString> set_values;
   QStringList set_dhcpcd_values;
   RpiConfig *set_rpiconfig;
   Config *set_config;
