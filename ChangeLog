@@ -232,3 +232,5 @@
 2021-11-17 Fred Gleason <fredg@paravelsystems.com>
 	* Added configuration snippet for the X server to defeat automatic
 	screen blanking.
+2021-11-17 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.11.0.
