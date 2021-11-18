@@ -41,6 +41,7 @@ class HostDialog : public QDialog
   int exec(int id);
 
  private slots:
+  void showPasswordToggledData(bool state);
   void okData();
   void cancelData();
 
@@ -57,6 +58,8 @@ class HostDialog : public QDialog
   QLineEdit *host_hostname_edit;
   QLabel *host_password_label;
   QLineEdit *host_password_edit;
+  QCheckBox *host_showpassword_check;
+  QLabel *host_showpassword_label;
   QLabel *host_color_label;
   ColorBox *host_color_box;
   QCheckBox *host_autoconnect_check;

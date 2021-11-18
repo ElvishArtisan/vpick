@@ -61,6 +61,13 @@ HostDialog::HostDialog(Config *config,QWidget *parent)
   host_password_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
   host_password_edit=new QLineEdit(this);
   host_password_edit->setEchoMode(QLineEdit::Password);
+  host_showpassword_check=new QCheckBox(this);
+  connect(host_showpassword_check,SIGNAL(toggled(bool)),
+	  this,SLOT(showPasswordToggledData(bool)));
+  host_showpassword_label=new QLabel(tr("Show Password"),this);
+  host_showpassword_label->setFont(check_font);
+  host_showpassword_label->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+
 
   host_color_label=new QLabel(tr("Color")+":",this);
   host_color_label->setFont(label_font);
@@ -69,12 +76,12 @@ HostDialog::HostDialog(Config *config,QWidget *parent)
 
   host_autoconnect_check=new QCheckBox(this);
   host_autoconnect_label=new QLabel(tr("Autoconnect"),this);
-  host_autoconnect_label->setFont(check_font);
+  host_autoconnect_label->setFont(label_font);
   host_autoconnect_label->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 
   host_fullscreen_check=new QCheckBox(this);
   host_fullscreen_label=new QLabel(tr("Fullscreen"),this);
-  host_fullscreen_label->setFont(check_font);
+  host_fullscreen_label->setFont(label_font);
   host_fullscreen_label->setAlignment(Qt::AlignLeft|Qt::AlignVCenter);
 #ifdef EMBEDDED
   host_fullscreen_check->setDisabled(true);
@@ -92,7 +99,7 @@ HostDialog::HostDialog(Config *config,QWidget *parent)
 
 QSize HostDialog::sizeHint() const
 {
-  return QSize(300,214+19);
+  return QSize(400,233+26);
 }
 
 
@@ -104,11 +111,23 @@ int HostDialog::exec(int id)
   host_type_box->setCurrentIndex((int)host_config->type(id));
   host_hostname_edit->setText(host_config->hostname(id));
   host_password_edit->setText(host_config->password(id));
+  host_password_edit->setEchoMode(QLineEdit::Password);
   host_color_box->setCurrentColor(host_config->color(id));
   host_autoconnect_check->setChecked(host_config->autoconnect(id));
   host_fullscreen_check->setChecked(host_config->fullscreen(id));
 
   return QDialog::exec();
+}
+
+
+void HostDialog::showPasswordToggledData(bool state)
+{
+  if(state) {
+    host_password_edit->setEchoMode(QLineEdit::Normal);
+  }
+  else {
+    host_password_edit->setEchoMode(QLineEdit::Password);
+  }
 }
 
 
@@ -152,15 +171,17 @@ void HostDialog::resizeEvent(QResizeEvent *e)
 
   host_password_label->setGeometry(10,76,110,20);
   host_password_edit->setGeometry(125,76,size().width()-140,20);
+  host_showpassword_check->setGeometry(130,96,20,20);
+  host_showpassword_label->setGeometry(155,97,size().width()-165,20);
 
-  host_color_label->setGeometry(10,98,110,20);
-  host_color_box->setGeometry(125,98,size().width()-140,20);
+  host_color_label->setGeometry(10,124,110,20);
+  host_color_box->setGeometry(125,124,size().width()-140,20);
 
-  host_autoconnect_check->setGeometry(125,119,20,20);
-  host_autoconnect_label->setGeometry(150,119,size().width()-165,20);
+  host_autoconnect_check->setGeometry(130-30,146,20,20);
+  host_autoconnect_label->setGeometry(155-30,147,size().width()-165,20);
 
-  host_fullscreen_check->setGeometry(125,138,20,20);
-  host_fullscreen_label->setGeometry(150,138,size().width()-165,20);
+  host_fullscreen_check->setGeometry(130-30,168,20,20);
+  host_fullscreen_label->setGeometry(155-30,169,size().width()-165,20);
 
   host_ok_button->setGeometry(size().width()-180,size().height()-60,80,50);
   host_cancel_button->setGeometry(size().width()-90,size().height()-60,80,50);

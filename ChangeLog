@@ -234,3 +234,5 @@
 	screen blanking.
 2021-11-17 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.11.0.
+2021-11-18 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Show Password' check box to the 'Host Settings' dialog.
