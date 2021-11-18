@@ -1,4 +1,4 @@
-## vpick.spec.in
+## vpick-desktop.spec.in
 ##
 ##    Host picker applet for thin clients
 ##
@@ -19,14 +19,14 @@
 ##    Boston, MA  02111-1307  USA
 ##
 
-Summary: Host picker applet for thin clients
-Name: vpick
+Summary: Remote host picker applet
+Name: vpick-desktop
 Version: @VERSION@
 Release: @RPM_RELEASE@%{?dist}
 License: GPLv2
 Packager: Fred Gleason <fredg@paravelsystems.com>
 Group: Productivity/Multimedia/Other
-Source: %{name}-@VERSION@.tar.gz
+Source: vpick-@VERSION@.tar.gz
 BuildRoot: /var/tmp/%{name}-@VERSION@
 Requires: tigervnc-server-minimal @RPM_VNC_VIEWER_DEP@ virt-viewer
 
@@ -38,41 +38,36 @@ VPick is a small "chooser" application for thin host clients.
 %prep
 
 
-%setup
+%setup -q -n vpick-%{version}
 
 
 %build
-%configure @WITH_PLATFORM_SWITCH@ @WITH_VNC_VIEWER_SWITCH@
+%configure --with-desktop --with-virtviewer
 make -j @CPUS_AVAIL@
 
 
 %install
 rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
+rm -rf $RPM_BUILD_ROOT/root
+rm -rf $RPM_BUILD_ROOT/etc
+rm -rf $RPM_BUILD_ROOT/usr/lib/systemd
 
 
 %post
-/usr/sbin/groupadd -r -g 152 %{name} &>/dev/null || :
-/usr/sbin/useradd -o -u 152 -g %{name} -G audio -s /bin/false -r -c "Host chooser" %{name} &>/dev/null || :
-/usr/bin/systemctl daemon-reload
-/usr/bin/systemctl set-default vpick.target
+
 
 %clean
-rm -rf $RPM_BUILD_ROOT
 
 
 %files
 %defattr(-,root,root)
 %{_bindir}/vpick
-/usr/lib/systemd/system/vpick.service
-/usr/lib/systemd/system/vpick.target
 %{_datadir}/icons/hicolor/16x16/apps/vpick.png
 %{_datadir}/icons/hicolor/22x22/apps/vpick.png
 %{_datadir}/icons/hicolor/32x32/apps/vpick.png
 %{_datadir}/icons/hicolor/48x48/apps/vpick.png
 %{_datadir}/applications/vpick.desktop
-/etc/system.fvwm2rc
-/root/.config/virt-viewer/settings
 %doc AUTHORS
 %doc ChangeLog
 %doc COPYING 

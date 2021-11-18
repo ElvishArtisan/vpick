@@ -38,7 +38,8 @@ deb:	dist
 
 rpm:	dist
 	cp vpick-$(VERSION).tar.gz $(HOME)/rpmbuild/SOURCES/
-	$(RPMBUILD) -ba --target $(ARCH)-$(VENDOR)-linux vpick.spec
+	$(RPMBUILD) -ba --target $(ARCH)-$(VENDOR)-linux vpick-desktop.spec
+	$(RPMBUILD) -ba --target $(ARCH)-$(VENDOR)-linux vpick-embedded.spec
 	mv $(HOME)/rpmbuild/RPMS/$(ARCH)/vpick-*.rpm $(top_srcdir)/
 	mv $(HOME)/rpmbuild/SRPMS/vpick-*.src.rpm $(top_srcdir)/
 	rm $(HOME)/rpmbuild/SOURCES/vpick-$(VERSION).tar.gz
