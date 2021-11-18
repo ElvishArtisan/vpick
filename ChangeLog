@@ -239,3 +239,5 @@
 2021-11-18 Fred Gleason <fredg@paravelsystems.com>
 	* Modified the 'make rpm' target to build both Desktop and
 	Embedded packages.
+2021-11-18 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.11.1.
