@@ -249,3 +249,5 @@
 2021-11-22 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug that could cause VNC hosts to be started in
 	non-fullscreen when using ssvnc(1).
+2021-11-22 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.11.3.
