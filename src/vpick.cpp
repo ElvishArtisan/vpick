@@ -425,9 +425,14 @@ void MainWidget::StartVnc(int id)
   }
   args.push_back("-passwd");
   args.push_back(vpick_password_file);
+#ifdef EMBEDDED
+  args.push_back("-fullscreen");
+#endif  // EMBEDDED
+#ifdef DESKTOP
   if(vpick_config->fullscreen(id)) {
     args.push_back("-fullscreen");
   }
+#endif  // DESKTOP
   args.push_back("-nograbkbd");  // So we don't break Synergy server
   args.push_back(vpick_config->hostname(id));
   vpick_process->start("/usr/lib/ssvnc/vncviewer",args);
