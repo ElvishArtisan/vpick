@@ -241,3 +241,6 @@
 	Embedded packages.
 2021-11-18 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.11.1.
+2021-11-22 Fred Gleason <fredg@paravelsystems.com>
+	* Modified the embedded RPM package to use ssvnc(1) instead of
+	virt-viewer(1).
