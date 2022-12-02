@@ -71,10 +71,17 @@ void RpiConfig::load()
 	  if(f0[0]=="framebuffer_height") {
 	    rpi_framebuffer_size.setHeight(f0[1].toInt(&used));
 	  }
+	  if(f0[0]=="disable_overscan") {
+	    rpi_lines.push_back("disable_overscan=1");
+	    used=true;
+	  }
 	}
 	if(!used) {
 	  rpi_lines.push_back(qline);
 	}
+      }
+      if(!rpi_lines.contains("disable_overscan=1")) {
+	rpi_lines.push_back("disable_overscan=1");
       }
     }
     fclose(f);

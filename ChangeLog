@@ -251,3 +251,6 @@
 	non-fullscreen when using ssvnc(1).
 2021-11-22 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 0.11.3.
+2022-12-02 Fred Gleason <fredg@paravelsystems.com>
+	* Added code to force a 'disable_overscan=1' statement into
+	'/boot/config.txt' in embedded mode.
