@@ -260,3 +260,5 @@
 	* Fixed a bug that caused the build to fail on Ubuntu 22.04.
 2022-12-28 Fred Gleason <fredg@paravelsystems.com>
 	* Removed the 'synergy' dependency from the DEB package.
+2022-12-28 Fred Gleason <fredg@paravelsystems.com>
+	* Cleaned up compiler warnings.

@@ -306,7 +306,7 @@ bool Config::load()
   Config::Type type;
   bool ok=false;
   int count=0;
-  QString section=QString().sprintf("Host%d",count+1);
+  QString section=QString::asprintf("Host%d",count+1);
   Profile *p=new Profile();
 #ifdef DESKTOP
   p->setSource(conf_filename);
@@ -373,10 +373,10 @@ bool Config::load()
     conf_autoconnects.push_back(p->boolValue(section,"Autoconnect"));
     conf_fullscreens.push_back(p->boolValue(section,"Fullscreen"));
     conf_colors.push_back(p->stringValue(section,"Color"));
-    conf_titles.push_back(p->stringValue(section,"Title",QString().
-					 sprintf("Host %d",count+1)));
+    conf_titles.push_back(p->stringValue(section,"Title",
+					 QString::asprintf("Host %d",count+1)));
     count++;
-    section=QString().sprintf("Host%d",count+1);
+    section=QString::asprintf("Host%d",count+1);
     type=(Config::Type)p->intValue(section,"Type",(int)Config::VncPlain,&ok);
   }
   delete p;

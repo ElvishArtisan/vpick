@@ -141,7 +141,7 @@ uint64_t InterfaceMacAddress(const QString &iface)
 
 QString MacAddressText(uint64_t mac)
 {
-  return QString().sprintf("%02X:%02X:%02X:%02X:%02X:%02X",
+  return QString::asprintf("%02X:%02X:%02X:%02X:%02X:%02X",
 			   0xFF&(unsigned)(mac>>40),
 			   0xFF&(unsigned)(mac>>32),
 			   0xFF&(unsigned)(mac>>24),

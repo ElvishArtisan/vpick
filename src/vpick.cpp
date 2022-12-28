@@ -49,7 +49,7 @@ MainWidget::MainWidget(QWidget *parent)
   bool ok=false;
 
   vpick_autoconnect_id=-1;
-
+  
   QDesktopWidget *desktop=QApplication::desktop();
   QSize logical_screen_size=
     QSize(desktop->screenGeometry(this).size().width()/
@@ -314,7 +314,7 @@ void MainWidget::settingsClickedData()
 void MainWidget::processErrorData(QProcess::ProcessError err)
 {
   QMessageBox::critical(this,"VPick",tr("Process returned error")+
-			QString().sprintf("%d!",err));
+			QString::asprintf("%d!",err));
   vpick_process_timer->start(0);
 }
 
