@@ -262,3 +262,6 @@
 	* Removed the 'synergy' dependency from the DEB package.
 2022-12-28 Fred Gleason <fredg@paravelsystems.com>
 	* Cleaned up compiler warnings.
+2023-01-11 Fred Gleason <fredg@paravelsystems.com>
+	* Refactored the code to allow multiple hosts to be viewed
+	simultaneously.

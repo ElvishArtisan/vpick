@@ -2,7 +2,7 @@
 //
 // vpick(1) Host Chooser
 //
-//   (C) Copyright 2016-2021 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2023 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -26,6 +26,7 @@
 
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QList>
 #include <QMessageBox>
 #include <QProcess>
 #include <QResizeEvent>
@@ -88,7 +89,6 @@ MainWidget::MainWidget(QWidget *parent)
 			  tr("Screen size is too small!"));
     exit(1);
   }
-  vpick_process=NULL;
   setWindowTitle(tr("Host Picker"));
   setWindowIcon(QPixmap(vpick_16x16_xpm));
 
@@ -345,9 +345,19 @@ void MainWidget::processFinishedData(int exit_code,QProcess::ExitStatus status)
 
 void MainWidget::processKillData()
 {
-  unlink(vpick_password_file.toUtf8());
-  delete vpick_process;
-  vpick_process=NULL;
+  QList<int> reaped_ids;
+
+  for(int i=0;i<vpick_config->hostQuantity();i++) {
+    QProcess *proc=vpick_config->viewerProcess(i);
+    if((proc!=NULL)&&(proc->state()==QProcess::NotRunning)) {
+      proc->deleteLater();
+      vpick_config->setViewerProcess(i,NULL);
+      if(!vpick_config->startupFileName(i).isEmpty()) {
+	unlink(vpick_config->startupFileName(i).toUtf8());
+	vpick_config->setStartupFileName(i,QString());
+      }
+    }
+  }
 }
 
 
@@ -374,7 +384,7 @@ void MainWidget::EditViewer(int id)
 
 void MainWidget::StartViewer(int id)
 {
-  if(vpick_process==NULL) {
+  if(vpick_config->viewerProcess(id)==NULL) {
     switch(vpick_config->type(id)) {
     case Config::VncPlain:
       StartVnc(id);
@@ -398,29 +408,30 @@ void MainWidget::StartVnc(int id)
   //
   // Start Viewer
   //
-  vpick_process=new QProcess(this);
-  connect(vpick_process,SIGNAL(error(QProcess::ProcessError)),
+  QProcess *proc=new QProcess(this);
+  connect(proc,SIGNAL(error(QProcess::ProcessError)),
 	  this,SLOT(processErrorData(QProcess::ProcessError)));
-  connect(vpick_process,SIGNAL(finished(int,QProcess::ExitStatus)),
+  connect(proc,SIGNAL(finished(int,QProcess::ExitStatus)),
 	  this,SLOT(processFinishedData(int,QProcess::ExitStatus)));
   args.clear();
 
 #ifdef VIRTVIEWER
   if(!GenerateConnectionFile(id)) {
+    delete proc;
     return;
   }
-  vpick_process=new QProcess(this);
-  connect(vpick_process,SIGNAL(error(QProcess::ProcessError)),
+  connect(proc,SIGNAL(error(QProcess::ProcessError)),
 	  this,SLOT(processErrorData(QProcess::ProcessError)));
-  connect(vpick_process,SIGNAL(finished(int,QProcess::ExitStatus)),
+  connect(proc,SIGNAL(finished(int,QProcess::ExitStatus)),
 	  this,SLOT(processFinishedData(int,QProcess::ExitStatus)));
   args.clear();
-  args.push_back(vpick_password_file);
-  vpick_process->start("/usr/bin/remote-viewer",args);
+  args.push_back(vpick_config->startupFileName(id));
+  proc->start("/usr/bin/remote-viewer",args);
 #endif  // VIRTVIEWER
 
 #ifdef SSVNC
   if(!GenerateVncPassword(id)) {
+    delete proc;
     return;
   }
   args.push_back("-passwd");
@@ -435,7 +446,7 @@ void MainWidget::StartVnc(int id)
 #endif  // DESKTOP
   args.push_back("-nograbkbd");  // So we don't break Synergy server
   args.push_back(vpick_config->hostname(id));
-  vpick_process->start("/usr/lib/ssvnc/vncviewer",args);
+  proc->start("/usr/lib/ssvnc/vncviewer",args);
 #endif  // SSVNC
 
 #ifdef TIGERVNC
@@ -444,8 +455,6 @@ void MainWidget::StartVnc(int id)
   }
   args.push_back("-passwd");
   args.push_back(vpick_password_file);
-  //  args.push_back("-fullscreen");
-  //  args.push_back("-nograbkbd");  // So we don't break Synergy server
   args.push_back(vpick_config->hostname(id));
   vpick_process->start("/usr/bin/vncviewer",args);
 #endif  // TIGERVNC
@@ -477,7 +486,8 @@ bool MainWidget::GenerateVncPassword(int id)
   write(fd,data,data.size());
   ::close(fd);
 
-  vpick_password_file=tempname;
+  vpick_config->setStartupFileName(id,tempname);
+  vpick_config->setViewerProcess(id,proc);
 
   return true;
 }
@@ -490,14 +500,15 @@ void MainWidget::StartSpice(int id)
   if(!GenerateConnectionFile(id)) {
     return;
   }
-  vpick_process=new QProcess(this);
-  connect(vpick_process,SIGNAL(error(QProcess::ProcessError)),
+  QProcess *proc=new QProcess(this);
+  connect(proc,SIGNAL(error(QProcess::ProcessError)),
 	  this,SLOT(processErrorData(QProcess::ProcessError)));
-  connect(vpick_process,SIGNAL(finished(int,QProcess::ExitStatus)),
+  connect(proc,SIGNAL(finished(int,QProcess::ExitStatus)),
 	  this,SLOT(processFinishedData(int,QProcess::ExitStatus)));
   args.clear();
-  args.push_back(vpick_password_file);
-  vpick_process->start("/usr/bin/remote-viewer",args);
+  args.push_back(vpick_config->startupFileName(id));
+  proc->start("/usr/bin/remote-viewer",args);
+  vpick_config->setViewerProcess(id,proc);
 }
 
 
@@ -515,8 +526,8 @@ bool MainWidget::GenerateConnectionFile(int id)
 			  "["+strerror(errno)+"].");
     return false;
   }
-  vpick_password_file=tempname;
-  if((f=fopen(vpick_password_file.toUtf8(),"w"))==NULL) {
+  vpick_config->setStartupFileName(id,tempname);
+  if((f=fopen(vpick_config->startupFileName(id).toUtf8(),"w"))==NULL) {
     QMessageBox::critical(this,tr("Host Picker"),
 			  tr("Unable to start viewer!")+"\n"+
 			  "["+strerror(errno)+"].");

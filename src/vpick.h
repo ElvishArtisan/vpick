@@ -2,7 +2,7 @@
 //
 // vpick(1) Host Chooser
 //
-//   (C) Copyright 2016-2021 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2023 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -84,9 +84,7 @@ class MainWidget : public QMainWindow
   QPushButton *vpick_remove_button;
   QPushButton *vpick_settings_button;
   int vpick_height;
-  QProcess *vpick_process;
   QTimer *vpick_process_timer;
-  QString vpick_password_file;
   HostDialog *vpick_host_dialog;
   SettingsDialog *vpick_settings_dialog;
   LayoutDialog *vpick_layout_dialog;

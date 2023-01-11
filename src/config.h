@@ -2,7 +2,7 @@
 //
 // vpick(1) Host Chooser Configuration
 //
-//   (C) Copyright 2016-2021 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2023 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -25,6 +25,7 @@
 #include <QList>
 #include <QHostAddress>
 #include <QPoint>
+#include <QProcess>
 #include <QSize>
 #include <QString>
 
@@ -73,6 +74,10 @@ class Config
   void setFullscreen(int n,bool state);
   QColor color(int n) const;
   void setColor(int n,const QColor &color);
+  QProcess *viewerProcess(int n) const;
+  void setViewerProcess(int n,QProcess *proc);
+  QString startupFileName(int n) const;
+  void setStartupFileName(int n,const QString &str);
   int addHost(Type type,const QString &title,const QString &hostname,
 	      const QString &passwd,bool autoconnect,bool fullscreen,
 	      const QColor &color);
@@ -101,6 +106,8 @@ class Config
   QList<unsigned> conf_autoconnects;
   QList<unsigned> conf_fullscreens;
   QList<QColor> conf_colors;
+  QList<QProcess *> conf_viewer_processes;
+  QStringList conf_startup_file_names;
 #ifdef DESKTOP
   QString conf_filename;
 #endif  // DESKTOP

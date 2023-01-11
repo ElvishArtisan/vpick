@@ -2,7 +2,7 @@
 //
 // vpick(1) Host Chooser Configuration
 //
-//   (C) Copyright 2016-2021 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2023 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#include <QApplication>
 #include <QObject>
 
 #include "config.h"
@@ -222,6 +223,30 @@ void Config::setColor(int n,const QColor &color)
 }
 
 
+QProcess *Config::viewerProcess(int n) const
+{
+  return conf_viewer_processes.at(n);
+}
+
+
+void Config::setViewerProcess(int n,QProcess *proc)
+{
+  conf_viewer_processes[n]=proc;
+}
+
+
+QString Config::startupFileName(int n) const
+{
+  return conf_startup_file_names.at(n);
+}
+
+
+void Config::setStartupFileName(int n,const QString &str)
+{
+  conf_startup_file_names[n]=str;
+}
+
+
 int Config::addHost(Type type,const QString &title,const QString &hostname,
 		    const QString &passwd,bool autoconnect,bool fullscreen,
 		    const QColor &color)
@@ -234,6 +259,8 @@ int Config::addHost(Type type,const QString &title,const QString &hostname,
   conf_autoconnects.push_back(autoconnect);
   conf_fullscreens.push_back(fullscreen);
   conf_colors.push_back(color);
+  conf_startup_file_names.push_back(QString());
+  conf_viewer_processes.push_back(NULL);
 
   return conf_types.size()-1;
 }
@@ -241,6 +268,17 @@ int Config::addHost(Type type,const QString &title,const QString &hostname,
 
 void Config::removeHost(int n)
 {
+  if((conf_viewer_processes.at(n)!=NULL)&&
+     (conf_viewer_processes.at(n)->state()==QProcess::Running)) {
+    conf_viewer_processes.at(n)->terminate();
+    qApp->processEvents();
+    conf_viewer_processes.at(n)->deleteLater();
+  }
+  conf_viewer_processes.erase(conf_viewer_processes.begin()+n);
+  if(!conf_startup_file_names.at(n).isEmpty()) {
+    unlink(conf_startup_file_names.at(n).toUtf8());
+    conf_startup_file_names.removeAt(n);
+  }
   conf_positions.erase(conf_positions.begin()+n);
   conf_types.erase(conf_types.begin()+n);
   conf_titles.erase(conf_titles.begin()+n);
@@ -375,6 +413,8 @@ bool Config::load()
     conf_colors.push_back(p->stringValue(section,"Color"));
     conf_titles.push_back(p->stringValue(section,"Title",
 					 QString::asprintf("Host %d",count+1)));
+    conf_startup_file_names.push_back(QString());
+    conf_viewer_processes.push_back(NULL);
     count++;
     section=QString::asprintf("Host%d",count+1);
     type=(Config::Type)p->intValue(section,"Type",(int)Config::VncPlain,&ok);
