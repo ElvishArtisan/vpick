@@ -273,3 +273,5 @@
 2023-01-23 Fred Gleason <fredg@paravelsystems.com>
 	* Added the '-x11cursor' switch to the viewer invocation for
 	ssvncviewer(1).
+2023-01-23 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 0.11.5.
