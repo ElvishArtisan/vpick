@@ -381,6 +381,7 @@ void MainWidget::StartVnc(int id)
   if(conn_file.isEmpty()) {
     return;
   }
+  args.push_back("-x11cursor");
   args.push_back("-passwd");
   args.push_back(conn_file);
 #ifdef EMBEDDED

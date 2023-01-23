@@ -270,3 +270,6 @@
 	properly.
 2023-01-23 Fred Gleason <fredg@paravelsystems.com>
 	* Refactored the code to handle resource cleanup reliably.
+2023-01-23 Fred Gleason <fredg@paravelsystems.com>
+	* Added the '-x11cursor' switch to the viewer invocation for
+	ssvncviewer(1).
