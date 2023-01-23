@@ -51,9 +51,6 @@ class MainWidget : public QMainWindow
   void setupToggledData(bool state);
   void removeToggledData(bool state);
   void settingsClickedData();
-  void processErrorData(QProcess::ProcessError err);
-  void processFinishedData(int exit_code,QProcess::ExitStatus status);
-  void processKillData();
   void autoconnectData();
   void titlebarData();
   
@@ -65,9 +62,9 @@ class MainWidget : public QMainWindow
   void EditViewer(int id);
   void StartViewer(int id);
   void StartVnc(int id);
-  bool GenerateVncPassword(int id);
+  QString GenerateVncPassword(int id);
   void StartSpice(int id);
-  bool GenerateConnectionFile(int id);
+  QString GenerateConnectionFile(int id);
   void SetButtonIcons(const QPixmap &pix);
   void LoadHosts();
   void AddHost(int id);
@@ -84,7 +81,6 @@ class MainWidget : public QMainWindow
   QPushButton *vpick_remove_button;
   QPushButton *vpick_settings_button;
   int vpick_height;
-  QTimer *vpick_process_timer;
   HostDialog *vpick_host_dialog;
   SettingsDialog *vpick_settings_dialog;
   LayoutDialog *vpick_layout_dialog;

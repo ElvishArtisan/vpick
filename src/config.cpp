@@ -222,7 +222,7 @@ void Config::setColor(int n,const QColor &color)
   conf_colors[n]=color;
 }
 
-
+/*
 QProcess *Config::viewerProcess(int n) const
 {
   return conf_viewer_processes.at(n);
@@ -245,7 +245,7 @@ void Config::setStartupFileName(int n,const QString &str)
 {
   conf_startup_file_names[n]=str;
 }
-
+*/
 
 int Config::addHost(Type type,const QString &title,const QString &hostname,
 		    const QString &passwd,bool autoconnect,bool fullscreen,

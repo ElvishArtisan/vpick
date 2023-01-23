@@ -35,6 +35,7 @@
 #include "cmdswitch.h"
 #include "network.h"
 #include "profile.h"
+#include "viewerprocess.h"
 #include "vpick.h"
 
 #include "../icons/lightbulb.xpm"
@@ -158,13 +159,6 @@ MainWidget::MainWidget(QWidget *parent)
   vpick_settings_button->setIcon(QPixmap(settings_xpm));
   connect(vpick_settings_button,SIGNAL(clicked()),
 	  this,SLOT(settingsClickedData()));
-
-  //
-  // Process Timer
-  //
-  vpick_process_timer=new QTimer(this);
-  vpick_process_timer->setSingleShot(true);
-  connect(vpick_process_timer,SIGNAL(timeout()),this,SLOT(processKillData()));
 
   LoadHosts();
 
@@ -310,15 +304,6 @@ void MainWidget::settingsClickedData()
   UpdateNavigationButtons();
 }
 
-
-void MainWidget::processErrorData(QProcess::ProcessError err)
-{
-  QMessageBox::critical(this,"VPick",tr("Process returned error")+
-			QString::asprintf("%d!",err));
-  vpick_process_timer->start(0);
-}
-
-
 void MainWidget::autoconnectData()
 {
   buttonClickedData(vpick_autoconnect_id);
@@ -334,30 +319,6 @@ void MainWidget::titlebarData()
   else {
     setWindowTitle(tr("Host Picker")+" - "+addr.toString());
   }    
-}
-
-
-void MainWidget::processFinishedData(int exit_code,QProcess::ExitStatus status)
-{
-  vpick_process_timer->start(0);
-}
-
-
-void MainWidget::processKillData()
-{
-  QList<int> reaped_ids;
-
-  for(int i=0;i<vpick_config->hostQuantity();i++) {
-    QProcess *proc=vpick_config->viewerProcess(i);
-    if((proc!=NULL)&&(proc->state()==QProcess::NotRunning)) {
-      proc->deleteLater();
-      vpick_config->setViewerProcess(i,NULL);
-      if(!vpick_config->startupFileName(i).isEmpty()) {
-	unlink(vpick_config->startupFileName(i).toUtf8());
-	vpick_config->setStartupFileName(i,QString());
-      }
-    }
-  }
 }
 
 
@@ -384,58 +345,44 @@ void MainWidget::EditViewer(int id)
 
 void MainWidget::StartViewer(int id)
 {
-  if(vpick_config->viewerProcess(id)==NULL) {
-    switch(vpick_config->type(id)) {
-    case Config::VncPlain:
-      StartVnc(id);
-      break;
+  switch(vpick_config->type(id)) {
+  case Config::VncPlain:
+    StartVnc(id);
+    break;
 
-    case Config::Spice:
-      StartSpice(id);
-      break;
+  case Config::Spice:
+    StartSpice(id);
+    break;
 
-    case Config::LastType:
-      break;
-    }
+  case Config::LastType:
+    break;
   }
 }
 
 
 void MainWidget::StartVnc(int id)
 {
+  ViewerProcess *proc=NULL;
   QStringList args;
-
-  //
-  // Start Viewer
-  //
-  QProcess *proc=new QProcess(this);
-  connect(proc,SIGNAL(error(QProcess::ProcessError)),
-	  this,SLOT(processErrorData(QProcess::ProcessError)));
-  connect(proc,SIGNAL(finished(int,QProcess::ExitStatus)),
-	  this,SLOT(processFinishedData(int,QProcess::ExitStatus)));
-  args.clear();
+  QString conn_file;
 
 #ifdef VIRTVIEWER
-  if(!GenerateConnectionFile(id)) {
-    delete proc;
+  conn_file=GenerateConnectionFile(id);
+  if(conn_file.isEmpty()) {
     return;
   }
-  connect(proc,SIGNAL(error(QProcess::ProcessError)),
-	  this,SLOT(processErrorData(QProcess::ProcessError)));
-  connect(proc,SIGNAL(finished(int,QProcess::ExitStatus)),
-	  this,SLOT(processFinishedData(int,QProcess::ExitStatus)));
-  args.clear();
-  args.push_back(vpick_config->startupFileName(id));
+  args.push_back(conn_file);
+  proc=new ViewerProcess(conn_file,this);
   proc->start("/usr/bin/remote-viewer",args);
 #endif  // VIRTVIEWER
 
 #ifdef SSVNC
-  if(!GenerateVncPassword(id)) {
-    delete proc;
+  conn_file=GenerateVncPassword(id);
+  if(conn_file.isEmpty()) {
     return;
   }
   args.push_back("-passwd");
-  args.push_back(vpick_password_file);
+  args.push_back(conn_file);
 #ifdef EMBEDDED
   args.push_back("-fullscreen");
 #endif  // EMBEDDED
@@ -446,22 +393,25 @@ void MainWidget::StartVnc(int id)
 #endif  // DESKTOP
   args.push_back("-nograbkbd");  // So we don't break Synergy server
   args.push_back(vpick_config->hostname(id));
+  proc=new ViewerProcess(conn_file,this);
   proc->start("/usr/lib/ssvnc/vncviewer",args);
 #endif  // SSVNC
 
 #ifdef TIGERVNC
-  if(!GenerateVncPassword(id)) {
+  conn_file=GenerateVncPassword(id);
+  if(conn_file.isEmpty()) {
     return;
   }
   args.push_back("-passwd");
-  args.push_back(vpick_password_file);
+  args.push_back(conn_file);
   args.push_back(vpick_config->hostname(id));
-  vpick_process->start("/usr/bin/vncviewer",args);
+  proc=new ViewerProcess(conn_file,this);  
+  proc->start("/usr/bin/vncviewer",args);
 #endif  // TIGERVNC
 }
 
 
-bool MainWidget::GenerateVncPassword(int id)
+QString MainWidget::GenerateVncPassword(int id)
 {
   char tempname[PATH_MAX];
   QStringList args;
@@ -473,7 +423,7 @@ bool MainWidget::GenerateVncPassword(int id)
     QMessageBox::critical(this,tr("Host Picker"),
 			  tr("Unable to start viewer!")+"\n"+
 			  "["+strerror(errno)+"].");
-    return false;
+    return QString();
   }
   args.push_back("-f");
   QProcess *proc=new QProcess(this);
@@ -486,33 +436,26 @@ bool MainWidget::GenerateVncPassword(int id)
   write(fd,data,data.size());
   ::close(fd);
 
-  vpick_config->setStartupFileName(id,tempname);
-  vpick_config->setViewerProcess(id,proc);
-
-  return true;
+  return QString(tempname);
 }
 
 
 void MainWidget::StartSpice(int id)
 {
   QStringList args;
+  QString conn_file=GenerateConnectionFile(id);
 
-  if(!GenerateConnectionFile(id)) {
+  if(conn_file.isEmpty()) {
     return;
   }
-  QProcess *proc=new QProcess(this);
-  connect(proc,SIGNAL(error(QProcess::ProcessError)),
-	  this,SLOT(processErrorData(QProcess::ProcessError)));
-  connect(proc,SIGNAL(finished(int,QProcess::ExitStatus)),
-	  this,SLOT(processFinishedData(int,QProcess::ExitStatus)));
-  args.clear();
-  args.push_back(vpick_config->startupFileName(id));
+  args.push_back(conn_file);
+
+  ViewerProcess *proc=new ViewerProcess(conn_file,this);
   proc->start("/usr/bin/remote-viewer",args);
-  vpick_config->setViewerProcess(id,proc);
 }
 
 
-bool MainWidget::GenerateConnectionFile(int id)
+QString MainWidget::GenerateConnectionFile(int id)
 {
   char tempname[PATH_MAX];
   FILE *f=NULL;
@@ -524,15 +467,13 @@ bool MainWidget::GenerateConnectionFile(int id)
     QMessageBox::critical(this,tr("Host Picker"),
 			  tr("Unable to start viewer!")+"\n"+
 			  "["+strerror(errno)+"].");
-    return false;
+    return QString();
   }
-  printf("tempfile: %s\n",tempname);
-  vpick_config->setStartupFileName(id,tempname);
-  if((f=fopen(vpick_config->startupFileName(id).toUtf8(),"w"))==NULL) {
+  if((f=fopen(tempname,"w"))==NULL) {
     QMessageBox::critical(this,tr("Host Picker"),
 			  tr("Unable to start viewer!")+"\n"+
 			  "["+strerror(errno)+"].");
-    return false;
+    return QString();
   }
   fprintf(f,"[virt-viewer]\n");
   switch(vpick_config->type(id)) {
@@ -548,7 +489,7 @@ bool MainWidget::GenerateConnectionFile(int id)
     QMessageBox::critical(this,tr("Host Picker"),
 			  tr("Unable to start viewer!")+"\n"+
 			  "["+tr("Internal error")+"].");
-    return false;
+    return QString();
   }
   fprintf(f,"host=%s\n",f0.at(0).toUtf8().constData());
   if(f0.size()==2) {
@@ -572,7 +513,7 @@ bool MainWidget::GenerateConnectionFile(int id)
   fprintf(f,"delete-this-file=1\n");
   fclose(f);
 
-  return true;
+  return QString(tempname);
 }
 
 

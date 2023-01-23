@@ -74,10 +74,12 @@ class Config
   void setFullscreen(int n,bool state);
   QColor color(int n) const;
   void setColor(int n,const QColor &color);
+  /*
   QProcess *viewerProcess(int n) const;
   void setViewerProcess(int n,QProcess *proc);
   QString startupFileName(int n) const;
   void setStartupFileName(int n,const QString &str);
+  */
   int addHost(Type type,const QString &title,const QString &hostname,
 	      const QString &passwd,bool autoconnect,bool fullscreen,
 	      const QColor &color);

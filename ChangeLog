@@ -268,3 +268,5 @@
 2023-01-23 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug that caused temporary files to fail to be purged
 	properly.
+2023-01-23 Fred Gleason <fredg@paravelsystems.com>
+	* Refactored the code to handle resource cleanup reliably.

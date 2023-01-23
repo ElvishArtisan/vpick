@@ -2,7 +2,7 @@
 ##
 ## Makefile for the vpick(1) host chooser
 ##
-## (C) Copyright 2016-2021 Fred Gleason <fredg@paravelsystems.com>
+## (C) Copyright 2016-2023 Fred Gleason <fredg@paravelsystems.com>
 ##
 ##   This program is free software; you can redistribute it and/or modify
 ##   it under the terms of the GNU General Public License version 2 as
@@ -48,6 +48,7 @@ dist_vpick_SOURCES = cmdswitch.cpp cmdswitch.h\
                      synergynode.cpp synergynode.h\
                      synergynodedialog.cpp synergynodedialog.h\
                      trashcan.cpp trashcan.h\
+                     viewerprocess.cpp viewerprocess.h\
                      vpick.cpp vpick.h
 
 nodist_vpick_SOURCES = moc_colorbox.cpp\
@@ -62,6 +63,7 @@ nodist_vpick_SOURCES = moc_colorbox.cpp\
                        moc_synergynode.cpp\
                        moc_synergynodedialog.cpp\
                        moc_trashcan.cpp\
+                       moc_viewerprocess.cpp\
                        moc_vpick.cpp
 
 vpick_LDADD = @QT5_LIBS@
