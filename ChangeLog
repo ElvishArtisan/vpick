@@ -265,3 +265,6 @@
 2023-01-11 Fred Gleason <fredg@paravelsystems.com>
 	* Refactored the code to allow multiple hosts to be viewed
 	simultaneously.
+2023-01-23 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug that caused temporary files to fail to be purged
+	properly.

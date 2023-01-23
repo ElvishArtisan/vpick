@@ -526,6 +526,7 @@ bool MainWidget::GenerateConnectionFile(int id)
 			  "["+strerror(errno)+"].");
     return false;
   }
+  printf("tempfile: %s\n",tempname);
   vpick_config->setStartupFileName(id,tempname);
   if((f=fopen(vpick_config->startupFileName(id).toUtf8(),"w"))==NULL) {
     QMessageBox::critical(this,tr("Host Picker"),
@@ -568,7 +569,7 @@ bool MainWidget::GenerateConnectionFile(int id)
 #ifdef EMBEDDED
   fprintf(f,"fullscreen=1\n");
 #endif  // EMBEDDED  
-  fprintf(f,"delete-this_file=1\n");
+  fprintf(f,"delete-this-file=1\n");
   fclose(f);
 
   return true;
