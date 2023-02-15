@@ -409,6 +409,21 @@ void MainWidget::StartVnc(int id)
   proc=new ViewerProcess(conn_file,this);  
   proc->start("/usr/bin/vncviewer",args);
 #endif  // TIGERVNC
+
+#ifdef REALVNC
+  conn_file=GenerateVncPassword(id);
+  if(conn_file.isEmpty()) {
+    return;
+  }
+  args.push_back("-passwd");
+  args.push_back(conn_file);
+  if(vpick_config->fullscreen(id)) {
+    args.push_back("--FullScreen");
+  }
+  args.push_back(vpick_config->hostname(id));
+  proc=new ViewerProcess(conn_file,this);
+  proc->start("/usr/bin/vncviewer",args);
+#endif  // REALVNC
 }
 
 

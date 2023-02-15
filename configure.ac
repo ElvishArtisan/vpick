@@ -43,6 +43,7 @@ AC_ARG_WITH(embedded,[  --with-embedded         Build embedded use],[TARGET_EMBE
 AC_ARG_WITH(virtviewer,[  --with-virtviewer       Use Virt-Viewer viewer for VNC (default)],[VIEWER_VIRTVIEWER=yes],[])
 AC_ARG_WITH(tigervnc,[  --with-tigervnc         Use TigerVNC viewer for VNC],[VIEWER_TIGERVNC=yes],[])
 AC_ARG_WITH(ssvnc,[  --with-ssvnc            Use SSVNC viewer for VNC],[VIEWER_SSVNC=yes],[])
+AC_ARG_WITH(realvnc,[  --with-realvnc          Use RealVNC viewer for VNC],[VIEWER_REALVNC=yes],[])
 
 
 #
@@ -87,6 +88,9 @@ fi
 if test $VIEWER_TIGERVNC ; then
   let vncviewers=vncviewers+1
 fi
+if test $VIEWER_REALVNC ; then
+  let vncviewers=vncviewers+1
+fi
 if test $vncviewers -eq 0 ; then
   AC_MSG_NOTICE([No VNC viewer specified, assuming virt-viewer (--with-virt-viewer)])
   VIEWER_VIRTVIEWER=yes
@@ -105,6 +109,12 @@ if test $VIEWER_SSVNC ; then
   AC_DEFINE(SSVNC,1)
   AC_SUBST(RPM_VNC_VIEWER_DEP,ssvnc)
   AC_SUBST(WITH_VNC_VIEWER_SWITCH,--with-ssvnc)
+fi
+if test $VIEWER_REALVNC ; then
+  AC_MSG_NOTICE([Configuring for RealVNC])
+  AC_DEFINE(REALVNC,1)
+  AC_SUBST(RPM_VNC_VIEWER_DEP,realvnc-vnc-viewer)
+  AC_SUBST(WITH_VNC_VIEWER_SWITCH,--with-realvnc)
 fi
 if test $VIEWER_TIGERVNC ; then
   AC_MSG_NOTICE([Configuring for TigerVNC])
@@ -280,6 +290,9 @@ AC_MSG_NOTICE("|                          VNC Viewer ... ssvnc       |")
 fi
 if test $VIEWER_TIGERVNC ; then
 AC_MSG_NOTICE("|                          VNC Viewer ... TigerVnc    |")
+fi
+if test $VIEWER_REALVNC ; then
+AC_MSG_NOTICE("|                          VNC Viewer ... RealVnc     |")
 fi
 AC_MSG_NOTICE("|-----------------------------------------------------|")
 AC_MSG_NOTICE()
