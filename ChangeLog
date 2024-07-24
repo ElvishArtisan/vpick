@@ -277,3 +277,9 @@
 	* Incremented the package version to 0.11.5.
 2023-02-15 Fred Gleason <fredg@paravelsystems.com>
 	* Added a '--with-realvnc' switch to 'configure'.
+2024-07-24 Fred Gleason <fredg@paravelsystems.com>
+	* Removed the 'tigervnc-common' dependency from the 'vpick' DEB
+	package.
+	* Added a 'tigervnc-tools' dependency to the 'vpick' DEB package.
+	* Added 'realvnc-vnc-server' to the 'Conflicts' list for the 'vpick'
+	DEB package.

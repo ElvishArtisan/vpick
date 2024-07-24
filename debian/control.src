@@ -7,6 +7,7 @@ Standards-Version: 4.4.1
 
 Package: vpick
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, tigervnc-common, virt-viewer, fvwm
+Depends: ${shlibs:Depends}, ${misc:Depends}, tigervnc-tools, virt-viewer, fvwm
+Conflicts: realvnc-vnc-server
 Description: Host picker applet for thin clients
  VPick is a small "chooser" application for thin host clients.
