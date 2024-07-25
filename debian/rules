@@ -3,7 +3,7 @@
 build:	
 	dh_update_autotools_config
 	dh_autoreconf
-	 ./configure --with-desktop --with-virtviewer --prefix=/usr --libdir=/usr/lib
+	./configure --with-desktop --with-virtviewer --prefix=/usr --libdir=/usr/lib
 	make $(DEBUILD_MAKE_ARGS)
 
 binary:	

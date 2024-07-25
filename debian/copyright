@@ -4,7 +4,7 @@ Upstream-Contact: fredg@paravelsystems.com
 Source: https://github.com/ElvishArtisan/vpick
 
 Files: *
-Copyright: 2002-2021 Fred Gleason <fredg@paravelsystems.com>
+Copyright: 2002-2024 Fred Gleason <fredg@paravelsystems.com>
 License: GPL-2
  This package is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License version 2 as

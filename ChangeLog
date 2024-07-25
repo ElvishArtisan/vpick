@@ -292,3 +292,5 @@
 	package.
 	* Added a '-style plastique' switch to the vpick(1) desktop entry
 	on Debian-ish distros.
+2024-07-25 Fred Gleason <fredg@paravelsystems.com>
+	* Renamed the 'vpick' DEB package to 'vpick-desktop'.
