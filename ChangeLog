@@ -283,3 +283,7 @@
 	* Added a 'tigervnc-tools' dependency to the 'vpick' DEB package.
 	* Added 'realvnc-vnc-server' to the 'Conflicts' list for the 'vpick'
 	DEB package.
+2024-07-25 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'prerm' script to the DEB package.
+	* Removed the command to set 'vpick.target' as the default
+	Systemd target in the DEB package.

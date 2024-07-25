@@ -27,6 +27,7 @@ EXTRA_DIST = changelog\
              control\
              control.src\
              copyright\
+             prerm\
              postinst\
              rules
 
