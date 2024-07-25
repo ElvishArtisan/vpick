@@ -294,3 +294,5 @@
 	on Debian-ish distros.
 2024-07-25 Fred Gleason <fredg@paravelsystems.com>
 	* Renamed the 'vpick' DEB package to 'vpick-desktop'.
+2024-07-25 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 1.0.0rc0.
