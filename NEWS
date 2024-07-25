@@ -1,6 +1,12 @@
 The NEWS file for the vpick package.
 
 -------------------------------------------------------------------------------
+1.0.0rc1 -- 25 July 2024
+
+Changes:
+   Fixed a bug in the vpick(1) destktop entry file. See the ChangeLog
+   for details.
+-------------------------------------------------------------------------------
 1.0.0rc0 -- 25 July 2024
 
 Changes:
