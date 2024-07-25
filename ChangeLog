@@ -296,3 +296,6 @@
 	* Renamed the 'vpick' DEB package to 'vpick-desktop'.
 2024-07-25 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 1.0.0rc0.
+2024-07-25 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug in the build system that caused vpick(1) desktop entry
+	to fail to receive the correct switch.

@@ -169,7 +169,7 @@ DISTRO_NAME="|                   Distribution Name ... Unknown     |"
 case "$ar_distro_id" in
      debian)
        AC_MSG_NOTICE([Distro is Debian-ish])
-       AC_SUBST(VPICK_EXEC_ARGS,-style plastique)
+       AC_SUBST(VPICK_EXEC_ARGS,"-style plastique")
        DISTRO_FAMILY="|                 Distribution Family ... Debian      |"
        DISTRO_IS_DEBIANISH=yes
        DISTRO_NAME="|                   Distribution Name ... Debian       |"
