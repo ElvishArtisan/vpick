@@ -6,6 +6,9 @@ case "$1" in
       /usr/sbin/groupadd -r -g 152 vpick &>/dev/null || :
       /usr/sbin/useradd -o -u 152 -g vpick -G audio -s /bin/false -r -c "Host chooser" vpick &>/dev/null || :
       /usr/bin/systemctl daemon-reload
+      if [ -x /usr/bin/gtk-update-icon-cache ] ; then
+	  /usr/bin/gtk-update-icon-cache -f --quiet %{_datadir}/icons/hicolor || :
+      fi
       ;;
     
     abort-upgrade|abort-remove|abort-deconfigure)

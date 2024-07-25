@@ -287,3 +287,8 @@
 	* Added a 'prerm' script to the DEB package.
 	* Removed the command to set 'vpick.target' as the default
 	Systemd target in the DEB package.
+2024-07-25 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'qt5-style-plugin-plastique' dependency to the DEB
+	package.
+	* Added a '-style plastique' switch to the vpick(1) desktop entry
+	on Debian-ish distros.

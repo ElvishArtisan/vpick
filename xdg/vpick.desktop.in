@@ -1,0 +1,14 @@
+@GENERATED_SCRIPT_FILE_WARNING@
+
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=VPick
+Comment=Remote Desktop Viewer
+Path=/usr/bin
+Exec=vpick @VPICK_EXEC_ARGS@
+Icon=vpick
+Terminal=false
+Categories=Utility;
+Keywords=vnc,spice,viewer
+Encoding=UTF-8

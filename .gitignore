@@ -29,3 +29,4 @@ conf/virt-viewer-settings
 debian/changelog
 debian/control
 src/vpick
+xdg/vpick.desktop

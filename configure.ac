@@ -169,23 +169,17 @@ DISTRO_NAME="|                   Distribution Name ... Unknown     |"
 case "$ar_distro_id" in
      debian)
        AC_MSG_NOTICE([Distro is Debian-ish])
-       DISTRO_FAMILY="|                 Distribution Family ... Debian       |"
+       AC_SUBST(VPICK_EXEC_ARGS,-style plastique)
+       DISTRO_FAMILY="|                 Distribution Family ... Debian      |"
        DISTRO_IS_DEBIANISH=yes
        DISTRO_NAME="|                   Distribution Name ... Debian       |"
        AC_DEFINE(DEBIAN)
        ;;
 
-     raspbian)
+     ubuntu|linuxmint)
        AC_MSG_NOTICE([Distro is Debian-ish])
-       DISTRO_FAMILY="|                Distribution Family ... Debian       |"
-       DISTRO_IS_DEBIANISH=yes
-       DISTRO_NAME="|                  Distribution Name ... Raspbian     |"
-       AC_DEFINE(DEBIAN)
-     ;;
-
-     ubuntu)
-       AC_MSG_NOTICE([Distro is Debian-ish])
-       DISTRO_FAMILY="|                 Distribution Family ... Debian       |"
+       AC_SUBST(VPICK_EXEC_ARGS,"-style plastique")
+       DISTRO_FAMILY="|                 Distribution Family ... Debian      |"
        DISTRO_IS_DEBIANISH=yes
        DISTRO_NAME="|                   Distribution Name ... Ubuntu      |"
        AC_DEFINE(DEBIAN)
@@ -193,6 +187,7 @@ case "$ar_distro_id" in
 
      centos|rhel|fedora|rocky|redsleeve)
        AC_MSG_NOTICE([Distro is RedHat-ish])
+       AC_SUBST(VPICK_EXEC_ARGS,"")
        DISTRO_FAMILY="|                 Distribution Family ... RedHat      |"
        if test $ar_distro_id = "centos" ; then
          DISTRO_NAME="|                   Distribution Name ... CentOS      |"
@@ -214,6 +209,7 @@ case "$ar_distro_id" in
 
      *)
        AC_MSG_NOTICE([Distro is unknown])
+       AC_SUBST(VPICK_EXEC_ARGS,"")
        DISTRO_FAMILY="|                 Distribution Family ... Unknown     |"
      ;;
 esac
@@ -256,6 +252,7 @@ AC_CONFIG_FILES([ \
     icons/Makefile \
     src/Makefile \
     systemd/Makefile \
+    xdg/vpick.desktop \
     xdg/Makefile \
     build_debs.sh \
     vpick-embedded.spec \

@@ -26,9 +26,11 @@ install-exec-am:
 uninstall-local:	
 	rm -f $(DESTDIR)@prefix@/share/applications/vpick.desktop
 
-EXTRA_DIST = vpick.desktop
+EXTRA_DIST = vpick.desktop.in
 
 CLEANFILES = *~
+
+DISTCLEANFILES = vpic.desktop
 
 MAINTAINERCLEANFILES = *~\
                        Makefile.in
