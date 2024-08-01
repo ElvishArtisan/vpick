@@ -1,6 +1,12 @@
 The NEWS file for the vpick package.
 
 -------------------------------------------------------------------------------
+1.0.0rc2 -- 1 August 2024
+
+Changes:
+   Fixed a bug in the 'Host Settings' dialog that failed to properly
+   initialize the state of the 'Show Password' checkbox.
+-------------------------------------------------------------------------------
 1.0.0rc1 -- 25 July 2024
 
 Changes:

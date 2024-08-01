@@ -304,3 +304,5 @@
 2024-08-01 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug in the 'Host Settings' dialog that failed to properly
 	initialize the state of the 'Show Password' checkbox.
+2024-08-01 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to v1.0.0rc2.
