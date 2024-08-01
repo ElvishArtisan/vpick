@@ -112,6 +112,7 @@ int HostDialog::exec(int id)
   host_hostname_edit->setText(host_config->hostname(id));
   host_password_edit->setText(host_config->password(id));
   host_password_edit->setEchoMode(QLineEdit::Password);
+  host_showpassword_check->setChecked(false);
   host_color_box->setCurrentColor(host_config->color(id));
   host_autoconnect_check->setChecked(host_config->autoconnect(id));
   host_fullscreen_check->setChecked(host_config->fullscreen(id));
