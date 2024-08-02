@@ -306,3 +306,5 @@
 	initialize the state of the 'Show Password' checkbox.
 2024-08-01 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to v1.0.0rc2.
+2024-08-02 Fred Gleason <fredg@paravelsystems.com>
+	* Added a '--display-profile' switch to vpick(1).

@@ -36,7 +36,7 @@
 #include "layoutdialog.h"
 #include "settingsdialog.h"
 
-#define VPICK_USAGE "[--logical-screen-size=<x-buttons>x<y-buttons>]\n"
+#define VPICK_USAGE "[--logical-screen-size=<x-buttons>x<y-buttons>] [--display-profile]\n"
 
 class MainWidget : public QMainWindow
 {
@@ -92,6 +92,7 @@ class MainWidget : public QMainWindow
   QTimer *vpick_autoconnect_timer;
   int vpick_autoconnect_id;
   QTimer *vpick_titlebar_timer;
+  bool vpick_display_profile;
 };
 
 

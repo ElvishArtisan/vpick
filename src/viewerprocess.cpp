@@ -2,7 +2,7 @@
 //
 // Process container for viewers
 //
-//   (C) Copyright 2023 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2023-2024 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -20,14 +20,19 @@
 
 #include <unistd.h>
 
+#include <QTime>
+
 #include "viewerprocess.h"
 
-ViewerProcess::ViewerProcess(const QString &startup_filename,QWidget *parent)
+ViewerProcess::ViewerProcess(const QString &startup_filename,
+			     bool display_profile,QWidget *parent)
   : QMessageBox(parent)
 {
   d_startup_filename=startup_filename;
+  d_display_profile=display_profile;
 
   d_process=new QProcess(this);
+  connect(d_process,SIGNAL(started()),this,SLOT(startedData()));
   connect(d_process,SIGNAL(finished(int,QProcess::ExitStatus)),
 	  this,SLOT(finishedData(int,QProcess::ExitStatus)));
 }
@@ -44,11 +49,40 @@ void ViewerProcess::start(const QString &cmd,const QStringList &args)
   d_command=cmd;
   d_arguments=args;
   d_process->start(cmd,args);
+  if(d_display_profile) {
+    printf("\n");
+    printf("%s - start(): %s %s\n",
+	   QTime::currentTime().toString("hh:mm:ss.zzz").
+	   toUtf8().constData(),
+	   d_command.toUtf8().constData(),
+	   d_arguments.join(" ").toUtf8().constData());
+  }
+}
+
+
+void ViewerProcess::startedData()
+{
+  if(d_display_profile) {
+    printf("%s - startedData(): %s %s\n",
+	   QTime::currentTime().toString("hh:mm:ss.zzz").
+	   toUtf8().constData(),
+	   d_command.toUtf8().constData(),
+	   d_arguments.join(" ").toUtf8().constData());
+  }
 }
 
 
 void ViewerProcess::finishedData(int exit_code,QProcess::ExitStatus status)
 {
+  if(d_display_profile) {
+    printf("%s - finishedData: %s %s\n",
+	   QTime::currentTime().toString("hh:mm:ss.zzz").
+	   toUtf8().constData(),
+	   d_command.toUtf8().constData(),
+	   d_arguments.join(" ").toUtf8().constData());
+    printf("\n");
+  }
+
   //
   // Process results
   //

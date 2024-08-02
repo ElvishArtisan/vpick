@@ -2,7 +2,7 @@
 //
 // Process container for viewers
 //
-//   (C) Copyright 2023 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2023-2024 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -28,18 +28,21 @@ class ViewerProcess : public QMessageBox
 {
  Q_OBJECT;
  public:
-  ViewerProcess(const QString &startup_filename,QWidget *parent=0);
+  ViewerProcess(const QString &startup_filename,bool display_profile,
+		QWidget *parent);
   ~ViewerProcess();
   void start(const QString &cmd,const QStringList &args);
 
  private slots:
-   void finishedData(int exit_code,QProcess::ExitStatus status);
+  void startedData();
+  void finishedData(int exit_code,QProcess::ExitStatus status);
 
  private:
   QProcess *d_process;
   QString d_startup_filename;
   QString d_command;
   QStringList d_arguments;
+  bool d_display_profile;
 };
 
 

@@ -51,7 +51,8 @@ MainWidget::MainWidget(QWidget *parent)
   bool ok=false;
 
   vpick_autoconnect_id=-1;
-  
+  vpick_display_profile=false;
+
   QDesktopWidget *desktop=QApplication::desktop();
   QSize logical_screen_size=
     QSize(desktop->screenGeometry(this).size().width()/
@@ -61,6 +62,10 @@ MainWidget::MainWidget(QWidget *parent)
 
   CmdSwitch *cmd=new CmdSwitch("vpick",VPICK_USAGE);
   for(int i=0;i<cmd->keys();i++) {
+    if(cmd->key(i)=="--display-profile") {
+      vpick_display_profile=true;
+      cmd->setProcessed(i,true);
+    }
     if(cmd->key(i)=="--logical-screen-size") {
       QStringList f0=cmd->value(i).split("x",QString::KeepEmptyParts);
       if(f0.size()!=2) {
@@ -372,7 +377,7 @@ void MainWidget::StartVnc(int id)
     return;
   }
   args.push_back(conn_file);
-  proc=new ViewerProcess(conn_file,this);
+  proc=new ViewerProcess(conn_file,vpick_display_profile,this);
   proc->start("/usr/bin/remote-viewer",args);
 #endif  // VIRTVIEWER
 
@@ -466,7 +471,7 @@ void MainWidget::StartSpice(int id)
   }
   args.push_back(conn_file);
 
-  ViewerProcess *proc=new ViewerProcess(conn_file,this);
+  ViewerProcess *proc=new ViewerProcess(conn_file,vpick_display_profile,this);
   proc->start("/usr/bin/remote-viewer",args);
 }
 
