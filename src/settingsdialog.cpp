@@ -149,14 +149,6 @@ SettingsDialog::SettingsDialog(Config *c,QWidget *parent)
   connect(set_synergy_button,SIGNAL(clicked()),set_synergy_dialog,SLOT(exec()));
 
   //
-  // Calibrate Button
-  //
-  set_calibrate_button=
-    new QPushButton(tr("Calibrate")+"\n"+tr("Touchscreen"),this);
-  set_calibrate_button->setFont(small_button_font);
-  connect(set_calibrate_button,SIGNAL(clicked()),this,SLOT(calibrateData()));
-
-  //
   // OK Button
   //
   set_ok_button=new QPushButton(tr("OK"),this);
@@ -179,8 +171,6 @@ SettingsDialog::SettingsDialog(Config *c,QWidget *parent)
 
   set_resolution_label->setDisabled(true);
   set_resolution_box->setDisabled(true);
-
-  set_calibrate_button->setDisabled(true);
 #endif  // DESKTOP
 }
 
@@ -215,12 +205,6 @@ void SettingsDialog::dhcpChangedData(int n)
   set_dns_label->setEnabled(n);
   set_dns_edits[0]->setEnabled(n);
   set_dns_edits[1]->setEnabled(n);
-}
-
-
-void SettingsDialog::calibrateData()
-{
-  system("/usr/bin/xinput_calibrator --misclick 0");
 }
 
 
@@ -270,7 +254,6 @@ void SettingsDialog::resizeEvent(QResizeEvent *e)
 
   set_layout_button->setGeometry(10,size().height()-60,80,50);
   set_synergy_button->setGeometry(100,size().height()-60,80,50);
-  set_calibrate_button->setGeometry(190,size().height()-60,80,50);
 
   set_ok_button->setGeometry(size().width()-180,size().height()-60,80,50);
   set_cancel_button->setGeometry(size().width()-90,size().height()-60,80,50);
@@ -282,19 +265,6 @@ void SettingsDialog::Load()
   FILE *f=NULL;
   char line[1024];
   QMap<QString,QString> confvalues;
-
-  //
-  // Check for devices that require calibration
-  //
-  bool calb_needed=false;
-  QStringList args;
-  args.push_back("--list");
-  QProcess *proc=new QProcess(this);
-  proc->start("/usr/bin/xinput_calibrator",args);
-  proc->waitForFinished();
-  calb_needed=(proc->exitStatus()==QProcess::NormalExit)&&(proc->exitCode()==0);
-  delete proc;
-  set_calibrate_button->setEnabled(calb_needed);
 
   //
   // Pointer Configuration

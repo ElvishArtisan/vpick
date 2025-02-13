@@ -67,7 +67,7 @@ MainWidget::MainWidget(QWidget *parent)
       cmd->setProcessed(i,true);
     }
     if(cmd->key(i)=="--logical-screen-size") {
-      QStringList f0=cmd->value(i).split("x",QString::KeepEmptyParts);
+      QStringList f0=cmd->value(i).split("x",Qt::KeepEmptyParts);
       if(f0.size()!=2) {
 	fprintf(stderr,"vpick: invalid argument\n");
 	exit(1);
@@ -454,7 +454,11 @@ QString MainWidget::GenerateVncPassword(int id)
   proc->waitForFinished();
   data=proc->readAllStandardOutput();
   delete proc;
-  write(fd,data,data.size());
+  if(write(fd,data,data.size())!=data.size()) {
+    QMessageBox::warning(this,"Vpick - "+tr("Error"),
+		 tr("An error occurred when attempting to set a password!")+
+			 QString::asprintf("[%s]",strerror(errno)));
+  }
   ::close(fd);
 
   return QString(tempname);

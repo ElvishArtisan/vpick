@@ -47,7 +47,6 @@ class SettingsDialog : public QDialog
 
  private slots:
   void dhcpChangedData(int n);
-  void calibrateData();
   void okData();
   void cancelData();
 
@@ -75,7 +74,6 @@ class SettingsDialog : public QDialog
   QComboBox *set_handedness_box;
   QPushButton *set_layout_button;
   QPushButton *set_synergy_button;
-  QPushButton *set_calibrate_button;
   QPushButton *set_ok_button;
   QPushButton *set_cancel_button;
   QStringList set_dhcpcd_values;

@@ -40,7 +40,7 @@ CmdSwitch::CmdSwitch(const char *modname,const char *usage)
       printf("\n%s %s\n",modname,usage);
       exit(0);
     }
-    QStringList f0=args.at(i).split("=",QString::KeepEmptyParts);
+    QStringList f0=args.at(i).split("=",Qt::KeepEmptyParts);
     if(f0.size()>=2) {
       if(f0.at(0).left(1)=="-") {
 	switch_keys.push_back(f0.at(0));
