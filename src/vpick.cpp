@@ -2,7 +2,7 @@
 //
 // vpick(1) Host Chooser
 //
-//   (C) Copyright 2016-2023 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -25,7 +25,6 @@
 #include <unistd.h>
 
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QList>
 #include <QMessageBox>
 #include <QProcess>
@@ -49,40 +48,23 @@ MainWidget::MainWidget(QWidget *parent)
   : QMainWindow(parent)
 {
   bool ok=false;
+  int screen_number=0;
 
   vpick_autoconnect_id=-1;
   vpick_display_profile=false;
-
-  QDesktopWidget *desktop=QApplication::desktop();
-  QSize logical_screen_size=
-    QSize(desktop->screenGeometry(this).size().width()/
-	  (VPICK_BUTTON_MARGIN+VPICK_BUTTON_WIDTH),
-	  desktop->screenGeometry(this).size().height()/
-	  (VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT)-1);
-
+  
   CmdSwitch *cmd=new CmdSwitch("vpick",VPICK_USAGE);
   for(int i=0;i<cmd->keys();i++) {
     if(cmd->key(i)=="--display-profile") {
       vpick_display_profile=true;
       cmd->setProcessed(i,true);
     }
-    if(cmd->key(i)=="--logical-screen-size") {
-      QStringList f0=cmd->value(i).split("x",Qt::KeepEmptyParts);
-      if(f0.size()!=2) {
-	fprintf(stderr,"vpick: invalid argument\n");
+    if(cmd->key(i)=="--screen") {
+      screen_number=cmd->value(i).toUInt(&ok);
+      if(!ok) {
+	fprintf(stderr,"vpick: invalid screen argument");
 	exit(1);
       }
-      int x_buttons=f0.at(0).toInt(&ok);
-      if((!ok)||(x_buttons<0)) {
-	fprintf(stderr,"vpick: invalid argument\n");
-	exit(1);
-      }
-      int y_buttons=f0.at(1).toInt(&ok);
-      if((!ok)||(y_buttons<0)) {
-	fprintf(stderr,"vpick: invalid argument\n");
-	exit(1);
-      }
-      logical_screen_size=QSize(x_buttons,y_buttons+1);
       cmd->setProcessed(i,true);
     }
     if(!cmd->processed(i)) {
@@ -90,11 +72,7 @@ MainWidget::MainWidget(QWidget *parent)
       exit(256);
     }
   }
-  if((logical_screen_size.width()<2)||(logical_screen_size.height()<3)) {
-    QMessageBox::critical(this,"VPick - "+tr("Error"),
-			  tr("Screen size is too small!"));
-    exit(1);
-  }
+
   setWindowTitle(tr("Host Picker"));
   setWindowIcon(QPixmap(vpick_16x16_xpm));
 
@@ -102,13 +80,13 @@ MainWidget::MainWidget(QWidget *parent)
   // Button Mapper
   //
   vpick_button_mapper=new QSignalMapper(this);
-  connect(vpick_button_mapper,SIGNAL(mapped(int)),
+  connect(vpick_button_mapper,SIGNAL(mappedInt(int)),
 	  this,SLOT(buttonClickedData(int)));
 
   //
   // Load Configuration
   //
-  vpick_config=new Config(logical_screen_size);
+  vpick_config=new Config(screen_number);
   if((!vpick_config->load())||(!vpick_config->fixup())) {
     QMessageBox::critical(this,"VPick - "+tr("Error"),
 			  tr("Too many buttons to fit on this screen!"));
@@ -300,7 +278,8 @@ void MainWidget::settingsClickedData()
 #endif  // EMBEDDED
 
 #ifdef DESKTOP
-  if(vpick_layout_dialog->exec()) {
+  if(vpick_layout_dialog->
+     exec()==0) {
     vpick_config->save();
     UpdateLayout();
     Resize();
@@ -689,5 +668,6 @@ int main(int argc,char *argv[])
   QApplication a(argc,argv);
   MainWidget *w=new MainWidget();
   w->show();
+
   return a.exec();
 }

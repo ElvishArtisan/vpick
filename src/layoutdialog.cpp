@@ -2,7 +2,7 @@
 //
 // Manage button layout
 //
-//   (C) Copyright 2021-2022 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2021-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -51,10 +51,7 @@ LayoutDialog::LayoutDialog(Config *config,QWidget *parent)
 
 QSize LayoutDialog::sizeHint() const
 {
-  return QSize(d_config->screenSize().width()*
-	       (VPICK_BUTTON_MARGIN+VPICK_BUTTON_WIDTH),
-	       d_config->screenSize().height()*
-	       (VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT));
+  return d_size_hint;
 }
 
 
@@ -63,9 +60,11 @@ int LayoutDialog::exec()
   QFont font("helvetica",16,QFont::Bold);
   font.setPixelSize(16);
 
-  setMaximumSize(sizeHint());
-  setMinimumSize(sizeHint());
-
+  d_size_hint=QSize(d_config->screenSize().width()*(VPICK_BUTTON_WIDTH+VPICK_BUTTON_MARGIN),
+		    d_config->screenSize().height()*(VPICK_BUTTON_HEIGHT+VPICK_BUTTON_MARGIN)+60);
+  setMaximumSize(d_size_hint);
+  setMinimumSize(d_size_hint);
+  
   d_config->save();
   d_changed=false;
 
@@ -96,7 +95,7 @@ bool LayoutDialog::cancelData()
   if(d_changed) {
     switch(QMessageBox::question(this,"VPick - "+tr("Layout Changed"),
 				 tr("Save changes to the button layout?"),
-				 QMessageBox::Yes,QMessageBox::No,
+				 QMessageBox::Yes|QMessageBox::No|
 				 QMessageBox::Cancel)) {
     case QMessageBox::Yes:
       saveData();
@@ -143,18 +142,17 @@ void LayoutDialog::paintEvent(QPaintEvent *e)
   QPainter *p=new QPainter(this);
 
   p->setPen(palette().color(QPalette::Inactive,QPalette::WindowText));
+
+  // Vertical Lines
   for(int i=1;i<d_config->screenSize().width();i++) {
-    p->drawLine(i*(VPICK_BUTTON_MARGIN+VPICK_BUTTON_WIDTH)+
-		VPICK_BUTTON_MARGIN/2,0,
-		i*(VPICK_BUTTON_MARGIN+VPICK_BUTTON_WIDTH)+
-		VPICK_BUTTON_MARGIN/2,h-
-		(VPICK_BUTTON_MARGIN/2+VPICK_BUTTON_HEIGHT));
+    p->drawLine(i*(VPICK_BUTTON_WIDTH+VPICK_BUTTON_MARGIN),
+		0,i*(VPICK_BUTTON_WIDTH+VPICK_BUTTON_MARGIN),h-60);
   }
-  for(int i=1;i<d_config->screenSize().height();i++) {
-    p->drawLine(0,i*(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT)+
-		VPICK_BUTTON_MARGIN/2,
-		w,i*(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT)+
-		VPICK_BUTTON_MARGIN/2);
+
+  // Horizontal Lines
+  for(int i=1;i<(d_config->screenSize().height()+1);i++) {
+    p->drawLine(0,i*(VPICK_BUTTON_HEIGHT+VPICK_BUTTON_MARGIN),
+		w,i*(VPICK_BUTTON_HEIGHT+VPICK_BUTTON_MARGIN));
   }
   p->end();
   delete p;
@@ -171,8 +169,9 @@ void LayoutDialog::dragEnterEvent(QDragEnterEvent *e)
 
 void LayoutDialog::dragMoveEvent(QDragMoveEvent *e)
 {
-  QPoint pos=QPoint(e->pos().x()/(VPICK_BUTTON_MARGIN+VPICK_BUTTON_WIDTH),
-		    e->pos().y()/(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT));
+  QPoint pt=e->position().toPoint();
+  QPoint pos=QPoint(pt.x()/(VPICK_BUTTON_MARGIN+VPICK_BUTTON_WIDTH),
+		    pt.y()/(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT));
 
   if((pos.y()<d_config->screenSize().height()-1)&&
      d_config->positionIsFree(pos)) {
@@ -187,8 +186,9 @@ void LayoutDialog::dragMoveEvent(QDragMoveEvent *e)
 void LayoutDialog::dropEvent(QDropEvent *e)
 {
   bool ok=false;
-  QPoint pos=QPoint(e->pos().x()/(VPICK_BUTTON_MARGIN+VPICK_BUTTON_WIDTH),
-		    e->pos().y()/(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT));
+  QPoint pt=e->position().toPoint();
+  QPoint pos=QPoint(pt.x()/(VPICK_BUTTON_MARGIN+VPICK_BUTTON_WIDTH),
+		    pt.y()/(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT));
 
   if(d_config->positionIsFree(pos)) {
     int id=e->mimeData()->data(VPICK_MIMETYPE).toInt(&ok);
@@ -209,22 +209,22 @@ void LayoutDialog::UpdateLayout()
 
   for(int i=0;i<d_config->hostQuantity();i++) {
     d_buttons.at(i)->
-      setGeometry(VPICK_BUTTON_MARGIN+(VPICK_BUTTON_MARGIN+VPICK_BUTTON_WIDTH)*
+      setGeometry(VPICK_BUTTON_MARGIN/2+(VPICK_BUTTON_MARGIN+VPICK_BUTTON_WIDTH)*
 		  d_config->position(i).x(),
-		  VPICK_BUTTON_MARGIN+(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT)*
+		  VPICK_BUTTON_MARGIN/2+(VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT)*
 		  d_config->position(i).y(),
 		  VPICK_BUTTON_WIDTH,
 		  VPICK_BUTTON_HEIGHT);
   }
+  int button_y=h-50;
   d_instructions_label->setGeometry(VPICK_BUTTON_MARGIN,
-				    h-(VPICK_BUTTON_MARGIN/4+
-				       VPICK_BUTTON_HEIGHT),
+				    button_y,
 				    w-180,VPICK_BUTTON_HEIGHT);
   d_save_button->setGeometry(w-160,
-			     h-(VPICK_BUTTON_MARGIN/4+VPICK_BUTTON_HEIGHT),
+			     button_y,
 			     70,VPICK_BUTTON_HEIGHT);
   d_cancel_button->setGeometry(w-80,
-			       h-(VPICK_BUTTON_MARGIN/4+VPICK_BUTTON_HEIGHT),
+			       button_y,
 			       70,VPICK_BUTTON_HEIGHT);
 }
 

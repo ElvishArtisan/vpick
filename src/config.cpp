@@ -2,7 +2,7 @@
 //
 // vpick(1) Host Chooser Configuration
 //
-//   (C) Copyright 2016-2023 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -21,31 +21,77 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include <QApplication>
+#include <QDir>
+#include <QGuiApplication>
 #include <QObject>
 
 #include "config.h"
 #include "profile.h"
 
-Config::Config(const QSize &screen_size)
+Config::Config(int screen_num)
 {
+  conf_screen_number=screen_num;
+
 #ifdef DESKTOP
   if(getenv("HOME")!=NULL) {
-    conf_filename=QString(getenv("HOME"))+"/.vpickrc";
+    if(screen_num==0) {
+      conf_filename=QString::asprintf("%s/.vpickrc",
+				      QDir::homePath().toUtf8().constData());
+    }
+    else {
+      conf_filename=
+	QString::asprintf("%s/.vpickrc%d",
+			  QDir::homePath().toUtf8().constData(),screen_num);
+    }
   }
   else {
-    conf_filename="/etc/vpick.conf";
+    if(screen_num==0) {
+      conf_filename="/etc/vpick.conf";
+    }
+    else {
+      conf_filename=QString::asprintf("/etc/vpick%d.conf",screen_num);
+    }
   }
 #endif  // DESKTOP
 
-  conf_screen_size=screen_size;
   conf_handedness=Config::RightHanded;
 }
 
 
-QSize Config::screenSize() const
+int Config::screenNumber() const
 {
-  return conf_screen_size;
+  return conf_screen_number;
+}
+
+
+QScreen *Config::screen()
+{
+  QList<QScreen *> screens=QGuiApplication::screens();
+  if(conf_screen_number<screens.size()) {
+    return screens.at(conf_screen_number);
+  }
+  return NULL;
+}
+
+
+QSize Config::screenSize()
+{
+#ifdef DESKTOP
+  QSize ret(QSize((screen()->size().
+		   width()-VPICK_BUTTON_DESKTOP_FUDGE)/
+		  (VPICK_BUTTON_MARGIN+VPICK_BUTTON_WIDTH),
+		  (screen()->size().
+		   height()-VPICK_BUTTON_DESKTOP_FUDGE)/
+		  (VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT)-2));
+#endif  // DESKTOP
+#ifdef EMBEDDED
+  QSize ret(QSize(screen()->size().width()/
+		  (VPICK_BUTTON_MARGIN+VPICK_BUTTON_WIDTH),
+		  screen()->size().height()/
+		  (VPICK_BUTTON_MARGIN+VPICK_BUTTON_HEIGHT)-2));
+#endif  // EMBEDDED
+
+  return ret;
 }
 
 
@@ -222,30 +268,6 @@ void Config::setColor(int n,const QColor &color)
   conf_colors[n]=color;
 }
 
-/*
-QProcess *Config::viewerProcess(int n) const
-{
-  return conf_viewer_processes.at(n);
-}
-
-
-void Config::setViewerProcess(int n,QProcess *proc)
-{
-  conf_viewer_processes[n]=proc;
-}
-
-
-QString Config::startupFileName(int n) const
-{
-  return conf_startup_file_names.at(n);
-}
-
-
-void Config::setStartupFileName(int n,const QString &str)
-{
-  conf_startup_file_names[n]=str;
-}
-*/
 
 int Config::addHost(Type type,const QString &title,const QString &hostname,
 		    const QString &passwd,bool autoconnect,bool fullscreen,
@@ -303,7 +325,7 @@ bool Config::positionIsFree(const QPoint &pt) const
 }
 
 
-QPoint Config::nextFreePosition(bool *ok) const
+QPoint Config::nextFreePosition(bool *ok)
 {
   QSize screen_size=screenSize();
 
@@ -331,7 +353,7 @@ QPoint Config::nextFreePosition(bool *ok) const
 }
 
 
-bool Config::hasFreePosition() const
+bool Config::hasFreePosition()
 {
   QPoint pos=nextFreePosition();
 

@@ -2,7 +2,7 @@
 //
 // Manage button layout
 //
-//   (C) Copyright 2021 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2021-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -59,6 +59,7 @@ class LayoutDialog : public QDialog
   QPushButton *d_cancel_button;
   Config *d_config;
   bool d_changed;
+  QSize d_size_hint;
 };
 
 

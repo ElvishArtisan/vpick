@@ -2,7 +2,7 @@
 //
 // vpick(1) Host Chooser Configuration
 //
-//   (C) Copyright 2016-2023 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -26,6 +26,7 @@
 #include <QHostAddress>
 #include <QPoint>
 #include <QProcess>
+#include <QScreen>
 #include <QSize>
 #include <QString>
 
@@ -38,6 +39,7 @@
 #define VPICK_BUTTON_WIDTH 200
 #define VPICK_BUTTON_HEIGHT 40
 #define VPICK_BUTTON_MARGIN 10
+#define VPICK_BUTTON_DESKTOP_FUDGE 50
 #define VPICK_MIMETYPE "application/vpick-button"
 class Config
 {
@@ -45,8 +47,10 @@ class Config
   enum Type {VncPlain=0,Spice=1,LastType=2};
   enum SynergyMode {NoSynergy=0,ClientSynergy=1,ServerSynergy=2};
   enum Handedness {RightHanded=1,LeftHanded=2};
-  Config(const QSize &screen_size);
-  QSize screenSize() const;
+  Config(int screen_num);
+  int screenNumber() const;
+  QScreen *screen();
+  QSize screenSize();
   QSize canvasSize() const;
   Handedness pointerHandedness() const;
   void setPointerHandedness(Handedness hand);
@@ -74,19 +78,13 @@ class Config
   void setFullscreen(int n,bool state);
   QColor color(int n) const;
   void setColor(int n,const QColor &color);
-  /*
-  QProcess *viewerProcess(int n) const;
-  void setViewerProcess(int n,QProcess *proc);
-  QString startupFileName(int n) const;
-  void setStartupFileName(int n,const QString &str);
-  */
   int addHost(Type type,const QString &title,const QString &hostname,
 	      const QString &passwd,bool autoconnect,bool fullscreen,
 	      const QColor &color);
   void removeHost(int n);
   bool positionIsFree(const QPoint &pt) const;
-  QPoint nextFreePosition(bool *ok=NULL) const;
-  bool hasFreePosition() const;
+  QPoint nextFreePosition(bool *ok=NULL);
+  bool hasFreePosition();
   bool load();
   bool save();
   bool fixup();
@@ -94,7 +92,7 @@ class Config
   static QString typeString(Type type);
 
  private:
-  QSize conf_screen_size;
+  int conf_screen_number;
   QSize conf_canvas_size;
   Handedness conf_handedness;
   SynergyMode conf_synergy_mode;

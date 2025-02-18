@@ -5,7 +5,7 @@ MANDATORY PREREQUISITES
 You will need the following installed and configured properly on your 
 system before building vpick:
 
-Qt5 Toolkit, v5.9.7 or better (http://www.qt.io/).
+Qt6 Toolkit, v6.2.4 or better (http://www.qt.io/).
 
 SSVNC Enhanced TightVNC Viewer (http://ssvnc.sourceforge.net/)
 
@@ -44,11 +44,23 @@ while '--with-embedded' intended for 'appliance' environments with no
 independently configured window manager.
 
 
-DISTRO-SPECFIC NOTES
---------------------
-1) RedHat Enterprise Linux 7
+DISTRO-SPECIFIC NOTES
+---------------------
+1) Ubuntu 22.02 LTS
 
-Required build packages: git gcc-c++ automake autoconf libtool qt5-qtbase-devel rpm-build createrepo fop docbook5-style-xsl libxslt rpm-sign man-pages 
+Required build packages: libsndfile1-dev qt6-base-dev docbook5-xml libxml2-utils docbook-xsl-ns xsltproc fop make g++ autoconf automake debhelper autoconf-archive gnupg pbuilder ubuntu-dev-tools apt-file
+
+Configure script invocation: ./configure --prefix=/usr
+
+Environmental variables:
+  DOCBOOK_STYLESHEETS=/usr/share/xml/docbook/stylesheet/docbook-xsl-ns
+  DEBUILD_MAKE_ARGS=<optional-gcc-flags>
+
+Due to a bug in the Ubuntu 'qt6-base-dev-tools', it may be necessary to
+define the following environmental variable to allow Qt's moc(1) utility
+to be found by the build system:
+
+  QT6_MOC=/usr/lib/qt6/libexec/moc
 
 
 VNC Server Script Mod

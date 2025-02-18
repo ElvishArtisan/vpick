@@ -27,7 +27,7 @@
 ColorBox::ColorBox(QWidget *parent)
   : QComboBox(parent)
 {
-  d_default_color=palette().color(QPalette::Background);
+  d_default_color=palette().color(QPalette::Window);
 
   InsertColor(tr("None"),QColor());
   InsertColor(tr("White"),Qt::white);
