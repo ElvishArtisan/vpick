@@ -318,3 +318,6 @@
 	* Added the package version to the titlebar of the main window.
 	* Added the current screen number to the titlebar of the main
 	window when running on a multi-screen system.
+2025-02-18 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Remember Position' item to the right-click menu on
+	viewer buttons.

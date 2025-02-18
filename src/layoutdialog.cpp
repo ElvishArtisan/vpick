@@ -71,8 +71,7 @@ int LayoutDialog::exec()
   d_changed=false;
 
   for(int i=0;i<d_config->hostQuantity();i++) {
-    d_buttons.
-      push_back(new HostButton(i,d_config->title(i),d_config->color(i),this));
+    d_buttons.push_back(new HostButton(i,d_config,this));
     d_buttons.back()->setFont(font);
     d_buttons.back()->setAllowDrags(true);
   }

@@ -21,15 +21,27 @@
 #ifndef HOSTBUTTON_H
 #define HOSTBUTTON_H
 
+#include <QMenu>
 #include <QPushButton>
+
+#include "config.h"
 
 class HostButton : public QPushButton
 {
  Q_OBJECT;
  public:
- HostButton(int id,const QString &text,const QColor &color,QWidget *parent=0);
+  //  HostButton(int id,const QString &text,const QColor &color,Config *c,
+  //	     QWidget *parent=0);
+  HostButton(int id,Config *c,QWidget *parent=0);
  void setText(const QString &text,const QColor &color);
  void setAllowDrags(bool state);
+
+ signals:
+ void savePosition(int id,const QPoint &pos);
+
+ private slots:
+  void aboutToShowData();
+  void rememberPositionData();
 
  protected:
   void mousePressEvent(QMouseEvent *e);
@@ -41,6 +53,10 @@ class HostButton : public QPushButton
   QColor TextColor(const QColor &color);
   int d_move_count;
   bool d_allow_drags;
+  QMenu *d_rightclick_menu;
+  QAction *d_remember_position_action;
+  QPoint d_window_position;
+  Config *d_config;
 };
 
 

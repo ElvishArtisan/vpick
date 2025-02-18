@@ -185,6 +185,18 @@ void Config::setPosition(int n,int x,int y)
 }
 
 
+QPoint Config::windowPosition(int n) const
+{
+  return conf_window_positions.at(n);
+}
+
+
+void Config::setWindowPosition(int n,const QPoint &win_pos)
+{
+  conf_window_positions[n]=win_pos;
+}
+
+
 Config::Type Config::type(int n)
 {
   return conf_types[n];
@@ -269,11 +281,69 @@ void Config::setColor(int n,const QColor &color)
 }
 
 
+QString Config::liveWindowId(int n) const
+{
+  return conf_live_window_ids.at(n);
+}
+
+
+QRect Config::liveWindowGeometry(int n) const
+{
+  return conf_live_window_geometries.at(n);
+}
+
+
+void Config::updateLiveParameters(int id)
+{
+  bool ok=false;
+  QStringList args;
+
+  conf_live_window_ids[id]=QString();
+  conf_live_window_geometries[id]=QRect();
+  
+  args.push_back("-lG");
+  QProcess *proc=new QProcess();
+  proc->start("/usr/bin/wmctrl",args);
+  proc->waitForFinished();
+  if(proc->exitStatus()!=QProcess::NormalExit) {
+    fprintf(stderr,"WARNING: wmctrl(1) process crashed!\n");
+  }
+  else {
+    if(proc->exitCode()!=0) {
+      fprintf(stderr,"WARNING: wmctrl(1) process returned error [%s]\n",
+	      proc->readAllStandardError().constData());
+    }
+    else {
+      QStringList f0=QString::fromUtf8(proc->readAllStandardOutput()).
+	split("\n",Qt::SkipEmptyParts);
+      for(int i=0;i<f0.size();i++) {
+	QString title=f0.at(i).right(f0.at(i).length()-53).trimmed();
+	if(title==(conf_titles.at(id)+" (1) - Remote Viewer")) {
+	  QString win_id=f0.at(i).left(10).trimmed();
+	  int x=f0.at(i).mid(14,4).trimmed().toInt(&ok);
+	  if(ok&&(x>=0)) {
+	    int y=f0.at(i).mid(19,4).trimmed().toInt(&ok);
+	    if(ok&&(y>=0)) {
+	      conf_live_window_ids[id]=f0.at(i).left(10);
+	      conf_live_window_geometries[id]=QRect(x,y,0,0);
+	    }
+	  }
+	}
+      }
+    }
+  }
+  delete proc;
+}
+
+
 int Config::addHost(Type type,const QString &title,const QString &hostname,
 		    const QString &passwd,bool autoconnect,bool fullscreen,
 		    const QColor &color)
 {
   conf_positions.push_back(nextFreePosition());
+  conf_window_positions.push_back(QPoint());
+  conf_live_window_ids.push_back(QString());
+  conf_live_window_geometries.push_back(QRect());
   conf_types.push_back(type);
   conf_titles.push_back(title);
   conf_hostnames.push_back(hostname);
@@ -302,6 +372,9 @@ void Config::removeHost(int n)
     conf_startup_file_names.removeAt(n);
   }
   conf_positions.erase(conf_positions.begin()+n);
+  conf_window_positions.erase(conf_window_positions.begin()+n);
+  conf_live_window_ids.erase(conf_live_window_ids.begin()+n);
+  conf_live_window_geometries.erase(conf_live_window_geometries.begin()+n);
   conf_types.erase(conf_types.begin()+n);
   conf_titles.erase(conf_titles.begin()+n);
   conf_hostnames.erase(conf_hostnames.begin()+n);
@@ -397,6 +470,9 @@ bool Config::load()
   // Clear previous Host entries
   //
   conf_positions.clear();
+  conf_window_positions.clear();
+  conf_live_window_ids.clear();
+  conf_live_window_geometries.clear();
   conf_types.clear();
   conf_hostnames.clear();
   conf_passwords.clear();
@@ -427,6 +503,11 @@ bool Config::load()
 	return false;
       }
     }
+    QPoint pos(QPoint(p->intValue(section,"WindowX",-1),
+		      p->intValue(section,"WindowY",-1)));
+    conf_window_positions.push_back(pos);
+    conf_live_window_ids.push_back(QString());
+    conf_live_window_geometries.push_back(QRect());
     conf_types.push_back(type);
     conf_hostnames.push_back(p->stringValue(section,"Hostname"));
     conf_passwords.push_back(p->stringValue(section,"Password"));
@@ -478,6 +559,8 @@ bool Config::save()
     fprintf(f,"[Host%u]\n",i+1);
     fprintf(f,"X=%d\n",conf_positions.at(i).x());
     fprintf(f,"Y=%d\n",conf_positions.at(i).y());
+    fprintf(f,"WindowX=%d\n",conf_window_positions.at(i).x());
+    fprintf(f,"WindowY=%d\n",conf_window_positions.at(i).y());
     fprintf(f,"Type=%u\n",conf_types.at(i));
     fprintf(f,"Title=%s\n",conf_titles.at(i).toUtf8().constData());
     fprintf(f,"Hostname=%s\n",conf_hostnames.at(i).toUtf8().constData());

@@ -21,23 +21,35 @@
 #include <stdio.h>
 
 #include <QDrag>
+#include <QMessageBox>
 #include <QMimeData>
+#include <QMouseEvent>
 
 #include "config.h"
 #include "hostbutton.h"
 
 #include "../icons/vpick-16x16.xpm"
 
-HostButton::HostButton(int id,const QString &text,const QColor &color,QWidget *parent)
-  : QPushButton(text,parent)
+//HostButton::HostButton(int id,const QString &text,const QColor &color,
+//		       Config *c,QWidget *parent)
+HostButton::HostButton(int id,Config *c,QWidget *parent)
+  : QPushButton(c->title(id),parent)
 {
   d_id=id;
   d_allow_drags=false;
   d_move_count=-1;
+  d_config=c;
 
-  if(color.isValid()) {
-    setStyleSheet("color: "+TextColor(color).name()+
-		  ";background-color: "+color.name());
+  d_rightclick_menu=new QMenu(this);
+  d_rightclick_menu->setPalette(parent->palette());
+  d_rightclick_menu->setStyleSheet("");
+  connect(d_rightclick_menu,SIGNAL(aboutToShow()),this,SLOT(aboutToShowData()));
+  d_remember_position_action=d_rightclick_menu->
+    addAction(tr("Remember position"),this,SLOT(rememberPositionData()));
+
+  if(c->color(id).isValid()) {
+    setStyleSheet("color: "+TextColor(c->color(id)).name()+
+    		  ";background-color: "+c->color(id).name());
   }
 }
 
@@ -61,9 +73,28 @@ void HostButton::setAllowDrags(bool state)
 }
 
 
+void HostButton::aboutToShowData()
+{
+  d_window_position=QPoint();
+  d_config->updateLiveParameters(d_id);
+  d_remember_position_action->
+    setDisabled(!d_config->liveWindowGeometry(d_id).isNull());
+}
+
+
+void HostButton::rememberPositionData()
+{
+  emit savePosition(d_id,d_config->liveWindowGeometry(d_id).topLeft());
+}
+
+
 void HostButton::mousePressEvent(QMouseEvent *e)
 {
   d_move_count=10;
+  if(e->button()==Qt::RightButton) {
+    d_rightclick_menu->
+      popup((QPoint(e->globalPosition().x(),e->globalPosition().y())));
+  }
   QPushButton::mousePressEvent(e);
 }
 

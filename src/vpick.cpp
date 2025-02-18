@@ -313,6 +313,42 @@ void MainWidget::titlebarData()
 }
 
 
+void MainWidget::processStartedData(int id)
+{
+  vpick_config->updateLiveParameters(id);
+
+  if(!vpick_config->windowPosition(id).isNull()) {
+    QStringList args;
+    args.push_back("-r");
+    args.push_back(vpick_config->title(id));
+    args.push_back("-e");
+    args.push_back(QString::asprintf("0,%d,%d,-1,-1",
+				     vpick_config->windowPosition(id).x(),
+				     vpick_config->windowPosition(id).y()));
+    QProcess *proc=new QProcess(this);
+    proc->start("/usr/bin/wmctrl",args);
+    proc->waitForFinished();
+    if(proc->exitStatus()!=QProcess::NormalExit) {
+      fprintf(stderr,"WARNING: wmctrl(1) process crashed!\n");
+    }
+    else {
+      if(proc->exitCode()!=0) {
+	fprintf(stderr,"WARNING: wmctrl(1) process returned error [%s]\n",
+		proc->readAllStandardError().constData());
+      }
+    }
+    delete proc;
+  }
+}
+
+
+void MainWidget::saveButtonPositionData(int id,const QPoint &pos)
+{
+  vpick_config->setWindowPosition(id,pos);
+  vpick_config->save();
+}
+
+
 void MainWidget::closeEvent(QCloseEvent *e)
 {
   vpick_settings_dialog->stopSynergy();
@@ -364,7 +400,8 @@ void MainWidget::StartVnc(int id)
   }
   args.push_back(conn_file);
   proc=new ViewerProcess(conn_file,vpick_display_profile,this);
-  proc->start("/usr/bin/remote-viewer",args);
+  connect(proc,SIGNAL(started(int)),this,SLOT(processStartedData(int)));
+  proc->start(id,"/usr/bin/remote-viewer",args);
 #endif  // VIRTVIEWER
 
 #ifdef SSVNC
@@ -386,6 +423,7 @@ void MainWidget::StartVnc(int id)
   args.push_back("-nograbkbd");  // So we don't break Synergy server
   args.push_back(vpick_config->hostname(id));
   proc=new ViewerProcess(conn_file,this);
+  connect(proc,SIGNAL(started(int)),this,SLOT(processStartedData(int)));
   proc->start("/usr/lib/ssvnc/vncviewer",args);
 #endif  // SSVNC
 
@@ -398,6 +436,7 @@ void MainWidget::StartVnc(int id)
   args.push_back(conn_file);
   args.push_back(vpick_config->hostname(id));
   proc=new ViewerProcess(conn_file,this);  
+  connect(proc,SIGNAL(started(int)),this,SLOT(processStartedData(int)));
   proc->start("/usr/bin/vncviewer",args);
 #endif  // TIGERVNC
 
@@ -413,6 +452,7 @@ void MainWidget::StartVnc(int id)
   }
   args.push_back(vpick_config->hostname(id));
   proc=new ViewerProcess(conn_file,this);
+  connect(proc,SIGNAL(started(int)),this,SLOT(processStartedData(int)));
   proc->start("/usr/bin/vncviewer",args);
 #endif  // REALVNC
 }
@@ -462,7 +502,7 @@ void MainWidget::StartSpice(int id)
   args.push_back(conn_file);
 
   ViewerProcess *proc=new ViewerProcess(conn_file,vpick_display_profile,this);
-  proc->start("/usr/bin/remote-viewer",args);
+  proc->start(id,"/usr/bin/remote-viewer",args);
 }
 
 
@@ -510,6 +550,7 @@ QString MainWidget::GenerateConnectionFile(int id)
     fprintf(f,"port=5900\n");
   }
   fprintf(f,"password=%s\n",vpick_config->password(id).toUtf8().constData());
+  fprintf(f,"title=%s\n",vpick_config->title(id).toUtf8().constData());
 #ifdef DESKTOP
   if(vpick_config->fullscreen(id)) {
     fprintf(f,"fullscreen=1\n");
@@ -544,11 +585,13 @@ void MainWidget::AddHost(int id)
   font.setPixelSize(16);
 
   vpick_buttons.
-    push_back(new HostButton(vpick_buttons.size(),vpick_config->title(id),vpick_config->color(id),this));
+    push_back(new HostButton(vpick_buttons.size(),vpick_config,this));
   vpick_buttons.back()->setFont(font);
   vpick_button_mapper->setMapping(vpick_buttons.back(),vpick_buttons.size()-1);
   connect(vpick_buttons.back(),SIGNAL(clicked()),
 	  vpick_button_mapper,SLOT(map()));
+  connect(vpick_buttons.back(),SIGNAL(savePosition(int,const QPoint &)),
+	  this,SLOT(saveButtonPositionData(int,const QPoint &)));
 }
 
 

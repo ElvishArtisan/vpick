@@ -2,7 +2,7 @@
 //
 // vpick(1) Host Chooser
 //
-//   (C) Copyright 2016-2023 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2016-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -53,6 +53,8 @@ class MainWidget : public QMainWindow
   void settingsClickedData();
   void autoconnectData();
   void titlebarData();
+  void processStartedData(int id);
+  void saveButtonPositionData(int id,const QPoint &pos);
   
  protected:
   void closeEvent(QCloseEvent *e);

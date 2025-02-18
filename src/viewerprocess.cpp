@@ -2,7 +2,7 @@
 //
 // Process container for viewers
 //
-//   (C) Copyright 2023-2024 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2023-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -31,6 +31,10 @@ ViewerProcess::ViewerProcess(const QString &startup_filename,
   d_startup_filename=startup_filename;
   d_display_profile=display_profile;
 
+  d_startup_timer=new QTimer(this);
+  connect(d_startup_timer,SIGNAL(timeout()),this,SLOT(startupTimeoutData()));
+  d_startup_timer->setSingleShot(true);
+  
   d_process=new QProcess(this);
   connect(d_process,SIGNAL(started()),this,SLOT(startedData()));
   connect(d_process,SIGNAL(finished(int,QProcess::ExitStatus)),
@@ -44,8 +48,9 @@ ViewerProcess::~ViewerProcess()
 }
 
 
-void ViewerProcess::start(const QString &cmd,const QStringList &args)
+void ViewerProcess::start(int id,const QString &cmd,const QStringList &args)
 {
+  d_id=id;
   d_command=cmd;
   d_arguments=args;
   d_process->start(cmd,args);
@@ -69,6 +74,13 @@ void ViewerProcess::startedData()
 	   d_command.toUtf8().constData(),
 	   d_arguments.join(" ").toUtf8().constData());
   }
+  d_startup_timer->start(500);
+}
+
+
+void ViewerProcess::startupTimeoutData()
+{
+  emit started(d_id);
 }
 
 

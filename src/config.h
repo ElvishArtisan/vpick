@@ -64,6 +64,8 @@ class Config
   QPoint position(int n) const;
   void setPosition(int n,const QPoint &pos);
   void setPosition(int n,int x,int y);
+  QPoint windowPosition(int n) const;
+  void setWindowPosition(int n,const QPoint &win_pos);
   Type type(int n);
   void setType(int n,Type type);
   QString title(int n) const;
@@ -78,6 +80,9 @@ class Config
   void setFullscreen(int n,bool state);
   QColor color(int n) const;
   void setColor(int n,const QColor &color);
+  QString liveWindowId(int n) const;
+  QRect liveWindowGeometry(int n) const;
+  void updateLiveParameters(int n);
   int addHost(Type type,const QString &title,const QString &hostname,
 	      const QString &passwd,bool autoconnect,bool fullscreen,
 	      const QColor &color);
@@ -100,6 +105,7 @@ class Config
   QHostAddress conf_synergy_server_address;
   QList<Type> conf_types;
   QList<QPoint> conf_positions;
+  QList<QPoint> conf_window_positions;
   QList<QString> conf_titles;
   QList<QString> conf_hostnames;
   QList<QString> conf_passwords;
@@ -108,6 +114,8 @@ class Config
   QList<QColor> conf_colors;
   QList<QProcess *> conf_viewer_processes;
   QStringList conf_startup_file_names;
+  QStringList conf_live_window_ids;
+  QList<QRect> conf_live_window_geometries;
 #ifdef DESKTOP
   QString conf_filename;
 #endif  // DESKTOP
