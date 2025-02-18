@@ -73,7 +73,14 @@ MainWidget::MainWidget(QWidget *parent)
     }
   }
 
-  setWindowTitle(tr("Host Picker"));
+  if(QGuiApplication::screens().size()>1) {
+    setWindowTitle(tr("Host Picker")+
+		   QString::asprintf(" [v%s, Screen %d]",
+				     VERSION,screen_number));
+  }
+  else {
+    setWindowTitle(tr("Host Picker")+" [v"+VERSION+"]");
+  }
   setWindowIcon(QPixmap(vpick_16x16_xpm));
 
   //

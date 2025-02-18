@@ -314,3 +314,7 @@
 	* Removed the calibration button from the 'Settings' dialog.
 2025-02-18 Fred Gleason <fredg@paravelsystems.com>
 	* Updated from Qt5 to Qt6.
+2025-02-18 Fred Gleason <fredg@paravelsystems.com>
+	* Added the package version to the titlebar of the main window.
+	* Added the current screen number to the titlebar of the main
+	window when running on a multi-screen system.

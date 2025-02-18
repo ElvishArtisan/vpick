@@ -32,6 +32,8 @@ LayoutDialog::LayoutDialog(Config *config,QWidget *parent)
   d_config=config;
   setAcceptDrops(true);
 
+  setWindowTitle(tr("Host Picker - Layout"));
+
   QFont label_font(font().family(),font().pointSize(),QFont::Bold);
 
   d_instructions_label=new QLabel(this);

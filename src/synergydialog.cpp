@@ -2,7 +2,7 @@
 //
 // Configure Synergy
 //
-//   (C) Copyright 2017 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2017-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -28,7 +28,7 @@ SynergyDialog::SynergyDialog(Config *c,QWidget *parent)
   synergy_config=c;
   synergy_process=NULL;
 
-  setWindowTitle(tr("Configure Synergy"));
+  setWindowTitle(tr("Host Picker - Configure Synergy"));
 
   QFont bold_font(font().family(),font().pointSize(),QFont::Bold);
 

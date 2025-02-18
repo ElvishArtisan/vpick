@@ -35,7 +35,7 @@ HostDialog::HostDialog(Config *config,QWidget *parent)
   QFont button_font("helvetica",16,QFont::Bold);
   button_font.setPixelSize(16);
 
-  setWindowTitle(tr("Host Settings"));
+  setWindowTitle(tr("Host Picker - Host Settings"));
 
   host_label_label=new QLabel(tr("Label")+":",this);
   host_label_label->setFont(label_font);

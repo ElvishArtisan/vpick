@@ -2,7 +2,7 @@
 //
 // Configure a Synergy node.
 //
-//   (C) Copyright 2017 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2017-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -23,7 +23,7 @@
 SynergyNodeDialog::SynergyNodeDialog(QWidget *parent)
   : QDialog(parent)
 {
-  setWindowTitle(tr("VPick - Synergy Node"));
+  setWindowTitle(tr("Host Picker - Synergy Node Settings"));
 
   QFont bold_font(font().family(),font().pointSize(),QFont::Bold);
 
