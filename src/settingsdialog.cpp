@@ -48,14 +48,34 @@ SettingsDialog::SettingsDialog(Config *c,QWidget *parent)
   // Config Files
   //
   set_config=c;
+#ifdef EMBEDDED
   set_rpiconfig=new RpiConfig();
-
+#endif  // EMBEDDED
+  
   //
   // Dialogs
   //
   set_layout_dialog=new LayoutDialog(set_config,this);
+#ifdef EMBEDDED
   set_synergy_dialog=new SynergyDialog(set_config,this);
+#endif  // EMBEDDED
 
+#ifdef DESKTOP
+  //
+  // Viewer Button Mode
+  //
+  set_viewer_button_mode_label=new QLabel(tr("Viewer Button Mode")+":",this);
+  set_viewer_button_mode_label->setFont(label_font);
+  set_viewer_button_mode_label->setAlignment(Qt::AlignRight|Qt::AlignVCenter);
+  set_viewer_button_mode_box=new ComboBox(this);
+  set_viewer_button_mode_box->
+    insertItem(0,tr("Raise Viewer"),Config::ButtonRaises);
+  set_viewer_button_mode_box->
+    insertItem(0,tr("Toggle Viewer"),Config::ButtonToggles);
+#endif  // DESKTOP
+
+
+#ifdef EMBEDDED
   //
   // Configuration Type
   //
@@ -131,6 +151,7 @@ SettingsDialog::SettingsDialog(Config *c,QWidget *parent)
   set_handedness_box=new QComboBox(this);
   set_handedness_box->insertItem(0,tr("Right Handed"),Config::RightHanded);
   set_handedness_box->insertItem(1,tr("Left Handed"),Config::LeftHanded);
+#endif  // EMBEDDED
 
   //
   // Layout Button
@@ -140,6 +161,7 @@ SettingsDialog::SettingsDialog(Config *c,QWidget *parent)
   set_layout_button->setFont(small_button_font);
   connect(set_layout_button,SIGNAL(clicked()),set_layout_dialog,SLOT(exec()));
 
+  #ifdef EMBEDDED
   //
   // Synergy Button
   //
@@ -147,6 +169,7 @@ SettingsDialog::SettingsDialog(Config *c,QWidget *parent)
     new QPushButton(tr("Configure")+"\n"+tr("Synergy"),this);
   set_synergy_button->setFont(small_button_font);
   connect(set_synergy_button,SIGNAL(clicked()),set_synergy_dialog,SLOT(exec()));
+#endif  // EMBEDDED
 
   //
   // OK Button
@@ -161,29 +184,25 @@ SettingsDialog::SettingsDialog(Config *c,QWidget *parent)
   set_cancel_button=new QPushButton(tr("Cancel"),this);
   set_cancel_button->setFont(button_font);
   connect(set_cancel_button,SIGNAL(clicked()),this,SLOT(cancelData()));
-
-#ifdef DESKTOP
-  //
-  // Disable IP settings controls
-  //
-  set_dhcp_label->setDisabled(true);
-  set_dhcp_box->setDisabled(true);
-
-  set_resolution_label->setDisabled(true);
-  set_resolution_box->setDisabled(true);
-#endif  // DESKTOP
 }
 
 
 QSize SettingsDialog::sizeHint() const
 {
+#ifdef EMBEDDED
   return QSize(490,299);
+#endif  // EMBEDDED
+#ifdef DESKTOP
+  return QSize(350,120);
+#endif  // DESKTOP
 }
 
 
 void SettingsDialog::stopSynergy()
 {
+#ifdef EMBEDDED
   set_synergy_dialog->stopSynergy();
+#endif  // EMBEDDED
 }
 
 
@@ -196,6 +215,7 @@ int SettingsDialog::exec()
 
 void SettingsDialog::dhcpChangedData(int n)
 {
+#ifdef EMBEDDED
   set_ipaddress_label->setEnabled(n);
   set_ipaddress_edit->setEnabled(n);
   set_ipnetmask_label->setEnabled(n);
@@ -205,6 +225,7 @@ void SettingsDialog::dhcpChangedData(int n)
   set_dns_label->setEnabled(n);
   set_dns_edits[0]->setEnabled(n);
   set_dns_edits[1]->setEnabled(n);
+#endif  // EMBEDDED
 }
 
 
@@ -230,6 +251,7 @@ void SettingsDialog::closeEvent(QCloseEvent *e)
 
 void SettingsDialog::resizeEvent(QResizeEvent *e)
 {
+#ifdef EMBEDDED
   set_dhcp_label->setGeometry(10,10,110,20);
   set_dhcp_box->setGeometry(125,10,100,20);
 
@@ -254,6 +276,13 @@ void SettingsDialog::resizeEvent(QResizeEvent *e)
 
   set_layout_button->setGeometry(10,size().height()-60,80,50);
   set_synergy_button->setGeometry(100,size().height()-60,80,50);
+#endif  // EMBEDDED
+
+#ifdef DESKTOP
+  set_viewer_button_mode_label->setGeometry(10,2,175,20);
+  set_viewer_button_mode_box->setGeometry(190,2,size().width()-200,20);
+#endif  // DESKTOP  
+  set_layout_button->setGeometry(10,size().height()-60,80,50);
 
   set_ok_button->setGeometry(size().width()-180,size().height()-60,80,50);
   set_cancel_button->setGeometry(size().width()-90,size().height()-60,80,50);
@@ -262,6 +291,7 @@ void SettingsDialog::resizeEvent(QResizeEvent *e)
 
 void SettingsDialog::Load()
 {
+#ifdef EMBEDDED
   FILE *f=NULL;
   char line[1024];
   QMap<QString,QString> confvalues;
@@ -354,19 +384,21 @@ void SettingsDialog::Load()
     fclose(f);
   }
 #endif  // DEBIAN
-
-#ifdef DESKTOP
-  set_dhcp_box->setCurrentIndex(0);
-#endif  // DESKTOP
-
   set_rpiconfig->load();
   set_resolution_box->setCurrentItemData(set_rpiconfig->framebufferSize());
   dhcpChangedData(set_dhcp_box->currentIndex());
+#endif  // EMBEDDED
+
+#ifdef DESKTOP
+  set_viewer_button_mode_box->
+    setCurrentItemData((int)set_config->viewerButtonMode());
+#endif  // DESKTOP
 }
 
 
 bool SettingsDialog::Save()
 {
+#ifdef EMBEDDED
   QList<QString> dns_servers;
   FILE *f=NULL;
   QProcess *proc=NULL;
@@ -555,11 +587,14 @@ bool SettingsDialog::Save()
     setFramebufferSize(set_resolution_box->currentItemData().toSize());
   if(set_rpiconfig->wasChanged()) {
     set_rpiconfig->save();
-#ifdef EMBEDDED
     system("/sbin/reboot");
-#endif  // EMBEDDED
   }
+#endif  // EMBEDDED
 
+#ifdef DESKTOP
+  set_config->setViewerButtonMode((Config::ViewerButtonMode)
+	      set_viewer_button_mode_box->currentItemData().toInt());
+#endif  // DESKTOP
   return true;
 }
 

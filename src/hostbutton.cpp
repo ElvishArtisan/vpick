@@ -87,8 +87,6 @@ void HostButton::aboutToShowData()
 		  d_menu_palette.color(cg,QPalette::WindowText).name()+";");
   d_window_position=QPoint();
   d_config->updateLiveParameters(d_id);
-  d_remember_position_action->
-    setDisabled(!d_config->liveWindowGeometry(d_id).isNull());
 }
 
 

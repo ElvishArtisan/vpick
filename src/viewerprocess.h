@@ -34,9 +34,13 @@ class ViewerProcess : public QMessageBox
 		QWidget *parent);
   ~ViewerProcess();
   void start(int id,const QString &cmd,const QStringList &args);
-
+  void terminate();
+  static bool sendCommand(const QString &cmd,const QStringList &args,
+			  QByteArray *data_out=NULL);
+  
  signals:
   void started(int id);
+  void finished(int id);
 
  private slots:
   void startedData();
@@ -51,6 +55,7 @@ class ViewerProcess : public QMessageBox
   int d_id;
   bool d_display_profile;
   QTimer *d_startup_timer;
+  bool d_stopping;
 };
 
 

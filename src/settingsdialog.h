@@ -58,6 +58,7 @@ class SettingsDialog : public QDialog
   void Load();
   bool Save();
   bool ValidIp(const QString &str) const;
+#ifdef EMBEDDED
   QLabel *set_dhcp_label;
   QComboBox *set_dhcp_box;
   QLabel *set_ipaddress_label;
@@ -72,15 +73,20 @@ class SettingsDialog : public QDialog
   ComboBox *set_resolution_box;
   QLabel *set_handedness_label;
   QComboBox *set_handedness_box;
-  QPushButton *set_layout_button;
   QPushButton *set_synergy_button;
-  QPushButton *set_ok_button;
-  QPushButton *set_cancel_button;
   QStringList set_dhcpcd_values;
   RpiConfig *set_rpiconfig;
+  SynergyDialog *set_synergy_dialog;
+#endif  // EMBEDDED
+#ifdef DESKTOP
+  QLabel *set_viewer_button_mode_label;
+  ComboBox *set_viewer_button_mode_box;
+#endif  // DESKTOP  
+  QPushButton *set_layout_button;
+  QPushButton *set_ok_button;
+  QPushButton *set_cancel_button;
   Config *set_config;
   LayoutDialog *set_layout_dialog;
-  SynergyDialog *set_synergy_dialog;
 };
 
 

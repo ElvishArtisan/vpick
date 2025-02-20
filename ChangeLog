@@ -324,3 +324,7 @@
 2025-02-20 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug that caused the right-click menu on host buttons
 	to be incorrectly styled.
+2025-02-20 Fred Gleason <fredg@paravelsystems.com>
+	* Changed the behavior of host buttons to toggle.
+2025-02-20 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'Viewer Button Mode' setting to the Desktop picker.

@@ -47,11 +47,14 @@ class Config
   enum Type {VncPlain=0,Spice=1,LastType=2};
   enum SynergyMode {NoSynergy=0,ClientSynergy=1,ServerSynergy=2};
   enum Handedness {RightHanded=1,LeftHanded=2};
+  enum ViewerButtonMode {ButtonToggles=0,ButtonRaises=1};
   Config(int screen_num);
   int screenNumber() const;
   QScreen *screen();
   QSize screenSize();
   QSize canvasSize() const;
+  ViewerButtonMode viewerButtonMode() const;
+  void setViewerButtonMode(ViewerButtonMode mode);
   Handedness pointerHandedness() const;
   void setPointerHandedness(Handedness hand);
   SynergyMode synergyMode() const;
@@ -83,6 +86,7 @@ class Config
   QString liveWindowId(int n) const;
   QRect liveWindowGeometry(int n) const;
   void updateLiveParameters(int n);
+  void clearLiveParameters(int n);
   int addHost(Type type,const QString &title,const QString &hostname,
 	      const QString &passwd,bool autoconnect,bool fullscreen,
 	      const QColor &color);
@@ -99,6 +103,7 @@ class Config
  private:
   int conf_screen_number;
   QSize conf_canvas_size;
+  ViewerButtonMode conf_viewer_button_mode;
   Handedness conf_handedness;
   SynergyMode conf_synergy_mode;
   QString conf_synergy_screenname;

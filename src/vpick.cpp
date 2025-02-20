@@ -198,7 +198,20 @@ void MainWidget::buttonClickedData(int id)
       RemoveHost(id);
     }
     else {
-      StartViewer(id);
+      if(vpick_viewer_processes.contains(id)) {
+	switch(vpick_config->viewerButtonMode()) {
+	case Config::ButtonToggles:
+	  KillViewer(id);
+	  break;
+
+	case Config::ButtonRaises:
+	  RaiseViewer(id);
+	  break;
+	}
+      }
+      else {
+	StartViewer(id);
+      }
     }
   }
 }
@@ -285,12 +298,19 @@ void MainWidget::settingsClickedData()
 #endif  // EMBEDDED
 
 #ifdef DESKTOP
+  if(vpick_settings_dialog->exec()==0) {
+    vpick_config->save();
+    UpdateLayout();
+    Resize();
+  }
+    /*
   if(vpick_layout_dialog->
      exec()==0) {
     vpick_config->save();
     UpdateLayout();
     Resize();
   }
+    */
 #endif  // DESKTOP
   UpdateNavigationButtons();
 }
@@ -325,20 +345,15 @@ void MainWidget::processStartedData(int id)
     args.push_back(QString::asprintf("0,%d,%d,-1,-1",
 				     vpick_config->windowPosition(id).x(),
 				     vpick_config->windowPosition(id).y()));
-    QProcess *proc=new QProcess(this);
-    proc->start("/usr/bin/wmctrl",args);
-    proc->waitForFinished();
-    if(proc->exitStatus()!=QProcess::NormalExit) {
-      fprintf(stderr,"WARNING: wmctrl(1) process crashed!\n");
-    }
-    else {
-      if(proc->exitCode()!=0) {
-	fprintf(stderr,"WARNING: wmctrl(1) process returned error [%s]\n",
-		proc->readAllStandardError().constData());
-      }
-    }
-    delete proc;
+    ViewerProcess::sendCommand("/usr/bin/wmctrl",args);
   }
+}
+
+
+void MainWidget::processFinishedData(int id)
+{
+  vpick_config->clearLiveParameters(id);
+  vpick_viewer_processes.remove(id);  // Memory is freed automatically!
 }
 
 
@@ -387,6 +402,24 @@ void MainWidget::StartViewer(int id)
 }
 
 
+void MainWidget::RaiseViewer(int id) const
+{
+  QStringList args;
+
+  args.push_back("-a");
+  args.push_back(vpick_config->title(id));
+  ViewerProcess::sendCommand("/usr/bin/wmctrl",args);
+}
+
+
+void MainWidget::KillViewer(int id)
+{
+  if(vpick_viewer_processes.contains(id)) {
+    vpick_viewer_processes.value(id)->terminate();
+  }
+}
+
+
 void MainWidget::StartVnc(int id)
 {
   ViewerProcess *proc=NULL;
@@ -401,6 +434,8 @@ void MainWidget::StartVnc(int id)
   args.push_back(conn_file);
   proc=new ViewerProcess(conn_file,vpick_display_profile,this);
   connect(proc,SIGNAL(started(int)),this,SLOT(processStartedData(int)));
+  connect(proc,SIGNAL(finished(int)),this,SLOT(processFinishedData(int)));
+  vpick_viewer_processes[id]=proc;
   proc->start(id,"/usr/bin/remote-viewer",args);
 #endif  // VIRTVIEWER
 
@@ -424,6 +459,8 @@ void MainWidget::StartVnc(int id)
   args.push_back(vpick_config->hostname(id));
   proc=new ViewerProcess(conn_file,this);
   connect(proc,SIGNAL(started(int)),this,SLOT(processStartedData(int)));
+  connect(proc,SIGNAL(finished(int)),this,SLOT(processFinishedData(int)));
+  vpick_viewer_processes[id]=proc;
   proc->start("/usr/lib/ssvnc/vncviewer",args);
 #endif  // SSVNC
 
@@ -437,6 +474,8 @@ void MainWidget::StartVnc(int id)
   args.push_back(vpick_config->hostname(id));
   proc=new ViewerProcess(conn_file,this);  
   connect(proc,SIGNAL(started(int)),this,SLOT(processStartedData(int)));
+  connect(proc,SIGNAL(finished(int)),this,SLOT(processFinishedData(int)));
+  vpick_viewer_processes[id]=proc;
   proc->start("/usr/bin/vncviewer",args);
 #endif  // TIGERVNC
 
@@ -453,6 +492,8 @@ void MainWidget::StartVnc(int id)
   args.push_back(vpick_config->hostname(id));
   proc=new ViewerProcess(conn_file,this);
   connect(proc,SIGNAL(started(int)),this,SLOT(processStartedData(int)));
+  connect(proc,SIGNAL(finished(int)),this,SLOT(processFinishedData(int)));
+  vpick_viewer_processes[id]=proc;
   proc->start("/usr/bin/vncviewer",args);
 #endif  // REALVNC
 }
@@ -473,13 +514,7 @@ QString MainWidget::GenerateVncPassword(int id)
     return QString();
   }
   args.push_back("-f");
-  QProcess *proc=new QProcess(this);
-  proc->start("/usr/bin/vncpasswd",args);
-  proc->write(vpick_config->password(id).toUtf8());
-  proc->closeWriteChannel();
-  proc->waitForFinished();
-  data=proc->readAllStandardOutput();
-  delete proc;
+  ViewerProcess::sendCommand("/usr/bin/vncpasswd",args,&data);
   if(write(fd,data,data.size())!=data.size()) {
     QMessageBox::warning(this,"Vpick - "+tr("Error"),
 		 tr("An error occurred when attempting to set a password!")+
@@ -502,6 +537,9 @@ void MainWidget::StartSpice(int id)
   args.push_back(conn_file);
 
   ViewerProcess *proc=new ViewerProcess(conn_file,vpick_display_profile,this);
+  connect(proc,SIGNAL(started(int)),this,SLOT(processStartedData(int)));
+  connect(proc,SIGNAL(finished(int)),this,SLOT(processFinishedData(int)));
+  vpick_viewer_processes[id]=proc;
   proc->start(id,"/usr/bin/remote-viewer",args);
 }
 

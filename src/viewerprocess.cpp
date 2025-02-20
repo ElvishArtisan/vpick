@@ -30,7 +30,8 @@ ViewerProcess::ViewerProcess(const QString &startup_filename,
 {
   d_startup_filename=startup_filename;
   d_display_profile=display_profile;
-
+  d_stopping=false;
+  
   d_startup_timer=new QTimer(this);
   connect(d_startup_timer,SIGNAL(timeout()),this,SLOT(startupTimeoutData()));
   d_startup_timer->setSingleShot(true);
@@ -65,6 +66,41 @@ void ViewerProcess::start(int id,const QString &cmd,const QStringList &args)
 }
 
 
+void ViewerProcess::terminate()
+{
+  d_stopping=true;
+  d_process->terminate();
+}
+
+
+bool ViewerProcess::sendCommand(const QString &cmd,const QStringList &args,
+				QByteArray *data_out)
+{
+  QProcess *proc=new QProcess();
+  proc->start(cmd,args);
+  proc->waitForFinished();
+  if(proc->exitStatus()!=QProcess::NormalExit) {
+    fprintf(stderr,"command \"%s %s\" crashed!\n",
+	    cmd.toUtf8().constData(),
+	    args.join(" ").toUtf8().constData());
+    delete proc;
+    return false;
+  }
+  if(proc->exitCode()!=0) {
+    fprintf(stderr,"command \"%s %s\" returned error: \"%s\"\n",
+	    cmd.toUtf8().constData(),
+	    args.join(" ").toUtf8().constData(),
+	    proc->readAllStandardError().constData());
+    delete proc;
+    return false;
+  }
+  if(data_out!=NULL) {
+    *data_out=proc->readAllStandardOutput();
+  }
+  delete proc;
+  return true;  
+}
+
 void ViewerProcess::startedData()
 {
   if(d_display_profile) {
@@ -98,27 +134,29 @@ void ViewerProcess::finishedData(int exit_code,QProcess::ExitStatus status)
   //
   // Process results
   //
-  if(status!=QProcess::NormalExit) {
-    setText(tr("The viewer process has crashed."));
-    setDetailedText(tr("Process invocation was")+": "+
-		    d_command+" "+d_arguments.join(" "));
-    exec();
-  }
-  else {
-    if(exit_code!=0) {
-      setText(tr("The viewer process returned an error."));
-      QString err_msg=
-	QString::fromUtf8(d_process->readAllStandardError()).trimmed();
-      if(err_msg.isEmpty()) {
-	setDetailedText(tr("Process invocation was")+": "+
-			d_command+" "+d_arguments.join(" ")+".");
-      }
-      else {
-	setDetailedText(tr("Process invocation was")+": "+
-			d_command+" "+d_arguments.join(" ")+".\n\n"+
-			err_msg);
-      }
+  if(!d_stopping) {
+    if(status!=QProcess::NormalExit) {
+      setText(tr("The viewer process has crashed."));
+      setDetailedText(tr("Process invocation was")+": "+
+		      d_command+" "+d_arguments.join(" "));
       exec();
+    }
+    else {
+      if(exit_code!=0) {
+	setText(tr("The viewer process returned an error."));
+	QString err_msg=
+	  QString::fromUtf8(d_process->readAllStandardError()).trimmed();
+	if(err_msg.isEmpty()) {
+	  setDetailedText(tr("Process invocation was")+": "+
+			  d_command+" "+d_arguments.join(" ")+".");
+	}
+	else {
+	  setDetailedText(tr("Process invocation was")+": "+
+			  d_command+" "+d_arguments.join(" ")+".\n\n"+
+			  err_msg);
+	}
+	exec();
+      }
     }
   }
 
@@ -128,5 +166,6 @@ void ViewerProcess::finishedData(int exit_code,QProcess::ExitStatus status)
   if(!d_startup_filename.isEmpty()) {
     unlink(d_startup_filename.toUtf8());
   }
+  emit finished(d_id);
   deleteLater();
 }

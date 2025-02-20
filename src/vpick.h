@@ -24,6 +24,7 @@
 #include <QLabel>
 #include <QList>
 #include <QMainWindow>
+#include <QMap>
 #include <QPixmap>
 #include <QProcess>
 #include <QPushButton>
@@ -35,6 +36,7 @@
 #include "hostdialog.h"
 #include "layoutdialog.h"
 #include "settingsdialog.h"
+#include "viewerprocess.h"
 
 #define VPICK_USAGE "[--logical-screen-size=<x-buttons>x<y-buttons>] [--display-profile]\n"
 
@@ -54,6 +56,7 @@ class MainWidget : public QMainWindow
   void autoconnectData();
   void titlebarData();
   void processStartedData(int id);
+  void processFinishedData(int id);
   void saveButtonPositionData(int id,const QPoint &pos);
   
  protected:
@@ -63,6 +66,8 @@ class MainWidget : public QMainWindow
  private:
   void EditViewer(int id);
   void StartViewer(int id);
+  void RaiseViewer(int id) const;
+  void KillViewer(int id);
   void StartVnc(int id);
   QString GenerateVncPassword(int id);
   void StartSpice(int id);
@@ -77,6 +82,7 @@ class MainWidget : public QMainWindow
   void UpdatePointerDevices();
   QList<HostButton *> vpick_buttons;
   QList<QString> vpick_commands;
+  QMap<int,ViewerProcess *> vpick_viewer_processes;
   QSignalMapper *vpick_button_mapper;
   QPushButton *vpick_add_button;
   QPushButton *vpick_config_button;

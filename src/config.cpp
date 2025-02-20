@@ -112,6 +112,18 @@ QSize Config::canvasSize() const
 }
 
 
+Config::ViewerButtonMode Config::viewerButtonMode() const
+{
+  return conf_viewer_button_mode;
+}
+
+
+void Config::setViewerButtonMode(Config::ViewerButtonMode mode)
+{
+  conf_viewer_button_mode=mode;
+}
+
+
 Config::Handedness Config::pointerHandedness() const
 {
   return conf_handedness;
@@ -342,6 +354,13 @@ void Config::updateLiveParameters(int id)
 }
 
 
+void Config::clearLiveParameters(int id)
+{
+  conf_live_window_ids[id]=QString();
+  conf_live_window_geometries[id]=QRect();
+}
+
+
 int Config::addHost(Type type,const QString &title,const QString &hostname,
 		    const QString &passwd,bool autoconnect,bool fullscreen,
 		    const QColor &color)
@@ -455,6 +474,12 @@ bool Config::load()
 #endif  // EMBEDDED
 
   //
+  // Global Parameters
+  //
+  conf_viewer_button_mode=(Config::ViewerButtonMode)
+    p->intValue("Global","ViewerButtonMode",(int)Config::ButtonRaises);
+  
+  //
   // Pointer Parameters
   //
   if(p->stringValue("Pointers","Handedness","right").toLower()=="left") {
@@ -546,6 +571,9 @@ bool Config::save()
 #endif  // EMBEDDED
     return false;
   }
+  fprintf(f,"[Global]\n");
+  fprintf(f,"ViewerButtonMode=%d\n",conf_viewer_button_mode);
+  fprintf(f,"\n");
   fprintf(f,"[Pointers]\n");
   if(conf_handedness==Config::LeftHanded) {
     fprintf(f,"Handedness=left\n");
