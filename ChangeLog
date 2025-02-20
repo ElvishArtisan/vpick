@@ -328,3 +328,7 @@
 	* Changed the behavior of host buttons to toggle.
 2025-02-20 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'Viewer Button Mode' setting to the Desktop picker.
+2025-02-20 Fred Gleason <fredg@paravelsystems.com>
+	* Removed the 'qt5-style-plugin-plastique' dependency from the DEB
+	package.
+	* Added a 'qt6-qpa-plugins' dependency to the DEB package.
