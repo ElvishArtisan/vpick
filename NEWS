@@ -1,6 +1,17 @@
 The NEWS file for the vpick package.
 
 -------------------------------------------------------------------------------
+1.1.0rc0 -- 20 February 2025
+
+Changes:
+   Runtime Options. Added a '--screen' switch to vpick(1).
+   
+   Viewier Window Positions. Added the ability to the desktop build to set a
+   default position for each host window.
+
+   Viewer Buttons. Added a setting to the desktop build to allow different
+   actions when toggling a viewer button.
+-------------------------------------------------------------------------------
 1.0.0rc2 -- 2 August 2024
 
 Changes:
