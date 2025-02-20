@@ -56,6 +56,7 @@ class HostButton : public QPushButton
   QMenu *d_rightclick_menu;
   QAction *d_remember_position_action;
   QPoint d_window_position;
+  QPalette d_menu_palette;
   Config *d_config;
 };
 

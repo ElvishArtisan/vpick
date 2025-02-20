@@ -324,8 +324,14 @@ void Config::updateLiveParameters(int id)
 	  if(ok&&(x>=0)) {
 	    int y=f0.at(i).mid(19,4).trimmed().toInt(&ok);
 	    if(ok&&(y>=0)) {
-	      conf_live_window_ids[id]=f0.at(i).left(10);
-	      conf_live_window_geometries[id]=QRect(x,y,0,0);
+	      int w=f0.at(i).mid(24,4).trimmed().toInt(&ok);
+	      if(ok&&(w>=0)) {
+		int h=f0.at(i).mid(29,4).trimmed().toInt(&ok);
+		if(ok&&(h>=0)) {
+		  conf_live_window_ids[id]=f0.at(i).left(10);
+		  conf_live_window_geometries[id]=QRect(x,y,w,h);
+		}
+	      }
 	    }
 	  }
 	}

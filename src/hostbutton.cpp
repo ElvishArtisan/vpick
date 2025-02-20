@@ -39,9 +39,9 @@ HostButton::HostButton(int id,Config *c,QWidget *parent)
   d_allow_drags=false;
   d_move_count=-1;
   d_config=c;
-
+  d_menu_palette=parent->palette();
+  
   d_rightclick_menu=new QMenu(this);
-  d_rightclick_menu->setPalette(parent->palette());
   d_rightclick_menu->setStyleSheet("");
   connect(d_rightclick_menu,SIGNAL(aboutToShow()),this,SLOT(aboutToShowData()));
   d_remember_position_action=d_rightclick_menu->
@@ -75,6 +75,16 @@ void HostButton::setAllowDrags(bool state)
 
 void HostButton::aboutToShowData()
 {
+  QPalette::ColorGroup cg=QPalette::Active;
+  if(d_config->liveWindowGeometry(d_id).isNull()) {
+    cg=QPalette::Disabled;
+  }
+  d_rightclick_menu->setPalette(d_menu_palette);
+  d_rightclick_menu->
+    setStyleSheet(QString("background-color: ")+
+		  d_menu_palette.color(cg,QPalette::Window).name()+";"+
+		  QString("color: ")+
+		  d_menu_palette.color(cg,QPalette::WindowText).name()+";");
   d_window_position=QPoint();
   d_config->updateLiveParameters(d_id);
   d_remember_position_action->
