@@ -335,20 +335,24 @@ void MainWidget::titlebarData()
 
 void MainWidget::processStartedData(int id)
 {
+  bool is_set=false;
+  
   vpick_config->updateLiveParameters(id);
 
-  if(!vpick_config->windowPosition(id).isNull()) {
+  QPoint pos=vpick_config->windowPosition(id,&is_set);
+  if(is_set) {
     QStringList args;
     args.push_back("-r");
     args.push_back(vpick_config->liveWindowId(id));
     args.push_back("-i");
     args.push_back("-e");
     args.push_back(QString::asprintf("0,%d,%d,%d,%d",
-			    vpick_config->windowPosition(id).x(),
-			    vpick_config->windowPosition(id).y(),
+			    pos.x(),
+			    pos.y(),
 			    vpick_config->liveWindowGeometry(id).width(),
 			    vpick_config->liveWindowGeometry(id).height()));
     ViewerProcess::sendCommand("/usr/bin/wmctrl",args);
+    printf("CMD: /usr/bin/wmctrl %s\n",args.join(" ").toUtf8().constData());
   }
 }
 

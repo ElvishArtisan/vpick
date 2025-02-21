@@ -197,14 +197,16 @@ void Config::setPosition(int n,int x,int y)
 }
 
 
-QPoint Config::windowPosition(int n) const
+QPoint Config::windowPosition(int n,bool *is_set) const
 {
+  *is_set=conf_window_position_is_sets.at(n);
   return conf_window_positions.at(n);
 }
 
 
 void Config::setWindowPosition(int n,const QPoint &win_pos)
 {
+  conf_window_position_is_sets[n]=true;
   conf_window_positions[n]=win_pos;
 }
 
@@ -374,6 +376,7 @@ int Config::addHost(Type type,const QString &title,const QString &hostname,
 {
   conf_positions.push_back(nextFreePosition());
   conf_window_positions.push_back(QPoint());
+  conf_window_position_is_sets.push_back(false);
   conf_live_window_ids.push_back(QString());
   conf_live_window_geometries.push_back(QRect());
   conf_types.push_back(type);
@@ -405,6 +408,7 @@ void Config::removeHost(int n)
   }
   conf_positions.erase(conf_positions.begin()+n);
   conf_window_positions.erase(conf_window_positions.begin()+n);
+  conf_window_position_is_sets.erase(conf_window_position_is_sets.begin()+n);
   conf_live_window_ids.erase(conf_live_window_ids.begin()+n);
   conf_live_window_geometries.erase(conf_live_window_geometries.begin()+n);
   conf_types.erase(conf_types.begin()+n);
@@ -509,6 +513,7 @@ bool Config::load()
   //
   conf_positions.clear();
   conf_window_positions.clear();
+  conf_window_position_is_sets.clear();
   conf_live_window_ids.clear();
   conf_live_window_geometries.clear();
   conf_types.clear();
@@ -541,9 +546,10 @@ bool Config::load()
 	return false;
       }
     }
-    QPoint pos(QPoint(p->intValue(section,"WindowX",-1),
-		      p->intValue(section,"WindowY",-1)));
+    QPoint pos(QPoint(p->intValue(section,"WindowX",-1,&x_ok),
+		      p->intValue(section,"WindowY",-1,&y_ok)));
     conf_window_positions.push_back(pos);
+    conf_window_position_is_sets.push_back(x_ok&&y_ok);
     conf_live_window_ids.push_back(QString());
     conf_live_window_geometries.push_back(QRect());
     conf_types.push_back(type);

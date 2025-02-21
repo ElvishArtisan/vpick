@@ -341,3 +341,6 @@
 	to be detected reliably.
 2025-02-21 Fred Gleason <fredg@paravelsystems.com>
 	* Added the connection ID to the view titlebars.
+2025-02-21 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug that made it impossible to specify a window position
+	of (0,0).

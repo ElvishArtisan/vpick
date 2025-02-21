@@ -67,7 +67,7 @@ class Config
   QPoint position(int n) const;
   void setPosition(int n,const QPoint &pos);
   void setPosition(int n,int x,int y);
-  QPoint windowPosition(int n) const;
+  QPoint windowPosition(int n,bool *is_set) const;
   void setWindowPosition(int n,const QPoint &win_pos);
   Type type(int n);
   void setType(int n,Type type);
@@ -111,6 +111,7 @@ class Config
   QList<Type> conf_types;
   QList<QPoint> conf_positions;
   QList<QPoint> conf_window_positions;
+  QList<bool> conf_window_position_is_sets;
   QList<QString> conf_titles;
   QList<QString> conf_hostnames;
   QList<QString> conf_passwords;
