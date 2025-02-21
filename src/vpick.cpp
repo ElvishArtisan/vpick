@@ -49,12 +49,17 @@ MainWidget::MainWidget(QWidget *parent)
 {
   bool ok=false;
   int screen_number=0;
-
+  bool debug=false;
+  
   vpick_autoconnect_id=-1;
   vpick_display_profile=false;
   
-  CmdSwitch *cmd=new CmdSwitch("vpick",VPICK_USAGE);
+  CmdSwitch *cmd=new CmdSwitch("vpick",VERSION,VPICK_USAGE);
   for(int i=0;i<cmd->keys();i++) {
+    if(cmd->key(i)=="--debug") {
+      debug=true;
+      cmd->setProcessed(i,true);
+    }
     if(cmd->key(i)=="--display-profile") {
       vpick_display_profile=true;
       cmd->setProcessed(i,true);
@@ -94,6 +99,7 @@ MainWidget::MainWidget(QWidget *parent)
   // Load Configuration
   //
   vpick_config=new Config(screen_number);
+  vpick_config->setDebug(debug);
   if((!vpick_config->load())||(!vpick_config->fixup())) {
     QMessageBox::critical(this,"VPick - "+tr("Error"),
 			  tr("Too many buttons to fit on this screen!"));
@@ -352,7 +358,7 @@ void MainWidget::processStartedData(int id)
 			    vpick_config->liveWindowGeometry(id).width(),
 			    vpick_config->liveWindowGeometry(id).height()));
     ViewerProcess::sendCommand("/usr/bin/wmctrl",args);
-    printf("CMD: /usr/bin/wmctrl %s\n",args.join(" ").toUtf8().constData());
+    vpick_config->debugToWmctrl(args.join(" "));
   }
 }
 
@@ -415,6 +421,7 @@ void MainWidget::RaiseViewer(int id) const
 
   args.push_back("-a");
   args.push_back(vpick_config->title(id));
+  vpick_config->debugToWmctrl(args.join(" "));
   ViewerProcess::sendCommand("/usr/bin/wmctrl",args);
 }
 

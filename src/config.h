@@ -49,6 +49,10 @@ class Config
   enum Handedness {RightHanded=1,LeftHanded=2};
   enum ViewerButtonMode {ButtonToggles=0,ButtonRaises=1};
   Config(int screen_num);
+  bool isDebug() const;
+  void setDebug(bool state);
+  void debugToWmctrl(const QString &cmd) const;
+  void debugFromWmctrl(const QString &resp) const;
   int screenNumber() const;
   QScreen *screen();
   QSize screenSize();
@@ -101,6 +105,7 @@ class Config
   static QString typeString(Type type);
 
  private:
+  bool conf_debug;
   int conf_screen_number;
   QSize conf_canvas_size;
   ViewerButtonMode conf_viewer_button_mode;

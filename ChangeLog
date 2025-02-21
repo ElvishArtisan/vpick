@@ -344,3 +344,6 @@
 2025-02-21 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a bug that made it impossible to specify a window position
 	of (0,0).
+2025-02-21 Fred Gleason <fredg@paravelsystems.com>
+	* Upgraded 'CmdSwitch' to Exemplar v2.0.1.
+	* Added a '--debug' option.

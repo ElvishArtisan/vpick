@@ -38,7 +38,7 @@
 #include "settingsdialog.h"
 #include "viewerprocess.h"
 
-#define VPICK_USAGE "[--logical-screen-size=<x-buttons>x<y-buttons>] [--display-profile]\n"
+#define VPICK_USAGE "[--debug] [--display-profile]\n"
 
 class MainWidget : public QMainWindow
 {

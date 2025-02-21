@@ -31,6 +31,7 @@
 Config::Config(int screen_num)
 {
   conf_screen_number=screen_num;
+  conf_debug=false;
 
 #ifdef DESKTOP
   if(getenv("HOME")!=NULL) {
@@ -55,6 +56,38 @@ Config::Config(int screen_num)
 #endif  // DESKTOP
 
   conf_handedness=Config::RightHanded;
+}
+
+
+bool Config::isDebug() const
+{
+  return conf_debug;
+}
+
+
+void Config::setDebug(bool state)
+{
+  conf_debug=state;
+}
+
+
+void Config::debugToWmctrl(const QString &cmd) const
+{
+  if(conf_debug) {
+   fprintf(stderr,"== TO WMCTL BEGINS =======================================================\n");
+    fprintf(stderr,"/usr/bin/wmctrl %s\n",cmd.toUtf8().constData());
+    fprintf(stderr,"== TO WMCTL ENDS =========================================================\n");
+  }
+}
+
+
+void Config::debugFromWmctrl(const QString &resp) const
+{
+  if(conf_debug) {
+    fprintf(stderr,"== FROM WMCTL BEGINS =====================================================\n");
+    fprintf(stderr,"%s\n",resp.toUtf8().constData());
+    fprintf(stderr,"== FROM WMCTL ENDS =======================================================\n");
+  }
 }
 
 
@@ -318,6 +351,7 @@ void Config::updateLiveParameters(int id)
   args.push_back("-lG");
   QProcess *proc=new QProcess();
   proc->start("/usr/bin/wmctrl",args);
+  debugToWmctrl(args.join(" "));
   proc->waitForFinished();
   if(proc->exitStatus()!=QProcess::NormalExit) {
     fprintf(stderr,"WARNING: wmctrl(1) process crashed!\n");
@@ -328,8 +362,9 @@ void Config::updateLiveParameters(int id)
 	      proc->readAllStandardError().constData());
     }
     else {
-      QStringList f0=QString::fromUtf8(proc->readAllStandardOutput()).
-	split("\n",Qt::SkipEmptyParts);
+      QString resp=QString::fromUtf8(proc->readAllStandardOutput());
+      debugFromWmctrl(resp);
+      QStringList f0=resp.split("\n",Qt::SkipEmptyParts);
       for(int i=0;i<f0.size();i++) {
 	QStringList f1=f0.at(i).trimmed().split(" ",Qt::SkipEmptyParts);
 	if(f1.size()>=8) {
