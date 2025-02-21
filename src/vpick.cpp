@@ -18,9 +18,11 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 #include <syslog.h>
 #include <unistd.h>
 
@@ -204,7 +206,21 @@ void MainWidget::buttonClickedData(int id)
       RemoveHost(id);
     }
     else {
+      /*
       if(vpick_viewer_processes.contains(id)) {
+	switch(vpick_config->viewerButtonMode()) {
+	case Config::ButtonToggles:
+	  KillViewer(id);
+	  break;
+
+	case Config::ButtonRaises:
+	  RaiseViewer(id);
+	  break;
+	}
+      }
+      */
+      printf("ID: %d  PID: %d\n",id,vpick_config->liveWindowPid(id));
+      if(vpick_config->liveWindowPid(id)>0) {
 	switch(vpick_config->viewerButtonMode()) {
 	case Config::ButtonToggles:
 	  KillViewer(id);
@@ -444,6 +460,12 @@ void MainWidget::KillViewer(int id)
 {
   if(vpick_viewer_processes.contains(id)) {
     vpick_viewer_processes.value(id)->terminate();
+  }
+  else {
+    if(vpick_config->liveWindowPid(id)>0) {
+      kill(vpick_config->liveWindowPid(id),SIGTERM);
+      vpick_config->clearLiveParameters(id);
+    }
   }
 }
 

@@ -334,6 +334,12 @@ QString Config::liveWindowId(int n) const
 }
 
 
+int Config::liveWindowPid(int n)
+{
+  return conf_live_window_pids.at(n);
+}
+
+
 QRect Config::liveWindowGeometry(int n) const
 {
   return conf_live_window_geometries.at(n);
@@ -342,13 +348,21 @@ QRect Config::liveWindowGeometry(int n) const
 
 void Config::updateLiveParameters(int id)
 {
-  bool ok=false;
   QStringList args;
 
-  conf_live_window_ids[id]=QString();
-  conf_live_window_geometries[id]=QRect();
-  
-  args.push_back("-lG");
+  if(id<0) {
+    for(int i=0;i<conf_live_window_ids.size();i++) {
+      conf_live_window_ids[i]=QString();
+      conf_live_window_pids[i]=-1;
+      conf_live_window_geometries[i]=QRect();
+    }
+  }
+  else {
+    conf_live_window_ids[id]=QString();
+    conf_live_window_pids[id]=-1;
+    conf_live_window_geometries[id]=QRect();
+  }
+  args.push_back("-lpG");
   QProcess *proc=new QProcess();
   proc->start("/usr/bin/wmctrl",args);
   debugToWmctrl(args.join(" "));
@@ -367,27 +381,24 @@ void Config::updateLiveParameters(int id)
       QStringList f0=resp.split("\n",Qt::SkipEmptyParts);
       for(int i=0;i<f0.size();i++) {
 	QStringList f1=f0.at(i).trimmed().split(" ",Qt::SkipEmptyParts);
-	if(f1.size()>=8) {
+	if(f1.size()>=9) {
 	  QString title;
-	  for(int j=7;j<f1.size();j++) {
+	  for(int j=8;j<f1.size();j++) {
 	    title+=f1.at(j)+" ";
 	  }
 	  title=title.trimmed();
-	  if(title.contains(conf_titles.at(id)+QString::asprintf(" [%d]",id))) {
-	    QString win_id=f0.at(i).left(10).trimmed();
-	    int x=f0.at(i).mid(14,4).trimmed().toInt(&ok);
-	    if(ok) {
-	      int y=f0.at(i).mid(19,4).trimmed().toInt(&ok);
-	      if(ok&&(y)) {
-		int w=f0.at(i).mid(24,4).trimmed().toInt(&ok);
-		if(ok&&(w>=0)) {
-		  int h=f0.at(i).mid(29,4).trimmed().toInt(&ok);
-		  if(ok&&(h>=0)) {
-		    conf_live_window_ids[id]=f0.at(i).left(10);
-		    conf_live_window_geometries[id]=QRect(x,y,w,h);
-		  }
-		}
+	  if(id<0) {
+	    for(int k=0;k<conf_titles.size();k++) {
+	      if(title.contains(conf_titles.at(k)+
+				QString::asprintf(" [%d]",k))) {
+		LoadLiveParameters(k,f1);
 	      }
+	    }
+	  }
+	  else {
+	    if(title.
+	       contains(conf_titles.at(id)+QString::asprintf(" [%d]",id))) {
+	      LoadLiveParameters(id,f1);
 	    }
 	  }
 	}
@@ -401,6 +412,7 @@ void Config::updateLiveParameters(int id)
 void Config::clearLiveParameters(int id)
 {
   conf_live_window_ids[id]=QString();
+  conf_live_window_pids[id]=-1;
   conf_live_window_geometries[id]=QRect();
 }
 
@@ -413,6 +425,7 @@ int Config::addHost(Type type,const QString &title,const QString &hostname,
   conf_window_positions.push_back(QPoint());
   conf_window_position_is_sets.push_back(false);
   conf_live_window_ids.push_back(QString());
+  conf_live_window_pids.push_back(-1);
   conf_live_window_geometries.push_back(QRect());
   conf_types.push_back(type);
   conf_titles.push_back(title);
@@ -445,6 +458,7 @@ void Config::removeHost(int n)
   conf_window_positions.erase(conf_window_positions.begin()+n);
   conf_window_position_is_sets.erase(conf_window_position_is_sets.begin()+n);
   conf_live_window_ids.erase(conf_live_window_ids.begin()+n);
+  conf_live_window_pids.erase(conf_live_window_pids.begin()+n);
   conf_live_window_geometries.erase(conf_live_window_geometries.begin()+n);
   conf_types.erase(conf_types.begin()+n);
   conf_titles.erase(conf_titles.begin()+n);
@@ -550,6 +564,7 @@ bool Config::load()
   conf_window_positions.clear();
   conf_window_position_is_sets.clear();
   conf_live_window_ids.clear();
+  conf_live_window_pids.clear();
   conf_live_window_geometries.clear();
   conf_types.clear();
   conf_hostnames.clear();
@@ -586,6 +601,7 @@ bool Config::load()
     conf_window_positions.push_back(pos);
     conf_window_position_is_sets.push_back(x_ok&&y_ok);
     conf_live_window_ids.push_back(QString());
+    conf_live_window_pids.push_back(-1);
     conf_live_window_geometries.push_back(QRect());
     conf_types.push_back(type);
     conf_hostnames.push_back(p->stringValue(section,"Hostname"));
@@ -603,6 +619,8 @@ bool Config::load()
   }
   delete p;
 
+  updateLiveParameters(-1);
+  
   return true;
 }
 
@@ -721,3 +739,32 @@ QString Config::typeString(Config::Type type)
 
   return ret;
 }
+
+
+void Config::LoadLiveParameters(int id,const QStringList &fields)
+{
+  bool ok=false;
+
+  QString win_id=fields.at(0).trimmed();
+  int pid=fields.at(2).toInt(&ok);
+  if(ok&&(pid>0)) {
+    int x=fields.at(3).toInt(&ok);
+    if(ok) {
+      int y=fields.at(4).toInt(&ok);
+      if(ok) {
+	int w=fields.at(5).toUInt(&ok);
+	if(ok) {
+	  int h=fields.at(6).toUInt(&ok);
+	  if(ok) {
+	    conf_live_window_ids[id]=win_id;
+	    conf_live_window_pids[id]=pid;
+	    conf_live_window_geometries[id]=QRect(x,y,w,h);
+	    
+	  }
+	}
+      }
+    }
+  }
+}
+
+

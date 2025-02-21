@@ -88,6 +88,7 @@ class Config
   QColor color(int n) const;
   void setColor(int n,const QColor &color);
   QString liveWindowId(int n) const;
+  int liveWindowPid(int n);
   QRect liveWindowGeometry(int n) const;
   void updateLiveParameters(int n);
   void clearLiveParameters(int n);
@@ -105,6 +106,7 @@ class Config
   static QString typeString(Type type);
 
  private:
+  void LoadLiveParameters(int id,const QStringList &fields);
   bool conf_debug;
   int conf_screen_number;
   QSize conf_canvas_size;
@@ -126,6 +128,7 @@ class Config
   QList<QProcess *> conf_viewer_processes;
   QStringList conf_startup_file_names;
   QStringList conf_live_window_ids;
+  QList<int> conf_live_window_pids;
   QList<QRect> conf_live_window_geometries;
 #ifdef DESKTOP
   QString conf_filename;

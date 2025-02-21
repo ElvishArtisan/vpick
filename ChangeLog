@@ -352,3 +352,6 @@
 	negative position values.
 	* Modified fullscreen mode with remote-viewer(1) to use wmctrl(1)
 	rather than the 'fullscreen=' directive in the start file.
+2025-02-21 Fred Gleason <fredg@paravelsystems.com>
+	* Modified the viewer control logic so that active viewers from
+	previous sessions of vpick(1) will be detected at startup.
