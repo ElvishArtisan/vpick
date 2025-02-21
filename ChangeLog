@@ -347,3 +347,8 @@
 2025-02-21 Fred Gleason <fredg@paravelsystems.com>
 	* Upgraded 'CmdSwitch' to Exemplar v2.0.1.
 	* Added a '--debug' option.
+2025-02-21 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug that made it impossible to position viewers using
+	negative position values.
+	* Modified fullscreen mode with remote-viewer(1) to use wmctrl(1)
+	rather than the 'fullscreen=' directive in the start file.

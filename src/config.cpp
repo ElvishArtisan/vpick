@@ -376,9 +376,9 @@ void Config::updateLiveParameters(int id)
 	  if(title.contains(conf_titles.at(id)+QString::asprintf(" [%d]",id))) {
 	    QString win_id=f0.at(i).left(10).trimmed();
 	    int x=f0.at(i).mid(14,4).trimmed().toInt(&ok);
-	    if(ok&&(x>=0)) {
+	    if(ok) {
 	      int y=f0.at(i).mid(19,4).trimmed().toInt(&ok);
-	      if(ok&&(y>=0)) {
+	      if(ok&&(y)) {
 		int w=f0.at(i).mid(24,4).trimmed().toInt(&ok);
 		if(ok&&(w>=0)) {
 		  int h=f0.at(i).mid(29,4).trimmed().toInt(&ok);

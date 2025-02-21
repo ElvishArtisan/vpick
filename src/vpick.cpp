@@ -345,6 +345,9 @@ void MainWidget::processStartedData(int id)
   
   vpick_config->updateLiveParameters(id);
 
+  //
+  // Set Viewer Geometry
+  //
   QPoint pos=vpick_config->windowPosition(id,&is_set);
   if(is_set) {
     QStringList args;
@@ -357,6 +360,17 @@ void MainWidget::processStartedData(int id)
 			    pos.y(),
 			    vpick_config->liveWindowGeometry(id).width(),
 			    vpick_config->liveWindowGeometry(id).height()));
+    ViewerProcess::sendCommand("/usr/bin/wmctrl",args);
+    vpick_config->debugToWmctrl(args.join(" "));
+  }
+
+  if(vpick_config->fullscreen(id)) {
+    QStringList args;
+    args.push_back("-r");
+    args.push_back(vpick_config->liveWindowId(id));
+    args.push_back("-i");
+    args.push_back("-b");
+    args.push_back("add,fullscreen");
     ViewerProcess::sendCommand("/usr/bin/wmctrl",args);
     vpick_config->debugToWmctrl(args.join(" "));
   }
@@ -605,12 +619,14 @@ QString MainWidget::GenerateConnectionFile(int id)
   fprintf(f,"title=%s [%d]\n",
 	  vpick_config->title(id).toUtf8().constData(),id);
 #ifdef DESKTOP
+  /*
   if(vpick_config->fullscreen(id)) {
     fprintf(f,"fullscreen=1\n");
   }
   else {
     fprintf(f,"fullscreen=0\n");
   }
+  */
 #endif  // DESKTOP
 #ifdef EMBEDDED
   fprintf(f,"fullscreen=1\n");
