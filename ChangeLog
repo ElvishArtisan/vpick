@@ -334,3 +334,5 @@
 	* Added a 'qt6-qpa-plugins' dependency to the DEB package.
 2025-02-20 Fred Gleason <fredg@paravelsystems.com>
 	* Incremented the package version to 1.1.0rc0.
+2025-02-21 Fred Gleason <fredg@paravelsystems.com>
+	* Added a 'wmctrl' dependency to the DEB package.

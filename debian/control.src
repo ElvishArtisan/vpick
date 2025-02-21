@@ -7,7 +7,7 @@ Standards-Version: 4.4.1
 
 Package: vpick-desktop
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, tigervnc-tools, virt-viewer, qt6-qpa-plugins
+Depends: ${shlibs:Depends}, ${misc:Depends}, tigervnc-tools, virt-viewer, qt6-qpa-plugins, wmctrl
 Conflicts: realvnc-vnc-server
 Description: Remote Desktop Viewer
  VPick is a viewer for remote desktops. It offers a window upon which
