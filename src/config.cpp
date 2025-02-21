@@ -307,7 +307,6 @@ QRect Config::liveWindowGeometry(int n) const
 
 void Config::updateLiveParameters(int id)
 {
-  printf("updateLiveParameters(%d)\n",id);
   bool ok=false;
   QStringList args;
 
@@ -330,19 +329,26 @@ void Config::updateLiveParameters(int id)
       QStringList f0=QString::fromUtf8(proc->readAllStandardOutput()).
 	split("\n",Qt::SkipEmptyParts);
       for(int i=0;i<f0.size();i++) {
-	QString title=f0.at(i).mid(47,-1);
-	if(title==(conf_titles.at(id)+" (1)")) {
-	  QString win_id=f0.at(i).left(10).trimmed();
-	  int x=f0.at(i).mid(14,4).trimmed().toInt(&ok);
-	  if(ok&&(x>=0)) {
-	    int y=f0.at(i).mid(19,4).trimmed().toInt(&ok);
-	    if(ok&&(y>=0)) {
-	      int w=f0.at(i).mid(24,4).trimmed().toInt(&ok);
-	      if(ok&&(w>=0)) {
-		int h=f0.at(i).mid(29,4).trimmed().toInt(&ok);
-		if(ok&&(h>=0)) {
-		  conf_live_window_ids[id]=f0.at(i).left(10);
-		  conf_live_window_geometries[id]=QRect(x,y,w,h);
+	QStringList f1=f0.at(i).trimmed().split(" ",Qt::SkipEmptyParts);
+	if(f1.size()>=8) {
+	  QString title;
+	  for(int j=7;j<f1.size();j++) {
+	    title+=f1.at(j)+" ";
+	  }
+	  title=title.trimmed();
+	  if(title.contains(conf_titles.at(id)+QString::asprintf(" [%d]",id))) {
+	    QString win_id=f0.at(i).left(10).trimmed();
+	    int x=f0.at(i).mid(14,4).trimmed().toInt(&ok);
+	    if(ok&&(x>=0)) {
+	      int y=f0.at(i).mid(19,4).trimmed().toInt(&ok);
+	      if(ok&&(y>=0)) {
+		int w=f0.at(i).mid(24,4).trimmed().toInt(&ok);
+		if(ok&&(w>=0)) {
+		  int h=f0.at(i).mid(29,4).trimmed().toInt(&ok);
+		  if(ok&&(h>=0)) {
+		    conf_live_window_ids[id]=f0.at(i).left(10);
+		    conf_live_window_geometries[id]=QRect(x,y,w,h);
+		  }
 		}
 	      }
 	    }

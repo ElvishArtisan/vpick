@@ -591,7 +591,8 @@ QString MainWidget::GenerateConnectionFile(int id)
     fprintf(f,"port=5900\n");
   }
   fprintf(f,"password=%s\n",vpick_config->password(id).toUtf8().constData());
-  fprintf(f,"title=%s\n",vpick_config->title(id).toUtf8().constData());
+  fprintf(f,"title=%s [%d]\n",
+	  vpick_config->title(id).toUtf8().constData(),id);
 #ifdef DESKTOP
   if(vpick_config->fullscreen(id)) {
     fprintf(f,"fullscreen=1\n");
