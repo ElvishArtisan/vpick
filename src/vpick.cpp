@@ -340,11 +340,14 @@ void MainWidget::processStartedData(int id)
   if(!vpick_config->windowPosition(id).isNull()) {
     QStringList args;
     args.push_back("-r");
-    args.push_back(vpick_config->title(id));
+    args.push_back(vpick_config->liveWindowId(id));
+    args.push_back("-i");
     args.push_back("-e");
-    args.push_back(QString::asprintf("0,%d,%d,-1,-1",
-				     vpick_config->windowPosition(id).x(),
-				     vpick_config->windowPosition(id).y()));
+    args.push_back(QString::asprintf("0,%d,%d,%d,%d",
+			    vpick_config->windowPosition(id).x(),
+			    vpick_config->windowPosition(id).y(),
+			    vpick_config->liveWindowGeometry(id).width(),
+			    vpick_config->liveWindowGeometry(id).height()));
     ViewerProcess::sendCommand("/usr/bin/wmctrl",args);
   }
 }

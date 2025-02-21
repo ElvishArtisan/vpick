@@ -307,6 +307,7 @@ QRect Config::liveWindowGeometry(int n) const
 
 void Config::updateLiveParameters(int id)
 {
+  printf("updateLiveParameters(%d)\n",id);
   bool ok=false;
   QStringList args;
 
@@ -329,8 +330,8 @@ void Config::updateLiveParameters(int id)
       QStringList f0=QString::fromUtf8(proc->readAllStandardOutput()).
 	split("\n",Qt::SkipEmptyParts);
       for(int i=0;i<f0.size();i++) {
-	QString title=f0.at(i).right(f0.at(i).length()-53).trimmed();
-	if(title==(conf_titles.at(id)+" (1) - Remote Viewer")) {
+	QString title=f0.at(i).mid(47,-1);
+	if(title==(conf_titles.at(id)+" (1)")) {
 	  QString win_id=f0.at(i).left(10).trimmed();
 	  int x=f0.at(i).mid(14,4).trimmed().toInt(&ok);
 	  if(ok&&(x>=0)) {

@@ -336,3 +336,6 @@
 	* Incremented the package version to 1.1.0rc0.
 2025-02-21 Fred Gleason <fredg@paravelsystems.com>
 	* Added a 'wmctrl' dependency to the DEB package.
+2025-02-21 Fred Gleason <fredg@paravelsystems.com>
+	* Fixed a bug that caused positions of viewer windows to fail
+	to be detected reliably.
