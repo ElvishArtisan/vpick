@@ -361,3 +361,6 @@
 2025-02-25 Fred Gleason <fredg@paravelsystems.com>
 	* Added a red border around host buttons on the 'desktop' build when
 	they are active.
+2025-02-25 Fred Gleason <fredg@paravelsystems.com>
+	* Added 'Raise Viewer' and 'Close Viewer' to the right-click menu
+	of host buttons on the 'desktop' build.

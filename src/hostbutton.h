@@ -43,6 +43,8 @@ class HostButton : public QPushButton
  private slots:
   void aboutToShowData();
   void rememberPositionData();
+  void raiseViewerData();
+  void closeViewerData();
 
  protected:
   void mousePressEvent(QMouseEvent *e);
@@ -56,6 +58,8 @@ class HostButton : public QPushButton
   bool d_allow_drags;
   QMenu *d_rightclick_menu;
   QAction *d_remember_position_action;
+  QAction *d_raise_viewer_action;
+  QAction *d_close_viewer_action;
   QPoint d_window_position;
   QPalette d_menu_palette;
   QString d_base_stylesheet;

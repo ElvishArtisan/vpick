@@ -18,7 +18,9 @@
 //   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+#include <signal.h>
 #include <stdio.h>
+#include <sys/types.h>
 
 #include <QDrag>
 #include <QMessageBox>
@@ -27,6 +29,7 @@
 
 #include "config.h"
 #include "hostbutton.h"
+#include "viewerprocess.h"
 
 #include "../icons/vpick-16x16.xpm"
 
@@ -47,7 +50,12 @@ HostButton::HostButton(int id,Config *c,QWidget *parent)
   d_rightclick_menu->setStyleSheet("");
   connect(d_rightclick_menu,SIGNAL(aboutToShow()),this,SLOT(aboutToShowData()));
   d_remember_position_action=d_rightclick_menu->
-    addAction(tr("Remember position"),this,SLOT(rememberPositionData()));
+    addAction(tr("Remember viewer position"),this,SLOT(rememberPositionData()));
+  d_rightclick_menu->addSeparator();
+  d_raise_viewer_action=d_rightclick_menu->
+    addAction(tr("Raise viewer"),this,SLOT(raiseViewerData()));
+  d_close_viewer_action=d_rightclick_menu->
+    addAction(tr("Close viewer"),this,SLOT(closeViewerData()));
 
   if(c->color(id).isValid()) {
     setStyleSheet(d_base_stylesheet);
@@ -107,6 +115,25 @@ void HostButton::aboutToShowData()
 void HostButton::rememberPositionData()
 {
   emit savePosition(d_id,d_config->liveWindowGeometry(d_id).topLeft());
+}
+
+
+void HostButton::raiseViewerData()
+{
+  QStringList args;
+
+  args.push_back("-a");
+  args.push_back(d_config->title(d_id));
+  d_config->debugToWmctrl(args.join(" "));
+  ViewerProcess::sendCommand("/usr/bin/wmctrl",args);
+}
+
+
+void HostButton::closeViewerData()
+{
+  if(d_config->liveWindowPid(d_id)>0) {
+    kill(d_config->liveWindowPid(d_id),SIGTERM);
+  }
 }
 
 

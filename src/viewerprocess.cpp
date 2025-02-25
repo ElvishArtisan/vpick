@@ -134,6 +134,7 @@ void ViewerProcess::finishedData(int exit_code,QProcess::ExitStatus status)
   //
   // Process results
   //
+  /*
   if(!d_stopping) {
     if(status!=QProcess::NormalExit) {
       setText(tr("The viewer process has crashed."));
@@ -159,7 +160,7 @@ void ViewerProcess::finishedData(int exit_code,QProcess::ExitStatus status)
       }
     }
   }
-
+  */
   //
   // Clean up
   //
