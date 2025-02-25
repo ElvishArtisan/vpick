@@ -214,20 +214,6 @@ void MainWidget::buttonClickedData(int id)
       RemoveHost(id);
     }
     else {
-      /*
-      if(vpick_viewer_processes.contains(id)) {
-	switch(vpick_config->viewerButtonMode()) {
-	case Config::ButtonToggles:
-	  KillViewer(id);
-	  break;
-
-	case Config::ButtonRaises:
-	  RaiseViewer(id);
-	  break;
-	}
-      }
-      */
-      printf("ID: %d  PID: %d\n",id,vpick_config->liveWindowPid(id));
       if(vpick_config->liveWindowPid(id)>0) {
 	switch(vpick_config->viewerButtonMode()) {
 	case Config::ButtonToggles:
