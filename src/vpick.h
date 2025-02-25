@@ -58,6 +58,7 @@ class MainWidget : public QMainWindow
   void processStartedData(int id);
   void processFinishedData(int id);
   void saveButtonPositionData(int id,const QPoint &pos);
+  void buttonstateData();
   
  protected:
   void closeEvent(QCloseEvent *e);
@@ -100,6 +101,7 @@ class MainWidget : public QMainWindow
   QTimer *vpick_autoconnect_timer;
   int vpick_autoconnect_id;
   QTimer *vpick_titlebar_timer;
+  QTimer *vpick_buttonstate_timer;
   bool vpick_display_profile;
 };
 

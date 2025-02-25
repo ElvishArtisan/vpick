@@ -2,7 +2,7 @@
 //
 // Button widget for host entries
 //
-//   (C) Copyright 2015-2017 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -30,14 +30,12 @@ class HostButton : public QPushButton
 {
  Q_OBJECT;
  public:
-  //  HostButton(int id,const QString &text,const QColor &color,Config *c,
-  //	     QWidget *parent=0);
   HostButton(int id,Config *c,QWidget *parent=0);
- void setText(const QString &text,const QColor &color);
- void setAllowDrags(bool state);
+  void setText(const QString &text,const QColor &color);
+  void setAllowDrags(bool state);
 
  signals:
- void savePosition(int id,const QPoint &pos);
+  void savePosition(int id,const QPoint &pos);
 
  private slots:
   void aboutToShowData();

@@ -2,7 +2,7 @@
 //
 // Button widget for host entries
 //
-//   (C) Copyright 2015-2017 Fred Gleason <fredg@paravelsystems.com>
+//   (C) Copyright 2015-2025 Fred Gleason <fredg@paravelsystems.com>
 //
 //   This program is free software; you can redistribute it and/or modify
 //   it under the terms of the GNU General Public License version 2 as
@@ -30,11 +30,11 @@
 
 #include "../icons/vpick-16x16.xpm"
 
-//HostButton::HostButton(int id,const QString &text,const QColor &color,
-//		       Config *c,QWidget *parent)
 HostButton::HostButton(int id,Config *c,QWidget *parent)
   : QPushButton(c->title(id),parent)
 {
+  setCheckable(true);
+
   d_id=id;
   d_allow_drags=false;
   d_move_count=-1;

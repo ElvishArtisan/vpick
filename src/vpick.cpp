@@ -96,7 +96,11 @@ MainWidget::MainWidget(QWidget *parent)
   vpick_button_mapper=new QSignalMapper(this);
   connect(vpick_button_mapper,SIGNAL(mappedInt(int)),
 	  this,SLOT(buttonClickedData(int)));
-
+  vpick_buttonstate_timer=new QTimer(this);
+  vpick_buttonstate_timer->setSingleShot(true);
+  connect(vpick_buttonstate_timer,SIGNAL(timeout()),
+	  this,SLOT(buttonstateData()));
+  
   //
   // Load Configuration
   //
@@ -170,11 +174,13 @@ MainWidget::MainWidget(QWidget *parent)
 #ifdef EMBEDDED
   vpick_titlebar_timer->start(10000);
 #endif  // EMBEDDED
-  
+
   //
-  // Autoconnect
+  // Intialize Button States and Autoconnect Hosts
   //
   for(int i=0;i<vpick_config->hostQuantity();i++) {
+    vpick_buttons.at(i)->setChecked(vpick_config->liveWindowPid(i)>0);
+
     if(vpick_config->autoconnect(i)) {
       vpick_autoconnect_id=i;
       vpick_autoconnect_timer=new QTimer(this);
@@ -185,6 +191,8 @@ MainWidget::MainWidget(QWidget *parent)
       continue;
     }
   }
+
+  vpick_buttonstate_timer->start(0);
 }
 
 
@@ -325,14 +333,6 @@ void MainWidget::settingsClickedData()
     UpdateLayout();
     Resize();
   }
-    /*
-  if(vpick_layout_dialog->
-     exec()==0) {
-    vpick_config->save();
-    UpdateLayout();
-    Resize();
-  }
-    */
 #endif  // DESKTOP
   UpdateNavigationButtons();
 }
@@ -404,6 +404,16 @@ void MainWidget::saveButtonPositionData(int id,const QPoint &pos)
 {
   vpick_config->setWindowPosition(id,pos);
   vpick_config->save();
+}
+
+
+void MainWidget::buttonstateData()
+{
+  vpick_config->updateLiveParameters(-1);
+  for(int i=0;i<vpick_buttons.size();i++) {
+    vpick_buttons.at(i)->setChecked(vpick_config->liveWindowPid(i)>0);
+  }
+  vpick_buttonstate_timer->start(1000);
 }
 
 
@@ -640,16 +650,6 @@ QString MainWidget::GenerateConnectionFile(int id)
   fprintf(f,"password=%s\n",vpick_config->password(id).toUtf8().constData());
   fprintf(f,"title=%s [%d]\n",
 	  vpick_config->title(id).toUtf8().constData(),id);
-#ifdef DESKTOP
-  /*
-  if(vpick_config->fullscreen(id)) {
-    fprintf(f,"fullscreen=1\n");
-  }
-  else {
-    fprintf(f,"fullscreen=0\n");
-  }
-  */
-#endif  // DESKTOP
 #ifdef EMBEDDED
   fprintf(f,"fullscreen=1\n");
 #endif  // EMBEDDED  
