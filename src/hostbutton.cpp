@@ -40,6 +40,8 @@ HostButton::HostButton(int id,Config *c,QWidget *parent)
   d_move_count=-1;
   d_config=c;
   d_menu_palette=parent->palette();
+  d_base_stylesheet=QString("color: ")+TextColor(c->color(id)).name()+
+    ";background-color: "+c->color(id).name();
   
   d_rightclick_menu=new QMenu(this);
   d_rightclick_menu->setStyleSheet("");
@@ -48,8 +50,7 @@ HostButton::HostButton(int id,Config *c,QWidget *parent)
     addAction(tr("Remember position"),this,SLOT(rememberPositionData()));
 
   if(c->color(id).isValid()) {
-    setStyleSheet("color: "+TextColor(c->color(id)).name()+
-    		  ";background-color: "+c->color(id).name());
+    setStyleSheet(d_base_stylesheet);
   }
 }
 
@@ -70,6 +71,19 @@ void HostButton::setText(const QString &text,const QColor &color)
 void HostButton::setAllowDrags(bool state)
 {
   d_allow_drags=state;
+}
+
+
+void HostButton::setChecked(bool state)
+{
+  QPushButton::setChecked(state);
+
+  if(state) {
+    setStyleSheet(d_base_stylesheet+";border: 2px solid red");
+  }
+  else {
+    setStyleSheet(d_base_stylesheet);
+  }
 }
 
 

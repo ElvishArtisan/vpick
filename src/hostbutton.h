@@ -34,6 +34,9 @@ class HostButton : public QPushButton
   void setText(const QString &text,const QColor &color);
   void setAllowDrags(bool state);
 
+ public slots:
+  void setChecked(bool state);
+
  signals:
   void savePosition(int id,const QPoint &pos);
 
@@ -55,6 +58,7 @@ class HostButton : public QPushButton
   QAction *d_remember_position_action;
   QPoint d_window_position;
   QPalette d_menu_palette;
+  QString d_base_stylesheet;
   Config *d_config;
 };
 
