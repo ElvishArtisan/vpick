@@ -49,14 +49,13 @@ HostButton::HostButton(int id,Config *c,QWidget *parent)
   d_rightclick_menu=new QMenu(this);
   d_rightclick_menu->setStyleSheet("");
   connect(d_rightclick_menu,SIGNAL(aboutToShow()),this,SLOT(aboutToShowData()));
-  d_remember_position_action=d_rightclick_menu->
-    addAction(tr("Remember viewer position"),this,SLOT(rememberPositionData()));
-  d_rightclick_menu->addSeparator();
   d_raise_viewer_action=d_rightclick_menu->
     addAction(tr("Raise viewer"),this,SLOT(raiseViewerData()));
   d_close_viewer_action=d_rightclick_menu->
     addAction(tr("Close viewer"),this,SLOT(closeViewerData()));
-
+  d_rightclick_menu->addSeparator();
+  d_remember_position_action=d_rightclick_menu->
+    addAction(tr("Remember viewer position"),this,SLOT(rememberPositionData()));
   if(c->color(id).isValid()) {
     setStyleSheet(d_base_stylesheet);
   }
@@ -112,12 +111,6 @@ void HostButton::aboutToShowData()
 }
 
 
-void HostButton::rememberPositionData()
-{
-  emit savePosition(d_id,d_config->liveWindowGeometry(d_id).topLeft());
-}
-
-
 void HostButton::raiseViewerData()
 {
   QStringList args;
@@ -134,6 +127,12 @@ void HostButton::closeViewerData()
   if(d_config->liveWindowPid(d_id)>0) {
     kill(d_config->liveWindowPid(d_id),SIGTERM);
   }
+}
+
+
+void HostButton::rememberPositionData()
+{
+  emit savePosition(d_id,d_config->liveWindowGeometry(d_id).topLeft());
 }
 
 
