@@ -369,3 +369,5 @@
 2025-02-25 Fred Gleason <fredg@paravelsystems.com>
 	* Resorted the order of items in the right-click menu of viewer
 	button on the 'desktop' build.
+2025-03-10 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 1.1.1rc0.

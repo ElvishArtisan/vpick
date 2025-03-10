@@ -1,6 +1,16 @@
 The NEWS file for the vpick package.
 
 -------------------------------------------------------------------------------
+1.1.1rc0 -- 10 March 2025
+
+Changes:
+   Added the ability to toggle viewer windows off and on from the command
+   buttons.
+
+   Added a 'Raise Viewer' option to the right-hand menu on the host buttons.
+
+   Many bugfixes to code for handling window positioning.
+-------------------------------------------------------------------------------
 1.1.0rc0 -- 20 February 2025
 
 Changes:
