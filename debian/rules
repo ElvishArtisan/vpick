@@ -6,7 +6,6 @@ build:
 	./configure --with-desktop --with-virtviewer --prefix=/usr --libdir=/usr/lib
 	make $(DEBUILD_MAKE_ARGS)
 
-binary:	
 	dh_testroot
 	dh_prep
 	dh_auto_install

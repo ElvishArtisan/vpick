@@ -18,16 +18,16 @@
 ##   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 ##
 
-install-exec-local:	
-	mkdir -p $(DESTDIR)/usr/lib/systemd/system
-	cp vpick.service $(DESTDIR)/usr/lib/systemd/system/vpick.service
-	cp vpick.target $(DESTDIR)/usr/lib/systemd/system/vpick.target
-	./daemon-reload.sh
+#install-exec-local:	
+#	mkdir -p $(DESTDIR)/usr/lib/systemd/system
+#	cp vpick.service $(DESTDIR)/usr/lib/systemd/system/vpick.service
+#	cp vpick.target $(DESTDIR)/usr/lib/systemd/system/vpick.target
+#	./daemon-reload.sh
 
-uninstall-local:	
-	rm -f $(DESTDIR)/usr/lib/systemd/system/vpick.service
-	rm -f $(DESTDIR)/usr/lib/systemd/system/vpick.target
-	./daemon-reload.sh
+#uninstall-local:	
+#	rm -f $(DESTDIR)/usr/lib/systemd/system/vpick.service
+#	rm -f $(DESTDIR)/usr/lib/systemd/system/vpick.target
+#	./daemon-reload.sh
 
 EXTRA_DIST = daemon-reload.sh\
              vpick.service\
