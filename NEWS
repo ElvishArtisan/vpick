@@ -1,6 +1,12 @@
 The NEWS file for the vpick package.
 
 -------------------------------------------------------------------------------
+1.1.1rc1 -- 8 September 2026
+
+Changes:
+   Fixed a bug in the 'vpick-desktop' DEB package that caused the local
+   desktop to fail to start.
+-------------------------------------------------------------------------------
 1.1.1rc0 -- 10 March 2025
 
 Changes:

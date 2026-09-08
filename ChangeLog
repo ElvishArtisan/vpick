@@ -375,3 +375,5 @@
 	* Disabled installation of SystemD components in 'systemd/'.
 	* Consolidate the 'binary' into the 'build' section of
 	'debian/rules'.
+2026-09-08 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 1.1.1rc1.
