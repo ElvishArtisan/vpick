@@ -477,6 +477,9 @@ void MainWidget::StartVnc(int id)
   if(conn_file.isEmpty()) {
     return;
   }
+  if(vpick_config->fullscreen(id)) {
+    args.push_back("--full-screen");
+  }
   args.push_back(conn_file);
   proc=new ViewerProcess(conn_file,vpick_display_profile,this);
   connect(proc,SIGNAL(started(int)),this,SLOT(processStartedData(int)));
