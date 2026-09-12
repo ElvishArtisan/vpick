@@ -380,3 +380,5 @@
 2026-09-11 Fred Gleason <fredg@paravelsystems.com>
 	* Fixed a regression that caused the 'Fullscreen' attribute to be
 	ignored when built with virt-viewer(1) support.
+2026-09-11 Fred Gleason <fredg@paravelsystems.com>
+	* Incremented the package version to 1.1.1rc2.
